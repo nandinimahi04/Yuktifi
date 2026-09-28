@@ -61,6 +61,7 @@ def build_canonical_input(
     category_id: str,
     margin_capital: float,
     cost: dict | None,
+    overrides: dict | None = None,
 ) -> tuple[CanonicalFinancialInput, dict]:
     """
     Builds the one canonical financial input for a session.
@@ -135,6 +136,30 @@ def build_canonical_input(
         fixed_costs = 0.0
         revenue_source = "not_modelled_missing_project_cost"
 
+    overrides = overrides or {}
+    operating_days = int(overrides.get("operating_days", 30))
+    if "project_cost" in overrides:
+        total_project_cost = float(overrides["project_cost"])
+        revenue_source = "User Input"
+    if "own_capital" in overrides:
+        margin_capital = float(overrides["own_capital"])
+        has_margin = True
+    if "monthly_expenses" in overrides:
+        fixed_costs = float(overrides["monthly_expenses"])
+    if "selling_price" in overrides:
+        price_per_unit = float(overrides["selling_price"])
+        var_cost_per_unit = price_per_unit * (tmpl.typical_cogs_pct / 100.0)
+        revenue_source = "User Input"
+    if "units_per_day" in overrides:
+        monthly_units = float(overrides["units_per_day"]) * operating_days
+        revenue_source = "User Input"
+    if "monthly_revenue" in overrides:
+        monthly_revenue = float(overrides["monthly_revenue"])
+        price_per_unit = price_per_unit if price_per_unit > 0 else monthly_revenue
+        monthly_units = monthly_revenue / price_per_unit if price_per_unit > 0 else 0.0
+        var_cost_per_unit = price_per_unit * (tmpl.typical_cogs_pct / 100.0)
+        revenue_source = "User Input"
+
     wc_cfg = WorkingCapitalConfig(
         inventory_days=tmpl.default_inventory_days,
         receivable_days=tmpl.default_receivable_days,
@@ -188,7 +213,10 @@ def build_canonical_input(
             has_margin
             and total_project_cost is not None
             and total_project_cost > float(margin_capital)
-        ),
+        ) if "loan_amount" not in overrides else False,
+        debt_amount=float(overrides["loan_amount"]) if "loan_amount" in overrides else None,
+        interest_rate_annual_pct=float(overrides["interest_rate"]) if "interest_rate" in overrides else 9.0,
+        tenure_months=int(overrides["loan_tenure"]) if "loan_tenure" in overrides else 60,
         working_capital_cfg=wc_cfg,
     )
     return fin_input, {
@@ -221,8 +249,10 @@ def compute_full_financials(
 
     cost_result = data_layer.get_cost_profile(location_id, category_id) if category_id else {"value": None}
     cost = cost_result.get("value")
+    
+    overrides = getattr(session, "financial_overrides", {})
 
-    fin_input, derived = build_canonical_input(category_id, margin_capital, cost)
+    fin_input, derived = build_canonical_input(category_id, margin_capital, cost, overrides=overrides)
 
     canon_res = compute_canonical_financials(fin_input)
     res_dict = canon_res.to_dict()
@@ -424,6 +454,7 @@ def get_base_state(db: DBSession, session_id: str) -> dict:
         session.category_id or "retail_kirana",
         session.margin_capital,
         cost_result.get("value"),
+        overrides=getattr(session, "financial_overrides", {}),
     )
 
     scheme = match_scheme(

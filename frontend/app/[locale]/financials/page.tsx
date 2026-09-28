@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import {
   IndianRupee, TrendingUp, TrendingDown, AlertTriangle, Loader2,
   CheckCircle, CreditCard, BarChart3, CalendarDays, Target,
-  ShieldAlert, Wallet, Clock, ArrowRight, Info, FileSearch, HelpCircle
+  ShieldAlert, Wallet, Clock, ArrowRight, Info, FileSearch, HelpCircle, Edit2, Save, X
 } from "lucide-react";
 
 // Lazy-load standalone chart components — keeping Recharts internal subcomponents
@@ -86,21 +86,98 @@ const SummaryCard = ({ label, value, sub, color = "text-ink", icon: Icon }: any)
   </div>
 );
 
+const EditableSummaryCard = ({ label, value, fieldName, originalValue, sub, color = "text-ink", icon: Icon, onSave, isRecalculating }: any) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState("");
+
+  const handleEdit = () => {
+    setEditValue(originalValue != null ? originalValue.toString() : "");
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    if (editValue && !isNaN(Number(editValue))) {
+      onSave(fieldName, Number(editValue));
+    }
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl p-5 border border-amber-200 shadow-sm flex flex-col gap-2 group relative">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-bold text-amber-600 uppercase tracking-wide flex items-center gap-1">
+          {label} {isRecalculating && <Loader2 size={12} className="animate-spin" />}
+        </span>
+        <Icon size={16} className="text-amber-500" />
+      </div>
+      {!isEditing ? (
+        <div className="flex items-center justify-between">
+          <div className={`text-2xl font-bold font-display ${color} ${isRecalculating ? 'opacity-50' : ''}`}>{value}</div>
+          <button onClick={handleEdit} className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-amber-50 rounded text-amber-600 transition-opacity" disabled={isRecalculating}>
+            <Edit2 size={14} />
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <input 
+            type="number" 
+            className={`text-lg font-bold font-display ${color} border border-amber-300 rounded px-2 py-1 w-full outline-none focus:border-amber-500`} 
+            value={editValue} 
+            onChange={(e) => setEditValue(e.target.value)} 
+            autoFocus
+            onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+          />
+          <button onClick={handleSave} className="p-1 text-green-600 hover:bg-green-50 rounded"><Save size={16}/></button>
+          <button onClick={() => setIsEditing(false)} className="p-1 text-red-500 hover:bg-red-50 rounded"><X size={16}/></button>
+        </div>
+      )}
+      {sub && <div className="text-xs font-medium text-amber-600/80">{sub}</div>}
+    </div>
+  );
+};
+
 // ─── Overview Tab ────────────────────────────────────────────────────────────
 
 const OverviewTab = ({ data }: { data: FinanceResponse }) => {
   const scheme = data.scheme as any;
   const schemeName = scheme?.scheme_name || "Standard Bank Loan";
+  const { analysisResult, updateState, sessionId } = useStore();
+  const [isRecalculating, setIsRecalculating] = useState(false);
+
+  const handleOverride = async (fieldName: string, value: number) => {
+    if (!sessionId) return;
+    setIsRecalculating(true);
+    try {
+      const overrides = { [fieldName]: value };
+      const newFinancials = await api.calculateFinance({ session_id: sessionId, overrides });
+      if (analysisResult) {
+        useStore.setState({
+          analysisResult: {
+            ...analysisResult,
+            financials: newFinancials
+          }
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRecalculating(false);
+    }
+  };
 
   return (
     <div className="animate-in fade-in duration-300">
       <h2 className="text-xl font-bold text-forest-deep mb-6">Financial Overview</h2>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
-        <SummaryCard label="Project Cost" value={fmt(data.project_cost)} sub="Total capital required" icon={Wallet} color="text-ink" />
-        <SummaryCard label="Loan Amount" value={fmt(data.loan_amount)} sub={data.rate != null ? `@ ${data.rate}% p.a.` : "Rate not declared"} icon={CreditCard} color="text-[#2563eb]" />
-        <SummaryCard
+        <EditableSummaryCard label="Project Cost" value={fmt(data.project_cost)} originalValue={data.project_cost} fieldName="project_cost" onSave={handleOverride} isRecalculating={isRecalculating} sub="Total capital required" icon={Wallet} color="text-ink" />
+        <EditableSummaryCard label="Loan Amount" value={fmt(data.loan_amount)} originalValue={data.loan_amount} fieldName="loan_amount" onSave={handleOverride} isRecalculating={isRecalculating} sub={data.rate != null ? `@ ${data.rate}% p.a.` : "Rate not declared"} icon={CreditCard} color="text-[#2563eb]" />
+        <EditableSummaryCard
           label="Your Contribution"
           value={fmt(data.beneficiary_contribution)}
+          originalValue={data.beneficiary_contribution}
+          fieldName="own_capital"
+          onSave={handleOverride}
+          isRecalculating={isRecalculating}
           sub={data.project_cost > 0
             ? `${((data.beneficiary_contribution / data.project_cost) * 100).toFixed(0)}% of project cost`
             : "Own margin"}
@@ -108,8 +185,8 @@ const OverviewTab = ({ data }: { data: FinanceResponse }) => {
           color="text-[#16a34a]"
         />
         <SummaryCard label="Monthly Installment" value={fmtFull(data.emi)} sub={data.tenure_months != null ? `Over ${data.tenure_months} months` : "Tenure not declared"} icon={Clock} color="text-[#ea580c]" />
-        <SummaryCard label="Monthly Revenue" value={fmt(data.monthly_revenue)} sub="Expected earnings" icon={TrendingUp} color="text-[#16a34a]" />
-        <SummaryCard label="Monthly Expenses" value={fmt(data.monthly_opex)} sub="OPEX + Variable" icon={TrendingDown} color="text-red-500" />
+        <EditableSummaryCard label="Monthly Revenue" value={fmt(data.monthly_revenue)} originalValue={data.monthly_revenue} fieldName="monthly_revenue" onSave={handleOverride} isRecalculating={isRecalculating} sub="Expected earnings" icon={TrendingUp} color="text-[#16a34a]" />
+        <EditableSummaryCard label="Monthly Expenses" value={fmt(data.monthly_opex)} originalValue={data.monthly_opex} fieldName="monthly_expenses" onSave={handleOverride} isRecalculating={isRecalculating} sub="OPEX + Variable" icon={TrendingDown} color="text-red-500" />
         <SummaryCard
           label="Net Profit / Month"
           value={fmt(data.net_profit)}
@@ -130,96 +207,115 @@ const OverviewTab = ({ data }: { data: FinanceResponse }) => {
         />
       </div>
 
-      {/* Scheme Info - Highlighted */}
-      <div className="relative bg-gradient-to-br from-[#16a34a] to-[#14532d] rounded-2xl p-6 text-white mb-6 shadow-[0_0_20px_rgba(22,163,74,0.3)] border border-[#22c55e]/30 overflow-hidden transform transition-transform hover:scale-[1.01]">
-        <div className="absolute top-0 right-0 bg-[#fde047] text-[#854d0e] text-xs font-bold px-3 py-1 rounded-bl-xl z-10 flex items-center">
-          <CheckCircle size={12} className="mr-1" /> Best Match
-        </div>
-        <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
-        <div className="absolute -right-2 -bottom-2 w-32 h-32 bg-[#22c55e]/20 rounded-full blur-2xl"></div>
-        <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-6">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <span className="flex h-2 w-2 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fde047] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fde047]"></span>
-              </span>
-              <p className="text-sm font-bold text-[#fde047]">Eligible Government Scheme</p>
-            </div>
-            <h3 className="text-2xl font-bold mb-3 drop-shadow-sm">{schemeName}</h3>
-            <div className="inline-flex flex-wrap gap-4 bg-black/20 rounded-lg px-4 py-2 backdrop-blur-sm mb-4">
-              <p className="text-sm text-white/90">
-                Interest: <span className="font-bold text-white text-base">{data.rate}%</span>
-              </p>
-              <div className="hidden sm:block w-px bg-white/20"></div>
-              <p className="text-sm text-white/90">
-                Tenure: <span className="font-bold text-white text-base">{data.tenure_months != null ? `${Math.round(data.tenure_months / 12)} yrs` : "not declared"}</span>
-              </p>
-              {data.moratorium_months > 0 && (
-                <>
-                  <div className="hidden sm:block w-px bg-white/20"></div>
-                  <p className="text-sm text-white/90">
-                    Moratorium: <span className="font-bold text-white text-base">{data.moratorium_months} mos</span>
-                  </p>
-                </>
-              )}
-            </div>
-            {scheme?.explanation && (
-              <p className="text-sm text-white/80 leading-relaxed mb-4 max-w-2xl">
-                {scheme.explanation}
-              </p>
-            )}
-            {scheme?.source_url && (
-              <a 
-                href={scheme.source_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center px-5 py-2.5 bg-white text-forest-deep rounded-xl font-bold text-sm hover:bg-[#fcfbf8] transition-colors shadow-sm"
-              >
-                Apply for this Scheme <ArrowRight size={16} className="ml-2" />
-              </a>
-            )}
-          </div>
-        </div>
+      <h3 className="text-lg font-bold text-forest-deep mt-8 mb-4">Underlying Assumptions</h3>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+        <EditableSummaryCard label="Selling Price" value={fmt(data.pnl_statement?.revenue ? data.pnl_statement.revenue / (data.monthly_revenue ? 1 : 1) : 0)} originalValue={0} fieldName="selling_price" onSave={handleOverride} isRecalculating={isRecalculating} sub="Per Unit" icon={IndianRupee} color="text-ink" />
+        <EditableSummaryCard label="Units / Day" value={"-"} originalValue={0} fieldName="units_per_day" onSave={handleOverride} isRecalculating={isRecalculating} sub="Expected" icon={TrendingUp} color="text-ink" />
+        <EditableSummaryCard label="Operating Days" value={data.operating_days_per_month ?? "-"} originalValue={data.operating_days_per_month ?? 30} fieldName="operating_days" onSave={handleOverride} isRecalculating={isRecalculating} sub="Per Month" icon={CalendarDays} color="text-ink" />
+        <EditableSummaryCard label="Interest Rate" value={`${data.rate ?? 0}%`} originalValue={data.rate ?? 9} fieldName="interest_rate" onSave={handleOverride} isRecalculating={isRecalculating} sub="Annual %" icon={TrendingDown} color="text-ink" />
+        <EditableSummaryCard label="Loan Tenure" value={`${data.tenure_months ?? 0} mo`} originalValue={data.tenure_months ?? 60} fieldName="loan_tenure" onSave={handleOverride} isRecalculating={isRecalculating} sub="Months" icon={Clock} color="text-ink" />
       </div>
 
-      {/* Loan Repayment Capacity */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-premium-border shadow-sm">
-          <p className="text-xs font-bold text-ink-soft uppercase mb-1">Loan Repayment Capacity</p>
-          <div className={`text-3xl font-bold font-display mb-1 ${
-            data.dscr == null
-              ? "text-ink-soft"
-              : data.dscr >= 1.5
-                ? "text-[#16a34a]"
-                : data.dscr >= 1.0
-                  ? "text-[#ea580c]"
-                  : "text-red-500"
-          }`}>{data.dscr == null ? "N/A" : `${data.dscr}x`}</div>
-          <p className="text-sm text-ink-soft">
-            {data.dscr == null
-              ? "No debt is assumed for this plan, so repayment coverage does not apply."
-              : data.dscr >= 1.5
-                ? "✅ Strong repayment ability"
-                : data.dscr >= 1.0
-                  ? "⚠️ Adequate — manage costs tightly"
-                  : "🔴 Weak — reconsider the capital plan"}
-          </p>
-        </div>
-        <div className="bg-white rounded-2xl p-5 border border-premium-border shadow-sm">
-          <p className="text-xs font-bold text-ink-soft uppercase mb-1">Break-Even Units / Month</p>
-          <div className="text-3xl font-bold font-display text-[#6366f1] mb-1">
-            {data.break_even_units == null ? "N/A" : `${Math.round(data.break_even_units)} units`}
+      {data.financial_status?.value === "INSUFFICIENT_INPUT" ? (
+         <div className="bg-red-50 border border-red-200 rounded-xl p-10 text-center text-red-600 animate-in fade-in">
+           <AlertTriangle size={48} className="mx-auto mb-4 opacity-80" />
+           <h3 className="text-lg font-bold mb-2">Detailed Projections Blocked</h3>
+           <p>Please provide Project Cost and Monthly Revenue to generate the full financial model.</p>
+         </div>
+      ) : (
+        <>
+          {/* Scheme Info - Highlighted */}
+          <div className="relative bg-gradient-to-br from-[#16a34a] to-[#14532d] rounded-2xl p-6 text-white mb-6 shadow-[0_0_20px_rgba(22,163,74,0.3)] border border-[#22c55e]/30 overflow-hidden transform transition-transform hover:scale-[1.01]">
+            <div className="absolute top-0 right-0 bg-[#fde047] text-[#854d0e] text-xs font-bold px-3 py-1 rounded-bl-xl z-10 flex items-center">
+              <CheckCircle size={12} className="mr-1" /> Best Match
+            </div>
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/5 rounded-full blur-xl"></div>
+            <div className="absolute -right-2 -bottom-2 w-32 h-32 bg-[#22c55e]/20 rounded-full blur-2xl"></div>
+            <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-6">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fde047] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fde047]"></span>
+                  </span>
+                  <p className="text-sm font-bold text-[#fde047]">Eligible Government Scheme</p>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 drop-shadow-sm">{schemeName}</h3>
+                <div className="inline-flex flex-wrap gap-4 bg-black/20 rounded-lg px-4 py-2 backdrop-blur-sm mb-4">
+                  <p className="text-sm text-white/90">
+                    Interest: <span className="font-bold text-white text-base">{data.rate}%</span>
+                  </p>
+                  <div className="hidden sm:block w-px bg-white/20"></div>
+                  <p className="text-sm text-white/90">
+                    Tenure: <span className="font-bold text-white text-base">{data.tenure_months != null ? `${Math.round(data.tenure_months / 12)} yrs` : "not declared"}</span>
+                  </p>
+                  {data.moratorium_months > 0 && (
+                    <>
+                      <div className="hidden sm:block w-px bg-white/20"></div>
+                      <p className="text-sm text-white/90">
+                        Moratorium: <span className="font-bold text-white text-base">{data.moratorium_months} mos</span>
+                      </p>
+                    </>
+                  )}
+                </div>
+                {scheme?.explanation && (
+                  <p className="text-sm text-white/80 leading-relaxed mb-4 max-w-2xl">
+                    {scheme.explanation}
+                  </p>
+                )}
+                {scheme?.source_url && (
+                  <a 
+                    href={scheme.source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-5 py-2.5 bg-white text-forest-deep rounded-xl font-bold text-sm hover:bg-[#fcfbf8] transition-colors shadow-sm"
+                  >
+                    Apply for this Scheme <ArrowRight size={16} className="ml-2" />
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-ink-soft">
-            {data.break_even_units == null
-              ? "Break-even cannot be stated because contribution per unit is not positive."
-              : data.operating_days_per_month == null
-                ? "Break-even is stated per month. The working days per month were not declared, so a per-day figure is not available."
-                : `You need to sell ${Math.round(data.break_even_units / data.operating_days_per_month)} units per working day to cover all costs.`}
-          </p>
-        </div>
-      </div>
+
+          {/* Loan Repayment Capacity */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded-2xl p-5 border border-premium-border shadow-sm">
+              <p className="text-xs font-bold text-ink-soft uppercase mb-1">Loan Repayment Capacity</p>
+              <div className={`text-3xl font-bold font-display mb-1 ${
+                data.dscr == null
+                  ? "text-ink-soft"
+                  : data.dscr >= 1.5
+                    ? "text-[#16a34a]"
+                    : data.dscr >= 1.0
+                      ? "text-[#ea580c]"
+                      : "text-red-500"
+              }`}>{data.dscr == null ? "N/A" : `${data.dscr}x`}</div>
+              <p className="text-sm text-ink-soft">
+                {data.dscr == null
+                  ? "No debt is assumed for this plan, so repayment coverage does not apply."
+                  : data.dscr >= 1.5
+                    ? "✅ Strong repayment ability"
+                    : data.dscr >= 1.0
+                      ? "⚠️ Adequate — manage costs tightly"
+                      : "🔴 Weak — reconsider the capital plan"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl p-5 border border-premium-border shadow-sm">
+              <p className="text-xs font-bold text-ink-soft uppercase mb-1">Break-Even Units / Month</p>
+              <div className="text-3xl font-bold font-display text-[#6366f1] mb-1">
+                {data.break_even_units == null ? "N/A" : `${Math.round(data.break_even_units)} units`}
+              </div>
+              <p className="text-sm text-ink-soft">
+                {data.break_even_units == null
+                  ? "Break-even cannot be stated because contribution per unit is not positive."
+                  : data.operating_days_per_month == null
+                    ? "Break-even is stated per month. The working days per month were not declared, so a per-day figure is not available."
+                    : `You need to sell ${Math.round(data.break_even_units / data.operating_days_per_month)} units per working day to cover all costs.`}
+              </p>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
@@ -1096,14 +1192,25 @@ export default function FinancialsPage() {
       {/* Tab Content */}
       <div>
         {activeTab === "overview"  && <OverviewTab data={data} />}
-        {activeTab === "cashflow"  && <CashFlowTab data={data} />}
-        {activeTab === "pnl"       && <PnlTab data={data} />}
-        {activeTab === "breakeven" && <BreakEvenTab data={data} />}
-        {activeTab === "loan"      && <LoanTab data={data} />}
-        {activeTab === "working"   && <WorkingCapitalTab data={data} />}
-        {activeTab === "scenarios" && <ScenariosTab data={data} />}
-        {activeTab === "seasonal"  && <SeasonalTab data={data} />}
-        {activeTab === "evidence"  && <EvidenceTab data={data} />}
+        {data.financial_status?.value === "INSUFFICIENT_INPUT" && activeTab !== "overview" && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-10 mt-6 text-center text-red-600 animate-in fade-in">
+            <AlertTriangle size={48} className="mx-auto mb-4 opacity-80" />
+            <h3 className="text-lg font-bold mb-2">Detailed Projections Blocked</h3>
+            <p>Please return to the Overview tab and provide Project Cost and Monthly Revenue to unlock the model.</p>
+          </div>
+        )}
+        {data.financial_status?.value !== "INSUFFICIENT_INPUT" && (
+          <>
+            {activeTab === "cashflow"  && <CashFlowTab data={data} />}
+            {activeTab === "pnl"       && <PnlTab data={data} />}
+            {activeTab === "breakeven" && <BreakEvenTab data={data} />}
+            {activeTab === "loan"      && <LoanTab data={data} />}
+            {activeTab === "working"   && <WorkingCapitalTab data={data} />}
+            {activeTab === "scenarios" && <ScenariosTab data={data} />}
+            {activeTab === "seasonal"  && <SeasonalTab data={data} />}
+            {activeTab === "evidence"  && <EvidenceTab data={data} />}
+          </>
+        )}
       </div>
     </div>
   );

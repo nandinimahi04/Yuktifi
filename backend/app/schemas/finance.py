@@ -4,6 +4,7 @@ from typing import Optional, List
 
 class FinanceRequest(BaseModel):
     session_id: str
+    overrides: Optional[dict] = None
 
 
 class PnlStatement(BaseModel):

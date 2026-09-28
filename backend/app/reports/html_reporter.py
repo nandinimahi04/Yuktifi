@@ -273,14 +273,14 @@ def render_dossier_to_html(dossier: Dict[str, Any]) -> str:
                     <td>{wn.get('why_not_reason', 'N/A')}</td>
                 </tr>
 """
-
+    formatted_disclaimer = disclaimer.replace('\n', '<br>')
     html_content += f"""
             </tbody>
         </table>
 
         <div class="disclaimer">
             <strong>LEGAL NOTICE & DATA ATTRIBUTION:</strong><br>
-            {disclaimer.replace('\n', '<br>')}
+            {formatted_disclaimer}
         </div>
     </div>
 </body>

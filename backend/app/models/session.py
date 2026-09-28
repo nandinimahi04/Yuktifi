@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, ForeignKey, DateTime, CheckConstraint
+from sqlalchemy import Column, String, Float, ForeignKey, DateTime, CheckConstraint, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from app.core.db import Base
@@ -14,6 +14,8 @@ class Session(Base):
     margin_capital = Column(Float)
     category_id = Column(String, ForeignKey("business_categories.id"), nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    financial_overrides = Column(JSON, default=dict, nullable=True)
+    
     user = relationship("User", back_populates="sessions")
     location = relationship("Location")
     category = relationship("BusinessCategory")

@@ -38,6 +38,27 @@ export default function SimulatorPage() {
     }
   }, [state.analysisResult]);
 
+  const handleOverride = async (fieldName: string, value: number) => {
+    if (!state.sessionId) return;
+    setSimLoading(true);
+    try {
+      const overrides = { [fieldName]: value };
+      const newFinancials = await api.calculateFinance({ session_id: state.sessionId, overrides });
+      if (state.analysisResult) {
+        state.updateState({
+          analysisResult: {
+            ...state.analysisResult,
+            financials: newFinancials
+          }
+        });
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setSimLoading(false);
+    }
+  };
+
   const runSimulation = async () => {
     setSimLoading(true);
     setError("");
@@ -155,6 +176,53 @@ export default function SimulatorPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 space-y-8">
+            <div className="space-y-4 mb-6 border-b border-warm-border pb-6">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-bold text-warm-text">Project Cost (₹)</label>
+                <input 
+                  type="number"
+                  className="w-full bg-warm-bg border border-warm-border rounded-lg px-3 py-2 text-sm focus:border-warm-primary outline-none"
+                  defaultValue={baseParams.financials?.project_cost || ""}
+                  onBlur={(e) => {
+                    const val = Number(e.target.value);
+                    if (val && !isNaN(val) && val !== baseParams.financials?.project_cost) {
+                      handleOverride("project_cost", val);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = Number(e.currentTarget.value);
+                      if (val && !isNaN(val) && val !== baseParams.financials?.project_cost) {
+                        handleOverride("project_cost", val);
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-bold text-warm-text">Expected Monthly Revenue (₹)</label>
+                <input 
+                  type="number"
+                  className="w-full bg-warm-bg border border-warm-border rounded-lg px-3 py-2 text-sm focus:border-warm-primary outline-none"
+                  defaultValue={baseParams.financials?.monthly_revenue || ""}
+                  onBlur={(e) => {
+                    const val = Number(e.target.value);
+                    if (val && !isNaN(val) && val !== baseParams.financials?.monthly_revenue) {
+                      handleOverride("monthly_revenue", val);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const val = Number(e.currentTarget.value);
+                      if (val && !isNaN(val) && val !== baseParams.financials?.monthly_revenue) {
+                        handleOverride("monthly_revenue", val);
+                      }
+                    }
+                  }}
+                />
+              </div>
+            </div>
+
             <div>
               <div className="flex justify-between mb-2">
                 <label className="text-sm font-bold text-warm-text">{t('variables.demand')}</label>
@@ -212,7 +280,7 @@ export default function SimulatorPage() {
             <Button 
               className="w-full mt-4 bg-warm-primary text-warm-text hover:bg-orange-600 font-bold py-6 rounded-xl shadow-md transition-all text-base" 
               onClick={runSimulation}
-              disabled={simLoading}
+              disabled={simLoading || baseParams.financials?.financial_status === "INSUFFICIENT_INPUT" || (baseParams.financials?.financial_status as any)?.value === "INSUFFICIENT_INPUT"}
             >
               {simLoading ? <Loader2 className="animate-spin mr-2" size={20} /> : <BarChart4 className="mr-2" size={20} />}
               {t('variables.runTest')}
@@ -229,7 +297,13 @@ export default function SimulatorPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
-            {!simResults ? (
+            {baseParams.financials?.financial_status === "INSUFFICIENT_INPUT" || (baseParams.financials?.financial_status as any)?.value === "INSUFFICIENT_INPUT" ? (
+              <div className="h-64 flex flex-col items-center justify-center text-red-500 border-2 border-dashed border-red-200 rounded-xl bg-red-50 p-6 text-center">
+                <AlertTriangle size={48} className="mb-4 opacity-80" />
+                <h3 className="font-bold text-lg mb-2">Insufficient Inputs</h3>
+                <p>Please provide Project Cost and Monthly Revenue in the controls panel to unlock simulations.</p>
+              </div>
+            ) : !simResults ? (
               <div className="h-64 flex flex-col items-center justify-center text-warm-muted border-2 border-dashed border-warm-border rounded-xl bg-warm-bg/50">
                 <Settings2 size={48} className="mb-4 text-warm-border" />
                 <p className="font-semibold">{t('results.placeholder')}</p>
