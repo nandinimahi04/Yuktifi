@@ -591,6 +591,22 @@ export const api = {
 
   simulateDynamic: (data: { month: number; cash_balance: number; active_events: string[]; decision: string; scenario_parameters: any }) =>
     ApiClient.post<any>("/api/simulate/dynamic", data, AI_TIMEOUT_MS),
+  getFinancialAssumptions: (projectId: string, signal?: AbortSignal) =>
+    ApiClient.get<any>(`/api/financials/${projectId}`, undefined, signal),
+
+  recalculateFinancials: (data: { session_id: string; assumptions: any; changed_by?: string }, signal?: AbortSignal) =>
+    ApiClient.post<any>("/api/financials/recalculate", data, undefined, signal),
+
+  getOpportunityAnalytics: (params?: { project_id?: string; session_id?: string; category_id?: string; district?: string }, signal?: AbortSignal) => {
+    const query = new URLSearchParams();
+    if (params?.project_id) query.append("project_id", params.project_id);
+    if (params?.session_id) query.append("session_id", params.session_id);
+    if (params?.category_id) query.append("category_id", params.category_id);
+    if (params?.district) query.append("district", params.district);
+    const qs = query.toString();
+    return ApiClient.get<any>(`/api/analytics/opportunity${qs ? `?${qs}` : ''}`, undefined, signal);
+  },
+
   getBusinessTemplates: () => ApiClient.get<{templates:any[]}>("/api/v3/business-templates"),
   runAdvisory: (data: any, signal?: AbortSignal) => ApiClient.post<AdvisoryResponse>("/api/v3/advisory", data, STANDARD_TIMEOUT_MS, signal),
   getAdvisoryRun: (runId: string) => ApiClient.get<AdvisoryResponse>(`/api/v3/advisory/${runId}`),

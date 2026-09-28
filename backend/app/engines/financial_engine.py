@@ -326,6 +326,7 @@ def compute_revenue_scenarios(
             "monthly_revenue": rev,
             "monthly_variable_cost": var,
             "monthly_fixed_cost": fixed,
+            "monthly_opex": round(var + fixed, 2),
             "monthly_ebitda": ebitda,
             "monthly_net_profit": profit,
             "monthly_cash_after_debt_service": cash,

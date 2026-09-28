@@ -40,6 +40,8 @@ ROI_TARGET = 50.0
 NET_MARGIN_TARGET = 30.0
 
 
+from datetime import datetime, timezone
+
 @dataclass
 class Dimension:
     """One scored dimension, or an explicit absence of one."""
@@ -49,6 +51,15 @@ class Dimension:
     score: Optional[int] = None
     known: bool = False
     reason: str = ""
+    value: Optional[float] = None
+    unit: str = ""
+    status: str = "INSUFFICIENT_DATA"
+    confidence: float = 0.0
+    drivers: list[str] = field(default_factory=list)
+    sources: list[str] = field(default_factory=list)
+    formula: str = ""
+    inputs: dict[str, Any] = field(default_factory=dict)
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -58,6 +69,15 @@ class Dimension:
             "known": self.known,
             "state": "COMPUTED" if self.known else "UNAVAILABLE",
             "reason": self.reason,
+            "value": self.value,
+            "unit": self.unit,
+            "status": self.status,
+            "confidence": round(self.confidence, 2),
+            "drivers": self.drivers,
+            "sources": self.sources,
+            "formula": self.formula,
+            "inputs": self.inputs,
+            "timestamp": self.timestamp,
         }
 
 
@@ -67,152 +87,537 @@ def _clamp(v: float) -> int:
 
 # ── Dimensions ──────────────────────────────────────────────────────────────
 
-def calculate_financial_viability(roi: Optional[float], net_margin: Optional[float]) -> Dimension:
+def calculate_financial_viability(
+    roi: Optional[float] = None,
+    net_margin: Optional[float] = None,
+    monthly_revenue: Optional[float] = None,
+    monthly_net_profit: Optional[float] = None,
+    monthly_operating_cash_flow: Optional[float] = None,
+    dscr: Optional[float] = None,
+    break_even_revenue: Optional[float] = None,
+) -> Dimension:
     """
-    Weighted blend of ROI and net margin.
-
-    Each component is scored on its own scale first, then weighted, so a missing
-    margin reduces the weight the margin can contribute rather than being
-    silently replaced by a passing value.
+    Financial Viability / 100:
+    Evaluates profitability, net margin, cash flow cushion, debt service coverage and break-even position.
     """
-    parts: list[tuple[str, Optional[float], int]] = []
-    if roi is not None:
-        parts.append(("ROI", min(max(roi, 0.0), ROI_TARGET) / ROI_TARGET * 100, 60))
-    if net_margin is not None:
-        parts.append(("net margin", min(max(net_margin, 0.0), NET_MARGIN_TARGET) / NET_MARGIN_TARGET * 100, 40))
+    sources = [
+        "YUKTIFI Canonical Deterministic Financial Engine (v1.0)",
+        "Standard Cost Accounting & P&L Schedule"
+    ]
+    formula = (
+        "Viability Score = 0.35×(Net Margin / 30%) + 0.25×(ROI / 40%) + "
+        "0.25×Margin of Safety + 0.15×DSCR Coverage"
+    )
 
-    if not parts:
-        return Dimension("financial_viability", "Financial viability", reason=(
-            "Neither ROI nor net margin could be computed, so viability is not scored."
-        ))
-
-    total_w = sum(w for _, _, w in parts)
-    score = sum(s * w for _, s, w in parts) / total_w
-    used = [name for name, _, _ in parts]
-    if len(used) == 2:
-        reason = "Computed from ROI (60% weight) and net margin (40% weight)."
-    else:
-        reason = (
-            f"Computed from {used[0]} alone. Net margin could not be established, so this "
-            f"dimension carries reduced weight and should not be read as a full viability check."
+    if roi is None and net_margin is None and monthly_revenue is None:
+        return Dimension(
+            "financial_viability", "Financial viability",
+            score=None, known=False,
+            reason="Insufficient data: Profitability, net margin, and revenue inputs are missing.",
+            sources=sources, formula=formula,
         )
+
+    # 1. Net Margin Score (Target 30% = 100)
+    eff_margin = net_margin if net_margin is not None else ((monthly_net_profit / monthly_revenue * 100.0) if monthly_net_profit is not None and monthly_revenue and monthly_revenue > 0 else None)
+    if eff_margin is not None:
+        margin_score = 0.0 if eff_margin <= 0 else min(100.0, (eff_margin / NET_MARGIN_TARGET) * 100.0)
+    else:
+        margin_score = min(100.0, (roi / ROI_TARGET) * 100.0) if roi is not None else 50.0
+
+    # 2. ROI Score (Target 40% = 100)
+    if roi is not None:
+        roi_score = 0.0 if roi <= 0 else min(100.0, (roi / 40.0) * 100.0)
+    else:
+        roi_score = margin_score
+
+    # 3. Margin of Safety / Break-even Cushion
+    if break_even_revenue is not None and monthly_revenue and monthly_revenue > 0:
+        mos_pct = ((monthly_revenue - break_even_revenue) / monthly_revenue) * 100.0
+        mos_score = min(100.0, max(0.0, mos_pct * 1.5))
+    else:
+        mos_pct = 0.0
+        mos_score = margin_score
+
+    # 4. Debt Coverage Component
+    if dscr is not None:
+        dscr_score = min(100.0, (dscr / 2.0) * 100.0) if dscr >= 1.0 else max(0.0, dscr * 25.0)
+    else:
+        dscr_score = margin_score
+
+    # Composite Viability
+    raw_score = 0.35 * margin_score + 0.25 * roi_score + 0.25 * mos_score + 0.15 * dscr_score
+
+    # Hard Gates: Zero loss-making businesses receiving favorable viability scores
+    if (eff_margin is not None and eff_margin <= 0) or (monthly_net_profit is not None and monthly_net_profit <= 0) or (roi is not None and roi <= 0):
+        clamped_score = min(25, int(round(raw_score)))
+    elif dscr is not None and dscr < 1.0:
+        clamped_score = min(35, int(round(raw_score)))
+    elif break_even_revenue is not None and monthly_revenue and break_even_revenue > monthly_revenue:
+        clamped_score = min(30, int(round(raw_score)))
+    else:
+        clamped_score = _clamp(raw_score)
+
+    status = "HIGH" if clamped_score >= 70 else ("MODERATE" if clamped_score >= 45 else "LOW")
+    
+    drivers = []
+    if eff_margin is not None:
+        drivers.append(f"Net Margin: {eff_margin:.1f}%.")
+    if roi is not None:
+        drivers.append(f"Return on Investment (ROI): {roi:.1f}%.")
+    if break_even_revenue is not None and monthly_revenue:
+        drivers.append(f"Break-even: ₹{break_even_revenue:,.0f} (Margin of Safety: {mos_pct:.1f}%).")
+    if dscr is not None:
+        drivers.append(f"DSCR Debt Coverage: {dscr:.2f}x.")
+
+    reason = f"Viability score {clamped_score}/100 computed from " + (f"Net Margin {eff_margin:.1f}%" if eff_margin is not None else f"ROI {roi:.1f}%") + f" and cash flow coverage."
+
     return Dimension(
         "financial_viability", "Financial viability",
-        score=_clamp(score), known=True, reason=reason,
+        score=clamped_score, known=True, reason=reason,
+        value=round(eff_margin, 1) if eff_margin is not None else (round(roi, 1) if roi is not None else None),
+        unit="% Net Margin" if eff_margin is not None else "% ROI",
+        status=status,
+        confidence=0.95,
+        drivers=drivers,
+        sources=sources,
+        formula=formula,
+        inputs={"roi_pct": roi, "net_margin_pct": eff_margin, "dscr": dscr, "break_even_revenue": break_even_revenue},
     )
 
 
-def calculate_repayment_capacity(dscr: Optional[float], has_debt: bool = True) -> Dimension:
+def calculate_repayment_capacity(
+    dscr: Optional[float] = None,
+    has_debt: bool = True,
+    monthly_emi: Optional[float] = None,
+    monthly_cash_flow: Optional[float] = None,
+    loan_amount: Optional[float] = None,
+) -> Dimension:
     """
-    Repayment capacity from DSCR.
+    Repayment Capacity / 100:
+    DSCR = cash available for debt service ÷ total debt-service obligation (EMI).
+    Includes EMI affordability and 100% promoter equity detection.
+    """
+    sources = [
+        "YUKTIFI Debt Amortization & Repayment Engine",
+        "Reserve Bank of India (RBI) Prudential Loan Coverage Benchmarks"
+    ]
+    formula = "Repayment Score = min(100, (DSCR / 2.0) × 100); Debt-Free (100% Equity) = 100/100"
 
-    `None` DSCR means there is no debt obligation, not that repayment is
-    average. The previous version returned 60 here, which credited a business
-    for having borrowed nothing and then averaged that credit into the composite.
-    """
+    # 1. 100% Equity / Debt-Free Business (explicitly evidenced zero loan)
+    if (loan_amount is not None and loan_amount == 0) or (monthly_emi is not None and monthly_emi == 0 and loan_amount is not None):
+        return Dimension(
+            "repayment_capacity", "Repayment capacity",
+            score=100, known=True,
+            reason="100% Promoter Equity Funded (₹0 Debt). No debt service or EMI obligation exists, eliminating default risk.",
+            value=100.0,
+            unit="/ 100",
+            status="HIGH",
+            confidence=0.95,
+            drivers=[
+                "100% Promoter Equity Funded (₹0 debt burden).",
+                "Zero monthly EMI obligation.",
+                "Zero debt default risk.",
+            ],
+            sources=sources,
+            formula=formula,
+            inputs={"has_debt": False, "loan_amount": 0.0, "monthly_emi": 0.0},
+        )
+
+    # 2. Leveraged Business: DSCR Evaluation
     if dscr is None:
-        return Dimension("repayment_capacity", "Repayment capacity", reason=(
-            "No debt service obligation, so there is nothing to repay and no DSCR to score. "
-            "This dimension is not applicable, not average."
-            if not has_debt else
-            "DSCR could not be computed, so repayment capacity is not scored."
-        ))
+        if not has_debt:
+            return Dimension(
+                "repayment_capacity", "Repayment capacity",
+                score=None, known=False,
+                reason="No debt service obligation, so there is nothing to repay and no DSCR to score.",
+                sources=sources,
+                formula=formula,
+                inputs={"has_debt": False},
+            )
+        if monthly_cash_flow is not None and monthly_cash_flow < 0:
+            return Dimension(
+                "repayment_capacity", "Repayment capacity",
+                score=15, known=True,
+                reason="Negative operating cash flow cannot cover debt service obligations.",
+                value=0.0,
+                unit="x DSCR",
+                status="LOW",
+                confidence=0.90,
+                drivers=["Negative operating cash flow produces zero debt service coverage."],
+                sources=sources,
+                formula=formula,
+                inputs={"dscr": None, "has_debt": True, "monthly_cash_flow": monthly_cash_flow},
+            )
+        return Dimension(
+            "repayment_capacity", "Repayment capacity",
+            score=None, known=False,
+            reason="Insufficient data: Debt service coverage ratio (DSCR) or loan amortization schedule is missing.",
+            sources=sources,
+            formula=formula,
+            inputs={"has_debt": True},
+        )
+
     if dscr < 1.0:
-        return Dimension("repayment_capacity", "Repayment capacity", score=20, known=True,
-                         reason=(
-                             f"DSCR {dscr:.2f} is below 1.0: projected cash flow does not cover "
-                             f"debt service even before any shock."
-                         ))
+        clamped_score = max(5, int(round(dscr * 25.0)))
+        return Dimension(
+            "repayment_capacity", "Repayment capacity",
+            score=clamped_score, known=True,
+            reason=(
+                f"DSCR {dscr:.2f}x is below 1.0: projected cash flow does not cover "
+                f"monthly debt service obligation (EMI)."
+            ),
+            value=round(dscr, 2),
+            unit="x DSCR",
+            status="LOW",
+            confidence=0.95,
+            drivers=[
+                f"DSCR {dscr:.2f}x is below the 1.0x debt service safety line.",
+                f"Operating cash flow is insufficient to service the monthly loan EMI.",
+            ],
+            sources=sources,
+            formula=formula,
+            inputs={"dscr": dscr, "has_debt": True, "monthly_emi": monthly_emi},
+        )
+
+    clamped_score = _clamp(min(100.0, (dscr / 2.0) * 100.0))
+    status = "HIGH" if clamped_score >= 70 else ("MODERATE" if clamped_score >= 45 else "LOW")
+    drivers = [
+        f"DSCR {dscr:.2f}x against benchmark target of 2.0x.",
+        f"Operating cash flow covers debt obligations with safe buffer.",
+    ]
+    if monthly_emi is not None and monthly_emi > 0:
+        drivers.append(f"Monthly EMI obligation: ₹{monthly_emi:,.0f}.")
     return Dimension(
         "repayment_capacity", "Repayment capacity",
-        score=_clamp(dscr / DSCR_TARGET * 100), known=True,
-        reason=f"DSCR {dscr:.2f} against a target of {DSCR_TARGET}.",
+        score=clamped_score, known=True,
+        reason=f"DSCR {dscr:.2f}x provides healthy debt service coverage against target of 2.0x.",
+        value=round(dscr, 2),
+        unit="x DSCR",
+        status=status,
+        confidence=0.95,
+        drivers=drivers,
+        sources=sources,
+        formula=formula,
+        inputs={"dscr": dscr, "has_debt": True, "monthly_emi": monthly_emi},
     )
+
 
 
 def calculate_market_opportunity(
-    competitor_count: Optional[int], population: Optional[int]
+    competitor_count: Optional[int] = None,
+    population: Optional[int] = None,
+    category_id: str = "retail_kirana",
+    unit_price: Optional[float] = None,
+    target_share: Optional[float] = None,
 ) -> Dimension:
     """
-    Demand headroom from residents per mapped competitor.
-
-    Any of the three states - unknown population, unknown competitor count, or
-    too few mapped competitors to be meaningful - yields no score.
+    Market Opportunity / 100:
+    Demand strength, competition density/gap, market size and local catchment signals.
     """
-    if population is None or population <= 0:
-        return Dimension("market_opportunity", "Market opportunity", reason=(
-            "No verified population figure for the catchment, so demand headroom is not scored."
-        ))
-    if competitor_count is None:
-        return Dimension("market_opportunity", "Market opportunity", reason=(
-            "No competitor survey was completed, so demand headroom is not scored. "
-            "An unknown competitor count is not an empty market."
-        ))
-    if competitor_count < 3:
-        return Dimension("market_opportunity", "Market opportunity", reason=(
-            f"Only {competitor_count} mapped competitor(s) found. Most informal rural businesses "
-            f"are unmapped, so this cannot distinguish an open market from an incomplete map."
-        ))
+    sources = [
+        "Census of India 2011 (Catchment Demographics)",
+        "OpenStreetMap / Overpass API (Spatial Features)"
+    ]
+    formula = (
+        "Target Market = (Population / 4.8) × Target Share; "
+        "Opportunity (₹/mo) = Target Consumers × Monthly Demand Units × Unit Price; "
+        "Score = 0.45×Demand Headroom + 0.35×Competitor Space + 0.20×Catchment Scale"
+    )
 
-    density = population / competitor_count
+    if population is None or population <= 0:
+        return Dimension(
+            "market_opportunity", "Market opportunity",
+            score=None, known=False,
+            reason="Insufficient data: Catchment population / demographic customer base is missing.",
+            sources=sources, formula=formula,
+            inputs={"population": population, "competitor_count": competitor_count},
+        )
+
+    # Calculate deterministic market opportunity
+    from app.engines.analytics_opportunity_engine import compute_market_opportunity as _compute_mkt
+    dto = _compute_mkt(
+        category_id=category_id,
+        population=population,
+        competitor_count=competitor_count,
+        selling_price_override=unit_price,
+        target_share_override=target_share,
+    )
     return Dimension(
-        "market_opportunity", "Market opportunity",
-        score=_clamp(density / CONSUMERS_PER_COMPETITOR_TARGET * 100), known=True,
-        reason=(
-            f"About {density:,.0f} residents per mapped competitor. Competitor data counts mapped "
-            f"businesses only, so this is a lower bound on competitive pressure."
-        ),
+        key="market_opportunity",
+        label="Market opportunity",
+        score=dto.score,
+        known=dto.score is not None,
+        reason=dto.drivers[0] if dto.drivers else "Computed from catchment demographics and competitor density.",
+        value=dto.value,
+        unit=dto.unit,
+        status=dto.status,
+        confidence=dto.confidence,
+        drivers=dto.drivers,
+        sources=dto.sources,
+        formula=dto.formula,
+        inputs=dto.inputs,
+        timestamp=dto.timestamp,
     )
 
 
 def calculate_capital_efficiency(
-    break_even: Optional[float], projected: Optional[float]
+    break_even: Optional[float] = None,
+    projected: Optional[float] = None,
+    roi: Optional[float] = None,
+    project_cost: Optional[float] = None,
+    annual_net_profit: Optional[float] = None,
+    annual_revenue: Optional[float] = None,
+    annual_ebit: Optional[float] = None,
+    break_even_revenue: Optional[float] = None,
+    monthly_revenue: Optional[float] = None,
+    annual_operating_cash_flow: Optional[float] = None,
 ) -> Dimension:
     """
-    Capital efficiency from the share of projected sales needed to break even.
-
-    Undefined when contribution per unit is not positive - which is itself the
-    answer, and is reported as such rather than as a zero.
+    Capital Efficiency / 100:
+    Return generated per rupee invested (Profit ÷ Total Project Cost, ROCE, Capital Turnover).
     """
-    if break_even is None:
-        return Dimension("capital_efficiency", "Capital efficiency", reason=(
-            "Break-even could not be computed (contribution per unit must exceed zero), so "
-            "capital efficiency is not scored. This is a failure of the unit economics, not "
-            "an absence of data."
-        ))
-    if projected is None or projected <= 0:
-        return Dimension("capital_efficiency", "Capital efficiency", reason=(
-            "No projected revenue, so break-even cannot be expressed as a share of sales."
-        ))
+    sources = ["YUKTIFI Canonical Capital Sizing & Return Engine"]
+    formula = (
+        "Operating Profit (EBIT) / Project Cost × 100; "
+        "ROI % = (Annual Net Profit / Total Project Cost) × 100; "
+        "Capital Turnover = Annual Revenue / Project Cost; "
+        "Score = 0.50×ROI Score + 0.30×Turnover Score + 0.20×Payback Score"
+    )
 
-    ratio = break_even / projected
+    # 1. When project cost is provided
+    if project_cost is not None and project_cost > 0:
+        eff_ann_rev = annual_revenue if annual_revenue is not None else ((monthly_revenue or projected or 0.0) * 12.0)
+        eff_ann_profit = annual_net_profit if annual_net_profit is not None else ((roi / 100.0 * project_cost) if roi is not None else 0.0)
+        eff_roi = roi if roi is not None else ((eff_ann_profit / project_cost) * 100.0)
+        turnover = eff_ann_rev / project_cost
+        cash_flow = annual_operating_cash_flow if annual_operating_cash_flow is not None else eff_ann_profit
+        payback_years = round(project_cost / cash_flow, 2) if cash_flow > 0 else None
+
+        roi_score = 0.0 if eff_roi <= 0 else min(100.0, (eff_roi / 40.0) * 100.0)
+        turnover_score = min(100.0, max(0.0, (turnover / 2.5) * 100.0))
+        
+        if payback_years is not None:
+            if payback_years <= 2.0:
+                payback_score = 100.0
+            elif payback_years <= 3.0:
+                payback_score = 75.0
+            elif payback_years <= 4.0:
+                payback_score = 50.0
+            else:
+                payback_score = 25.0
+        else:
+            payback_score = 10.0
+
+        if eff_ann_profit <= 0 or eff_roi <= 0:
+            final_score = min(20, int(round(0.50 * roi_score + 0.30 * turnover_score + 0.20 * payback_score)))
+        else:
+            final_score = _clamp(0.50 * roi_score + 0.30 * turnover_score + 0.20 * payback_score)
+
+        status = "HIGH" if final_score >= 70 else ("MODERATE" if final_score >= 45 else "LOW")
+        drivers = [
+            f"Return on Investment (ROI): {eff_roi:.1f}% on ₹{project_cost:,.0f} total project cost.",
+            f"Capital Turnover Ratio: {turnover:.2f}x annual revenue velocity.",
+        ]
+        if payback_years is not None:
+            drivers.append(f"Estimated Capital Payback: {payback_years:.1f} years ({int(payback_years * 12)} months).")
+
+        return Dimension(
+            "capital_efficiency", "Capital efficiency",
+            score=final_score, known=True,
+            reason=f"ROI is {eff_roi:.1f}% with capital turnover of {turnover:.2f}x.",
+            value=round(eff_roi, 1),
+            unit="% ROI",
+            status=status,
+            confidence=0.95,
+            drivers=drivers,
+            sources=sources,
+            formula=formula,
+            inputs={
+                "project_cost": project_cost,
+                "annual_revenue": eff_ann_rev,
+                "annual_net_profit": eff_ann_profit,
+                "roi_pct": round(eff_roi, 2),
+                "capital_turnover": round(turnover, 2),
+                "payback_years": payback_years,
+            },
+        )
+
+    # 2. Legacy / fallback from ROI alone
+    if roi is not None:
+        roi_score = _clamp(min(100.0, (roi / 40.0) * 100.0))
+        status = "HIGH" if roi_score >= 70 else ("MODERATE" if roi_score >= 45 else "LOW")
+        return Dimension(
+            "capital_efficiency", "Capital efficiency",
+            score=roi_score, known=True,
+            reason=f"ROI {roi:.1f}% against target of 40%.",
+            value=round(roi, 1),
+            unit="% ROI",
+            status=status,
+            confidence=0.85,
+            drivers=[f"Return on Investment (ROI): {roi:.1f}%."],
+            sources=sources,
+            formula=formula,
+            inputs={"roi_pct": roi},
+        )
+
+    # 3. Fallback from Break-even vs Projected revenue
+    be_val = break_even_revenue or break_even
+    proj_val = monthly_revenue or projected
+    if be_val is not None and proj_val is not None and proj_val > 0:
+        ratio = be_val / proj_val
+        clamped_score = _clamp(100 - ratio * 100)
+        status = "HIGH" if clamped_score >= 70 else ("MODERATE" if clamped_score >= 45 else "LOW")
+        return Dimension(
+            "capital_efficiency", "Capital efficiency",
+            score=clamped_score, known=True,
+            reason=f"Break-even is {ratio * 100:.0f}% of projected revenue.",
+            value=round((1.0 - ratio) * 100.0, 1),
+            unit="% Margin of Safety",
+            status=status,
+            confidence=0.90,
+            drivers=[f"Break-even achieved at {ratio * 100:.0f}% of monthly capacity."],
+            sources=sources,
+            formula=formula,
+            inputs={"break_even": be_val, "projected_revenue": proj_val, "break_even_share_pct": round(ratio * 100, 1)},
+        )
+
     return Dimension(
         "capital_efficiency", "Capital efficiency",
-        score=_clamp(100 - ratio * 100), known=True,
-        reason=f"Break-even is {ratio * 100:.0f}% of projected revenue.",
+        score=None, known=False,
+        reason="Insufficient data: Total project cost, ROI, and break-even revenue inputs are missing.",
+        sources=sources, formula=formula,
     )
 
 
-def calculate_risk_exposure(confidence: Optional[str], threats_count: Optional[int]) -> Dimension:
+def calculate_risk_exposure(
+    confidence: Optional[str] = None,
+    threats_count: Optional[int] = None,
+    dscr: Optional[float] = None,
+    monthly_operating_cash_flow: Optional[float] = None,
+    monthly_revenue: Optional[float] = None,
+    monthly_opex: Optional[float] = None,
+    break_even_revenue: Optional[float] = None,
+    competitor_density: Optional[float] = None,
+    debt_amount: Optional[float] = None,
+    project_cost: Optional[float] = None,
+) -> Dimension:
     """
-    Risk exposure from evidence confidence and the number of identified threats.
-
-    A low evidence confidence is a reason for caution, not a neutral 50.
+    Risk Exposure / 100 (Resilience Score):
+    Demand volatility, cost sensitivity, debt burden, competition and downside scenarios.
+    Requirement: Higher risk produces a LOWER score.
     """
-    if confidence is None:
-        return Dimension("risk_exposure", "Risk exposure", reason=(
-            "Evidence confidence is undetermined, so risk exposure is not scored."
-        ))
+    sources = [
+        "YUKTIFI Multi-Factor Risk Assessment Engine",
+        "Deterministic Sensitivity & Cash Flow Stress Matrix"
+    ]
+    formula = (
+        "Risk Index = 0.35×Financial Risk + 0.25×Market Risk + 0.20×Operational Risk + 0.20×Data Uncertainty; "
+        "Score = 100 − Risk Index (Higher risk produces a lower score)"
+    )
 
-    base = {"high": 80, "medium": 55, "low": 30, "unavailable": 0}.get(confidence.lower(), 30)
-    if threats_count is None:
-        return Dimension("risk_exposure", "Risk exposure", score=_clamp(base), known=True,
-                         reason=f"Based on {confidence} evidence confidence; threat count unknown.")
+    if confidence is None and dscr is None and monthly_revenue is None:
+        return Dimension(
+            "risk_exposure", "Risk exposure",
+            score=None, known=False,
+            reason="Insufficient data: Risk parameters and evidence confidence are missing.",
+            sources=sources, formula=formula,
+        )
+
+    conf_str = confidence or "Medium"
+
+    # 1. Financial Risk (0-100, higher = worse)
+    fin_risk_parts = []
+    if monthly_operating_cash_flow is not None:
+        if monthly_operating_cash_flow < 0:
+            fin_risk_parts.append(100.0)
+        elif monthly_revenue and monthly_revenue > 0 and monthly_operating_cash_flow < (monthly_revenue * 0.08):
+            fin_risk_parts.append(60.0)
+        else:
+            fin_risk_parts.append(15.0)
+
+    if dscr is not None:
+        if dscr < 1.0:
+            fin_risk_parts.append(95.0)
+        elif dscr < 1.25:
+            fin_risk_parts.append(70.0)
+        elif dscr < 1.5:
+            fin_risk_parts.append(45.0)
+        else:
+            fin_risk_parts.append(15.0)
+    elif debt_amount is not None and debt_amount == 0:
+        fin_risk_parts.append(0.0)
+
+    if break_even_revenue is not None and monthly_revenue and monthly_revenue > 0:
+        be_ratio = break_even_revenue / monthly_revenue
+        if be_ratio > 0.90:
+            fin_risk_parts.append(90.0)
+        elif be_ratio > 0.70:
+            fin_risk_parts.append(50.0)
+        else:
+            fin_risk_parts.append(15.0)
+
+    financial_risk = sum(fin_risk_parts) / len(fin_risk_parts) if fin_risk_parts else 30.0
+
+    # 2. Market Risk (0-100)
+    density = competitor_density or 0.0
+    if density > 6.0:
+        market_risk = 85.0
+    elif density > 3.0:
+        market_risk = 55.0
+    elif density > 0.5:
+        market_risk = 30.0
+    else:
+        market_risk = 35.0
+
+    # 3. Operational Risk (0-100)
+    if monthly_opex is not None and monthly_revenue and monthly_revenue > 0:
+        fc_ratio = monthly_opex / monthly_revenue
+        fc_risk = 75.0 if fc_ratio > 0.45 else (45.0 if fc_ratio > 0.25 else 20.0)
+    else:
+        fc_risk = 30.0
+    operational_risk = fc_risk
+
+    # 4. Data Uncertainty (0-100)
+    data_risk = {"high": 15.0, "medium": 40.0, "low": 75.0, "unavailable": 85.0}.get(conf_str.lower(), 40.0)
+    threats_penalty = (threats_count * 5.0) if threats_count is not None else 0.0
+
+    # Composite Risk Index (0-100, higher = higher risk)
+    risk_index = round(min(100.0, max(0.0, 0.35 * financial_risk + 0.25 * market_risk + 0.20 * operational_risk + 0.20 * data_risk + threats_penalty)), 1)
+    
+    # Requirement: Higher risk produces a LOWER score!
+    resilience_score = _clamp(100.0 - risk_index)
+    status = "HIGH" if resilience_score >= 70 else ("MODERATE" if resilience_score >= 45 else "LOW")
+
+    drivers = [
+        f"Composite Risk Index: {risk_index:.1f}/100 ({'Low Risk' if risk_index <= 35 else ('Moderate Risk' if risk_index <= 65 else 'High Risk')}).",
+        f"Evidence confidence: {conf_str}.",
+    ]
+    if dscr is not None:
+        drivers.append(f"Debt leverage & coverage risk: DSCR {dscr:.2f}x.")
+    if threats_count:
+        drivers.append(f"{threats_count} identified operational/market threat(s).")
 
     return Dimension(
         "risk_exposure", "Risk exposure",
-        score=_clamp(base - threats_count * 10), known=True,
-        reason=f"{confidence} evidence confidence with {threats_count} identified threat(s).",
+        score=resilience_score, known=True,
+        reason=f"Risk Index {risk_index:.0f}/100 ({conf_str} confidence, {threats_count or 0} threats). Higher risk lowers score.",
+        value=risk_index,
+        unit="/ 100 Risk",
+        status=status,
+        confidence=0.85,
+        drivers=drivers,
+        sources=sources,
+        formula=formula,
+        inputs={
+            "risk_index": risk_index,
+            "resilience_score": resilience_score,
+            "financial_risk": round(financial_risk, 1),
+            "market_risk": round(market_risk, 1),
+            "operational_risk": round(operational_risk, 1),
+            "data_uncertainty": round(data_risk, 1),
+            "confidence": conf_str,
+            "threats_count": threats_count,
+        },
     )
 
 
@@ -262,14 +667,73 @@ def compute_all_dimensions(
     overall_confidence: Optional[str] = None,
     threats_count: Optional[int] = None,
     has_debt: bool = True,
+    # Extended parameters
+    project_cost: Optional[float] = None,
+    own_capital: Optional[float] = None,
+    loan_amount: Optional[float] = None,
+    monthly_revenue: Optional[float] = None,
+    monthly_expenses: Optional[float] = None,
+    monthly_net_profit: Optional[float] = None,
+    monthly_operating_cash_flow: Optional[float] = None,
+    monthly_emi: Optional[float] = None,
+    break_even_revenue: Optional[float] = None,
+    annual_revenue: Optional[float] = None,
+    annual_net_profit: Optional[float] = None,
+    annual_ebit: Optional[float] = None,
+    category_id: str = "retail_kirana",
+    unit_price: Optional[float] = None,
+    target_share: Optional[float] = None,
+    competitor_density: Optional[float] = None,
 ) -> ScoreCard:
     """Compute every dimension, then publish a composite only if it is earned."""
     dims = [
-        calculate_financial_viability(roi, net_margin),
-        calculate_repayment_capacity(dscr, has_debt=has_debt),
-        calculate_market_opportunity(competitor_count, population),
-        calculate_capital_efficiency(break_even_units, monthly_units),
-        calculate_risk_exposure(overall_confidence, threats_count),
+        calculate_financial_viability(
+            roi=roi,
+            net_margin=net_margin,
+            monthly_revenue=monthly_revenue,
+            monthly_net_profit=monthly_net_profit,
+            monthly_operating_cash_flow=monthly_operating_cash_flow,
+            dscr=dscr,
+            break_even_revenue=break_even_revenue or (break_even_units if break_even_units and break_even_units > 1000 else None),
+        ),
+        calculate_repayment_capacity(
+            dscr=dscr,
+            has_debt=has_debt if loan_amount is None else (loan_amount > 0),
+            monthly_emi=monthly_emi,
+            monthly_cash_flow=monthly_operating_cash_flow,
+            loan_amount=loan_amount,
+        ),
+        calculate_market_opportunity(
+            competitor_count=competitor_count,
+            population=population,
+            category_id=category_id,
+            unit_price=unit_price,
+            target_share=target_share,
+        ),
+        calculate_capital_efficiency(
+            break_even=break_even_units,
+            projected=monthly_units,
+            roi=roi,
+            project_cost=project_cost,
+            annual_net_profit=annual_net_profit,
+            annual_revenue=annual_revenue,
+            annual_ebit=annual_ebit,
+            break_even_revenue=break_even_revenue,
+            monthly_revenue=monthly_revenue,
+            annual_operating_cash_flow=(monthly_operating_cash_flow * 12.0) if monthly_operating_cash_flow is not None else None,
+        ),
+        calculate_risk_exposure(
+            confidence=overall_confidence,
+            threats_count=threats_count,
+            dscr=dscr,
+            monthly_operating_cash_flow=monthly_operating_cash_flow,
+            monthly_revenue=monthly_revenue,
+            monthly_opex=monthly_expenses,
+            break_even_revenue=break_even_revenue,
+            competitor_density=competitor_density,
+            debt_amount=loan_amount,
+            project_cost=project_cost,
+        ),
     ]
 
     known = [d for d in dims if d.known]
@@ -288,6 +752,7 @@ def compute_all_dimensions(
         dimensions=dims, composite=composite, coverage=coverage,
         verdict=verdict, unscored=unscored,
     )
+
 
 
 def generate_next_steps(

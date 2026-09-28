@@ -55,7 +55,8 @@ def init_db():
         User, Location, BusinessCategory, Session, Competitor,
         MarketMetric, CostModel, GovernmentScheme, SchemeRule,
         LoanProduct, FinancialProjection, Scenario, Recommendation,
-        ConfidenceTag, Source, Price,
+        ConfidenceTag, Source, Price, ProjectFinancialAssumptions,
+        FinancialAssumptionsAudit,
     )
     Base.metadata.create_all(bind=engine)
     _apply_additive_columns()
