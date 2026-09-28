@@ -16,4 +16,5 @@ from app.models.recommendation import Recommendation  # noqa: F401
 from app.models.confidence_tag import ConfidenceTag  # noqa: F401
 from app.models.source import Source  # noqa: F401
 from app.models.price import Price  # noqa: F401
+from app.models.financial_assumptions import ProjectFinancialAssumptions, FinancialAssumptionsAudit  # noqa: F401
 

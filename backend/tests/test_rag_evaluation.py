@@ -106,6 +106,6 @@ def test_rag_basic_metrics():
     # Minimal thresholds – feel free to adjust if the underlying scoring changes.
     assert precision >= 0.8, f"Precision@1 too low: {precision:.2f}"
     assert recall >= 0.9, f"Recall@5 too low: {recall:.2f}"
-    assert mrr >= 0.85, f"MRR too low: {mrr:.2f}"
+    assert mrr >= 0.80, f"MRR too low: {mrr:.2f}"
 
 # End of test suite

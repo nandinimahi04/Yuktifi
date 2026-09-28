@@ -21,6 +21,8 @@ const SeasonalChart = dynamic(() => import("@/components/financials/SeasonalChar
   loading: () => <div className="w-full h-72 bg-gray-50 rounded-2xl animate-pulse flex items-center justify-center text-xs text-ink-soft">Loading Chart...</div>
 });
 
+import FinancialAssumptionsPanel from "@/components/financials/FinancialAssumptionsPanel";
+
 
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
@@ -103,17 +105,17 @@ const EditableSummaryCard = ({ label, value, fieldName, originalValue, sub, colo
   };
 
   return (
-    <div className="bg-white rounded-2xl p-5 border border-amber-200 shadow-sm flex flex-col gap-2 group relative">
+    <div className="bg-white rounded-2xl p-5 border border-premium-border shadow-sm flex flex-col gap-2 group relative">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-amber-600 uppercase tracking-wide flex items-center gap-1">
-          {label} {isRecalculating && <Loader2 size={12} className="animate-spin" />}
+        <span className="text-xs font-bold text-ink-soft uppercase tracking-wide flex items-center gap-1">
+          {label} {isRecalculating && <Loader2 size={12} className="animate-spin text-ink-soft" />}
         </span>
-        <Icon size={16} className="text-amber-500" />
+        <Icon size={16} className="text-ink-faint" />
       </div>
       {!isEditing ? (
         <div className="flex items-center justify-between">
           <div className={`text-2xl font-bold font-display ${color} ${isRecalculating ? 'opacity-50' : ''}`}>{value}</div>
-          <button onClick={handleEdit} className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-amber-50 rounded text-amber-600 transition-opacity" disabled={isRecalculating}>
+          <button onClick={handleEdit} className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-black/5 rounded text-ink-soft hover:text-ink transition-opacity" disabled={isRecalculating}>
             <Edit2 size={14} />
           </button>
         </div>
@@ -121,7 +123,7 @@ const EditableSummaryCard = ({ label, value, fieldName, originalValue, sub, colo
         <div className="flex items-center gap-2">
           <input 
             type="number" 
-            className={`text-lg font-bold font-display ${color} border border-amber-300 rounded px-2 py-1 w-full outline-none focus:border-amber-500`} 
+            className={`text-lg font-bold font-display ${color} border border-gray-300 rounded px-2 py-1 w-full outline-none focus:border-forest`} 
             value={editValue} 
             onChange={(e) => setEditValue(e.target.value)} 
             autoFocus
@@ -131,7 +133,7 @@ const EditableSummaryCard = ({ label, value, fieldName, originalValue, sub, colo
           <button onClick={() => setIsEditing(false)} className="p-1 text-red-500 hover:bg-red-50 rounded"><X size={16}/></button>
         </div>
       )}
-      {sub && <div className="text-xs font-medium text-amber-600/80">{sub}</div>}
+      {sub && <div className="text-xs font-medium text-ink-soft">{sub}</div>}
     </div>
   );
 };
@@ -166,9 +168,10 @@ const OverviewTab = ({ data }: { data: FinanceResponse }) => {
   };
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <h2 className="text-xl font-bold text-forest-deep mb-6">Financial Overview</h2>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+    <div className="animate-in fade-in duration-300 space-y-6">
+      <div>
+        <h2 className="text-xl font-bold text-forest-deep mb-4">Financial Snapshot & Key Metrics</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <EditableSummaryCard label="Project Cost" value={fmt(data.project_cost)} originalValue={data.project_cost} fieldName="project_cost" onSave={handleOverride} isRecalculating={isRecalculating} sub="Total capital required" icon={Wallet} color="text-ink" />
         <EditableSummaryCard label="Loan Amount" value={fmt(data.loan_amount)} originalValue={data.loan_amount} fieldName="loan_amount" onSave={handleOverride} isRecalculating={isRecalculating} sub={data.rate != null ? `@ ${data.rate}% p.a.` : "Rate not declared"} icon={CreditCard} color="text-[#2563eb]" />
         <EditableSummaryCard
@@ -184,7 +187,7 @@ const OverviewTab = ({ data }: { data: FinanceResponse }) => {
           icon={IndianRupee}
           color="text-[#16a34a]"
         />
-        <SummaryCard label="Monthly Installment" value={fmtFull(data.emi)} sub={data.tenure_months != null ? `Over ${data.tenure_months} months` : "Tenure not declared"} icon={Clock} color="text-[#ea580c]" />
+        <SummaryCard label="Monthly Installment" value={fmtFull(data.emi)} sub={data.tenure_months != null ? `Over ${data.tenure_months} months` : "Tenure not declared"} icon={Clock} color="text-ink" />
         <EditableSummaryCard label="Monthly Revenue" value={fmt(data.monthly_revenue)} originalValue={data.monthly_revenue} fieldName="monthly_revenue" onSave={handleOverride} isRecalculating={isRecalculating} sub="Expected earnings" icon={TrendingUp} color="text-[#16a34a]" />
         <EditableSummaryCard label="Monthly Expenses" value={fmt(data.monthly_opex)} originalValue={data.monthly_opex} fieldName="monthly_expenses" onSave={handleOverride} isRecalculating={isRecalculating} sub="OPEX + Variable" icon={TrendingDown} color="text-red-500" />
         <SummaryCard
@@ -203,8 +206,9 @@ const OverviewTab = ({ data }: { data: FinanceResponse }) => {
               : "On total project cost"
           }
           icon={BarChart3}
-          color={data.roi >= 15 ? "text-[#16a34a]" : "text-[#ea580c]"}
+          color={data.roi >= 15 ? "text-[#16a34a]" : "text-ink"}
         />
+      </div>
       </div>
 
       <h3 className="text-lg font-bold text-forest-deep mt-8 mb-4">Underlying Assumptions</h3>
@@ -352,10 +356,9 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
   const pnl = data.pnl_statement;
   if (!pnl) return <p className="text-ink-soft">P&L data not available.</p>;
 
-  // The full waterfall the engine actually computes, in the engine's order.
-  // This previously jumped from gross profit straight to "EBIT (Earnings before
-  // Tax)" - naming EBIT as earnings before tax, which is not what EBIT is - and
-  // then printed an income tax line fed by a hardcoded 0.
+  const isNetProfitNegative = typeof pnl.net_profit === "number" && pnl.net_profit < 0;
+  const isGrossMarginNegative = typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct < 0;
+
   const rows: {
     label: string;
     value: number | null;
@@ -385,19 +388,47 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
   const allRows = [...rows, patRow];
 
   return (
-    <div className="animate-in fade-in duration-300">
-      <div className="flex items-start justify-between mb-6">
+    <div className="animate-in fade-in duration-300 space-y-6">
+      <div className="flex items-start justify-between">
         <div>
           <h2 className="text-xl font-bold text-forest-deep">Monthly P&L Statement</h2>
           <p className="text-sm text-ink-soft mt-1">Projected monthly income statement for your business</p>
         </div>
         <div className="text-right">
           <p className="text-xs font-bold text-ink-soft">Gross Margin</p>
-          <p className="text-2xl font-bold text-[#16a34a]">{fmtPct(pnl.gross_margin_pct)}</p>
+          <p className={`text-2xl font-bold ${typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 20 ? "text-[#16a34a]" : typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 0 ? "text-[#ea580c]" : "text-red-500"}`}>
+            {fmtPct(pnl.gross_margin_pct)}
+          </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-premium-border shadow-sm overflow-hidden mb-6">
+      {/* Negative Profit Diagnostic Alert */}
+      {(isNetProfitNegative || isGrossMarginNegative) && (
+        <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-5 text-red-900">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="text-red-600 shrink-0 mt-1" size={22} />
+            <div className="space-y-2 flex-1">
+              <h4 className="font-bold text-base text-red-800">Why is Net Profit & Annual Return Negative?</h4>
+              <p className="text-sm text-red-700 leading-relaxed">
+                {isGrossMarginNegative ? (
+                  <>
+                    <strong>Cost of Goods Sold exceeds Revenue:</strong> Your monthly COGS ({fmtFull(pnl.cogs)}) is larger than your revenue ({fmtFull(pnl.revenue)}), creating a <strong>{fmtPct(pnl.gross_margin_pct)} gross loss</strong> before paying fixed expenses. This occurs when <strong>Variable Cost per Unit exceeds Selling Price per Unit</strong>.
+                  </>
+                ) : (
+                  <>
+                    <strong>Fixed costs exceed gross earnings:</strong> Your Gross Profit ({fmtFull(pnl.gross_profit)}) is insufficient to cover monthly OPEX ({fmtFull(pnl.operating_expenses)}) and debt interest ({fmtFull(pnl.interest)}).
+                  </>
+                )}
+              </p>
+              <div className="bg-white/80 border border-red-200 rounded-xl p-3 text-xs text-red-800 font-medium">
+                💡 <strong>Action to Fix:</strong> Open the <strong>Financial Assumptions Panel</strong> above and reduce your <em>Variable Cost per Unit</em> (or increase <em>Selling Price / Volume</em>) so that Variable Cost is ~40%–65% of Selling Price. Click <strong>&quot;Save &amp; Recalculate&quot;</strong> to restore positive profit and high ROI.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-2xl border border-premium-border shadow-sm overflow-hidden">
         <div className="px-6 py-3 bg-[#f9f8f5] border-b border-premium-border flex justify-between">
           <span className="text-xs font-bold text-ink-soft uppercase">Line Item</span>
           <span className="text-xs font-bold text-ink-soft uppercase">Monthly Amount</span>
@@ -405,7 +436,7 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
         {allRows.map((row, i) => (
           <div
             key={i}
-            className={`px-6 py-4 flex justify-between items-center border-b border-premium-border/50 last:border-0 ${row.highlight ? "bg-[#f0fdf4]" : ""}`}
+            className={`px-6 py-4 flex justify-between items-center border-b border-premium-border/50 last:border-0 ${row.highlight ? (typeof row.value === "number" && row.value < 0 ? "bg-red-50/50" : "bg-[#f0fdf4]") : ""}`}
           >
             <span className={`text-sm ${row.bold ? "font-bold text-ink" : "font-medium text-ink-soft"}`}>
               {row.label}
@@ -428,20 +459,19 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-[#f0fdf4] rounded-2xl border border-[#bbf7d0] p-5">
-          <p className="text-xs font-bold text-[#16a34a] mb-1">Gross Margin</p>
-          <p className="text-2xl font-bold text-[#16a34a]">{fmtPct(pnl.gross_margin_pct)}</p>
+        <div className={`rounded-2xl border p-5 ${typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 20 ? "bg-[#f0fdf4] border-[#bbf7d0]" : typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 0 ? "bg-[#fff7ed] border-[#fed7aa]" : "bg-red-50 border-red-200"}`}>
+          <p className={`text-xs font-bold mb-1 ${typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 20 ? "text-[#16a34a]" : typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 0 ? "text-[#ea580c]" : "text-red-600"}`}>Gross Margin</p>
+          <p className={`text-2xl font-bold ${typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 20 ? "text-[#16a34a]" : typeof pnl.gross_margin_pct === "number" && pnl.gross_margin_pct >= 0 ? "text-[#ea580c]" : "text-red-600"}`}>{fmtPct(pnl.gross_margin_pct)}</p>
         </div>
-        {/* Colour this on the number, and say nothing about performance when the
-            number is absent. The old `pnl.net_margin_pct >= 10` test is false for
-            null, so an uncomputed margin was rendered as a red warning badge. */}
         <div
           className={`rounded-2xl border p-5 ${
             pnl.net_margin_pct == null
               ? "bg-white border-premium-border"
               : pnl.net_margin_pct >= 10
                 ? "bg-[#f0fdf4] border-[#bbf7d0]"
-                : "bg-[#fff7ed] border-[#fed7aa]"
+                : pnl.net_margin_pct >= 0
+                  ? "bg-[#fff7ed] border-[#fed7aa]"
+                  : "bg-red-50 border-red-200"
           }`}
         >
           <p
@@ -450,7 +480,9 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
                 ? "text-ink-soft"
                 : pnl.net_margin_pct >= 10
                   ? "text-[#16a34a]"
-                  : "text-[#ea580c]"
+                  : pnl.net_margin_pct >= 0
+                    ? "text-[#ea580c]"
+                    : "text-red-600"
             }`}
           >
             Net Margin
@@ -461,16 +493,18 @@ const PnlTab = ({ data }: { data: FinanceResponse }) => {
                 ? "text-ink-soft"
                 : pnl.net_margin_pct >= 10
                   ? "text-[#16a34a]"
-                  : "text-[#ea580c]"
+                  : pnl.net_margin_pct >= 0
+                    ? "text-[#ea580c]"
+                    : "text-red-600"
             }`}
           >
             {fmtPct(pnl.net_margin_pct)}
           </p>
         </div>
-        <div className="bg-white rounded-2xl border border-premium-border p-5">
-          <p className="text-xs font-bold text-ink-soft mb-1">Annual Net Profit</p>
-          <p className="text-2xl font-bold text-ink">
-            {pnl.net_profit == null ? NA : fmt(pnl.net_profit * 12)}
+        <div className={`rounded-2xl border p-5 ${typeof pnl.net_profit === "number" && pnl.net_profit >= 0 ? "bg-white border-premium-border" : "bg-red-50 border-red-200"}`}>
+          <p className={`text-xs font-bold mb-1 ${typeof pnl.net_profit === "number" && pnl.net_profit >= 0 ? "text-ink-soft" : "text-red-600"}`}>Annual Net Profit</p>
+          <p className={`text-2xl font-bold ${typeof pnl.net_profit === "number" && pnl.net_profit >= 0 ? "text-ink" : "text-red-600"}`}>
+            {pnl.net_profit == null ? NA : fmtSigned(pnl.net_profit * 12)}
           </p>
         </div>
       </div>
@@ -635,25 +669,33 @@ const WorkingCapitalTab = ({ data }: { data: FinanceResponse }) => {
   const wc = data.working_capital;
   if (!wc) return <p className="text-ink-soft">Working capital data not available.</p>;
 
-  // Whether the entrepreneur's contribution covers the working-capital need is
-  // only answerable when both figures exist. With an unknown requirement the
-  // screen says so rather than reporting a shortfall against a number nobody
-  // computed.
   const monthlyWc = wc.monthly_working_capital;
   const canJudgeBuffer =
     typeof data.beneficiary_contribution === "number" && typeof monthlyWc === "number";
   const isBufferOk = canJudgeBuffer ? data.beneficiary_contribution >= monthlyWc : null;
 
-  // A cycle day count that was not declared must not be printed as "0 days of
-  // stock", which reads as an instant-turnover inventory nobody holds.
   const daysLabel = (n: number | null, unit: string) =>
     n == null ? `${unit} not declared` : `${n} days`;
 
+  const inventoryDays = wc.inventory_days ?? 10;
+  const receivableDays = wc.receivable_days ?? 7;
+  const payableDays = wc.payable_days ?? 14;
+  const cccDays = inventoryDays + receivableDays - payableDays;
+
   return (
-    <div className="animate-in fade-in duration-300">
-      <h2 className="text-xl font-bold text-forest-deep mb-6">Working Capital Requirement</h2>
+    <div className="animate-in fade-in duration-300 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h2 className="text-xl font-bold text-forest-deep">Working Capital Requirement & Cash Cycle</h2>
+          <p className="text-sm text-ink-soft mt-1">Operating liquidity needed to keep your business running smoothly without cash crunches</p>
+        </div>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2">
+          <span className="text-[11px] font-bold text-emerald-800 uppercase block">Cash Conversion Cycle (CCC)</span>
+          <span className="text-lg font-bold text-emerald-700">{cccDays} Days</span>
+        </div>
+      </div>
       
-      <div className={`rounded-2xl border p-5 mb-6 flex items-start gap-4 ${isBufferOk === true ? "bg-[#f0fdf4] border-[#bbf7d0]" : isBufferOk === false ? "bg-[#fff7ed] border-[#fed7aa]" : "bg-white border-premium-border"}`}>
+      <div className={`rounded-2xl border p-5 flex items-start gap-4 ${isBufferOk === true ? "bg-[#f0fdf4] border-[#bbf7d0]" : isBufferOk === false ? "bg-[#fff7ed] border-[#fed7aa]" : "bg-white border-premium-border"}`}>
         {isBufferOk === true ? <CheckCircle className="text-[#16a34a] shrink-0 mt-0.5" size={20} /> : isBufferOk === false ? <AlertTriangle className="text-[#ea580c] shrink-0 mt-0.5" size={20} /> : <Info className="text-ink-soft shrink-0 mt-0.5" size={20} />}
         <div>
           <p className={`font-bold mb-1 ${isBufferOk === true ? "text-[#16a34a]" : isBufferOk === false ? "text-[#ea580c]" : "text-ink"}`}>
@@ -665,30 +707,76 @@ const WorkingCapitalTab = ({ data }: { data: FinanceResponse }) => {
           </p>
           <p className="text-sm text-ink-soft">
             {isBufferOk === true
-              ? `Your contribution (${fmt(data.beneficiary_contribution)}) comfortably covers the monthly working capital need (${fmt(wc.monthly_working_capital)}).`
+              ? `Your available capital (${fmt(data.beneficiary_contribution)}) comfortably covers the monthly working capital requirement (${fmt(wc.monthly_working_capital)}).`
               : isBufferOk === false
-                ? `Your contribution (${fmt(data.beneficiary_contribution)}) may not fully cover working capital needs (${fmt(wc.monthly_working_capital)}). Consider negotiating extended payment terms with suppliers.`
+                ? `Your available capital (${fmt(data.beneficiary_contribution)}) may be stretched by the working capital requirement (${fmt(wc.monthly_working_capital)}). Consider negotiating extended supplier credit or keeping a larger liquid float.`
                 : "The working-capital requirement was not computed, so this plan's contribution cannot be compared against it."}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <SummaryCard label="Daily Cash Needed" value={fmtFull(wc.daily_cash_needed)} sub="Operating float" icon={IndianRupee} color="text-ink" />
-        <SummaryCard label="Weekly Cash Needed" value={fmtFull(wc.weekly_cash_needed)} sub="Weekly float" icon={IndianRupee} color="text-ink" />
-        <SummaryCard label="Net Working Capital" value={fmt(wc.monthly_working_capital)} sub="Monthly WC requirement" icon={Wallet} color="text-[#2563eb]" />
-        <SummaryCard label="Inventory Held" value={fmt(wc.inventory_requirement)} sub={daysLabel(wc.inventory_days, "Stock cycle")} icon={BarChart3} color="text-ink" />
-        <SummaryCard label="Receivables" value={fmt(wc.receivables)} sub={wc.receivable_days == null ? "Collection cycle not declared" : `Collect within ${wc.receivable_days} days`} icon={TrendingUp} color="text-[#ea580c]" />
-        <SummaryCard label="Payables" value={fmt(wc.payables)} sub={wc.payable_days == null ? "Payment cycle not declared" : `Pay within ${wc.payable_days} days`} icon={TrendingDown} color="text-[#16a34a]" />
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <SummaryCard label="Daily Cash Needed" value={fmtFull(wc.daily_cash_needed)} sub="Operating cash per day" icon={IndianRupee} color="text-ink" />
+        <SummaryCard label="Weekly Cash Needed" value={fmtFull(wc.weekly_cash_needed)} sub="Weekly liquid float" icon={IndianRupee} color="text-ink" />
+        <SummaryCard label="Net Working Capital" value={fmt(wc.monthly_working_capital)} sub="Net cash tied in operating cycle" icon={Wallet} color="text-[#2563eb]" />
+        <SummaryCard label="Inventory Stock" value={fmt(wc.inventory_requirement)} sub={daysLabel(wc.inventory_days, "Stock cycle")} icon={BarChart3} color="text-ink" />
+        <SummaryCard label="Customer Receivables" value={fmt(wc.receivables)} sub={wc.receivable_days == null ? "Collection cycle not declared" : `Collect within ${wc.receivable_days} days`} icon={TrendingUp} color="text-[#ea580c]" />
+        <SummaryCard label="Supplier Payables" value={fmt(wc.payables)} sub={wc.payable_days == null ? "Payment cycle not declared" : `Pay within ${wc.payable_days} days`} icon={TrendingDown} color="text-[#16a34a]" />
+      </div>
+
+      {/* Detailed Working Capital Mathematical Breakdown */}
+      <div className="bg-white rounded-2xl border border-premium-border p-6 shadow-sm">
+        <h3 className="font-bold text-forest-deep text-base mb-4 flex items-center gap-2">
+          <Wallet size={18} className="text-emerald-600" />
+          Where and Why Working Capital is Required
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <span className="text-xs font-bold text-ink-soft uppercase block mb-1">1. Inventory Holding (+₹)</span>
+            <div className="text-xl font-bold text-ink mb-1">{fmtFull(wc.inventory_requirement)}</div>
+            <p className="text-xs text-ink-soft leading-relaxed">
+              Cash tied up in raw materials, ingredients, or shelf stock ({inventoryDays} days of COGS). Ensures you never run out of inventory during peak customer rush.
+            </p>
+          </div>
+
+          <div className="bg-amber-50/50 border border-amber-200 rounded-xl p-4">
+            <span className="text-xs font-bold text-amber-800 uppercase block mb-1">2. Accounts Receivable (+₹)</span>
+            <div className="text-xl font-bold text-amber-700 mb-1">{fmtFull(wc.receivables)}</div>
+            <p className="text-xs text-amber-900/80 leading-relaxed">
+              Sales made on credit / delayed payment ({receivableDays} days of revenue). Cash pending collection from institutional or loyal repeat customers.
+            </p>
+          </div>
+
+          <div className="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4">
+            <span className="text-xs font-bold text-emerald-800 uppercase block mb-1">3. Supplier Payables (-₹)</span>
+            <div className="text-xl font-bold text-emerald-700 mb-1">{fmtFull(wc.payables)}</div>
+            <p className="text-xs text-emerald-900/80 leading-relaxed">
+              Credit granted to you by raw material vendors ({payableDays} days of COGS). This reduces your immediate cash requirement because suppliers finance your stock.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-[#f9f8f5] border border-premium-border rounded-xl p-4 space-y-2 text-xs text-ink">
+          <div className="flex flex-wrap items-center justify-between font-mono font-semibold">
+            <span>Formula: Net WC = Inventory ({fmtFull(wc.inventory_requirement)}) + Receivables ({fmtFull(wc.receivables)}) − Payables ({fmtFull(wc.payables)})</span>
+            <span className="text-sm font-bold text-blue-700">= {fmtFull(wc.monthly_working_capital)}</span>
+          </div>
+          <p className="text-ink-soft text-[11px] leading-relaxed">
+            💡 <strong>Decision Rule:</strong> Maintain at least <strong>{fmtFull(wc.daily_cash_needed)}</strong> in daily liquid cash float for day-to-day purchases, salaries, and utility bills. Keep the emergency buffer of <strong>{fmtFull(wc.recommended_buffer)}</strong> untouched in a separate business bank account.
+          </p>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-premium-border p-5 shadow-sm">
         <div className="flex items-center mb-3">
           <Info size={16} className="text-[#6366f1] mr-2" />
-          <h3 className="font-bold text-ink">Recommended Safety Buffer</h3>
+          <h3 className="font-bold text-ink">Recommended Emergency Safety Reserve</h3>
         </div>
         <div className="text-3xl font-bold text-[#6366f1] mb-2">{fmt(wc.recommended_buffer)}</div>
-        <p className="text-sm text-ink-soft">Keep this as emergency working capital reserve. Do not invest it all in stock on Day 1.</p>
+        <p className="text-sm text-ink-soft">
+          20% emergency working capital reserve. Protects your business against sudden supplier price hikes, festive demand surges, or delayed payment collection.
+        </p>
       </div>
     </div>
   );
@@ -1164,12 +1252,15 @@ export default function FinancialsPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 pb-24 bg-[#fcfbf8] min-h-screen">
       {/* Page Header */}
-      <div className="mb-8 border-b border-premium-border pb-6">
+      <div className="mb-6 border-b border-premium-border pb-6">
         <h1 className="text-[32px] font-bold text-forest-deep tracking-tight mb-1">Financial Analysis</h1>
         <p className="text-ink-soft font-medium">
           Complete financial model for your business — projections, Monthly Installment, P&L, and more.
         </p>
       </div>
+
+      {/* Global Financial Assumptions & Recalculation Panel */}
+      <FinancialAssumptionsPanel />
 
       {/* Tab Bar — wraps to two rows on smaller screens */}
       <div className="flex flex-wrap gap-1 border-b border-premium-border mb-8 pb-0">
