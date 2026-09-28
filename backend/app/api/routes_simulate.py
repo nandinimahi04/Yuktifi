@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
-from app.schemas.simulation import SimulateRequest, SimulateResponse as StaticSimulateResponse
+from app.schemas.simulation import SimulateRequest, SimulateResponse
 from app.engines.simulation_engine import run_simulation
 from app.services.session_service import get_base_state
 from app.core.db import get_db
@@ -14,7 +14,7 @@ import json
 router = APIRouter()
 gemini = GeminiClient()
 
-@router.post("/simulate", response_model=StaticSimulateResponse)
+@router.post("/simulate", response_model=SimulateResponse)
 def simulate(req: SimulateRequest, db: DBSession = Depends(get_db)):
     try:
         base_state = get_base_state(db, req.session_id)
