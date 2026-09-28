@@ -1086,6 +1086,8 @@ def compute_canonical_financials(inp: CanonicalFinancialInput) -> CanonicalFinan
         roi_on_total_project_pct=roi_project,
         payback_months=payback_month,
         payback_status=payback_status,
+        project_cost_known=capital_known,
+        monthly_revenue=tot_revenue_m,
     )
 
     # ── Confidence in the numbers ──────────────────────────────────────────

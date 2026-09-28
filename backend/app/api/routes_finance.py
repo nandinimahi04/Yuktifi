@@ -8,7 +8,17 @@ router = APIRouter()
 
 @router.post("/calculate-finance", response_model=FinanceResponse)
 def calculate_finance(req: FinanceRequest, db: DBSession = Depends(get_db)):
+    from app.models.session import Session
     try:
+        if req.overrides is not None:
+            session = db.query(Session).filter(Session.id == req.session_id).first()
+            if session:
+                current_overrides = getattr(session, "financial_overrides", {}) or {}
+                # Update existing with new overrides
+                current_overrides.update(req.overrides)
+                session.financial_overrides = current_overrides
+                db.commit()
+
         result = compute_full_financials(db, req.session_id)
         return FinanceResponse(**result)
     except ValueError as e:

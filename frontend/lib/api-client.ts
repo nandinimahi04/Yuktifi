@@ -551,7 +551,7 @@ export const api = {
   analyzeMarket: (data: { session_id: string; location_id: string; category_id: string; category_name?: string; budget?: number; experience?: string; idea_details?: string }, signal?: AbortSignal) =>
     ApiClient.post<MarketResponse>("/analyze-market", data, AI_TIMEOUT_MS, signal),
 
-  calculateFinance: (data: { session_id: string }, signal?: AbortSignal) =>
+  calculateFinance: (data: { session_id: string; overrides?: any }, signal?: AbortSignal) =>
     ApiClient.post<FinanceResponse>("/calculate-finance", data, undefined, signal),
 
   getRecommendation: (data: { session_id: string }, signal?: AbortSignal) =>

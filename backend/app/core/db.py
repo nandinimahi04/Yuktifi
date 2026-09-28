@@ -71,6 +71,9 @@ _ADDITIVE_COLUMNS = {
         ("financing_gap", "FLOAT"),
         ("payback_months", "FLOAT"),
     ],
+    "sessions": [
+        ("financial_overrides", "JSON"),
+    ],
 }
 
 

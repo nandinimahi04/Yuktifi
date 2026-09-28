@@ -286,6 +286,8 @@ def derive_financial_status(
     roi_on_total_project_pct: Optional[float] = None,
     payback_months: Optional[float] = None,
     payback_status: str = "",
+    project_cost_known: bool = True,
+    monthly_revenue: float = 0.0,
 ) -> Dict[str, Any]:
     """
     Roll the gates up into one decision.
@@ -315,9 +317,17 @@ def derive_financial_status(
     conditions: List[str] = [g.reason for g in advisory_failures]
     unknowns_reasons: List[str] = [g.reason for g in unknowns]
 
+    STATUS_INSUFFICIENT_INPUT = "INSUFFICIENT_INPUT"
+
     if has_input_error:
         status = STATUS_NO_GO
         reasons.insert(0, "One or more declared inputs are not usable, so no decision can be made from them.")
+    elif not project_cost_known or monthly_revenue <= 0:
+        status = STATUS_INSUFFICIENT_INPUT
+        if not project_cost_known:
+            reasons.append("Project Cost is missing.")
+        if monthly_revenue <= 0:
+            reasons.append("Monthly Revenue is missing.")
     elif fatal_failures:
         status = STATUS_NO_GO
     elif unknowns or roi_on_total_project_pct is None or payback_months is None:
