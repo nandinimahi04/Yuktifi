@@ -143,6 +143,10 @@ app.include_router(routes_census.router)
 app.include_router(routes_advisory.router)
 from app.api import routes_privacy
 app.include_router(routes_privacy.router)
+from app.api import routes_financial_assumptions
+app.include_router(routes_financial_assumptions.router)
+from app.api import routes_analytics
+app.include_router(routes_analytics.router)
 
 
 @app.get("/health")

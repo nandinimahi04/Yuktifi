@@ -93,8 +93,21 @@ ICAR Micro-Enterprise Technical Parameters:
     }
 ]
 
-def seed_rag_corpus() -> int:
+def seed_rag_corpus(force: bool = False) -> int:
     """Auto-seeds official documents into RAG SQLite knowledge store."""
+    from app.rag.ingest import ingest_directory
+    from app.core.db import engine
+    from sqlalchemy import text
+    
+    if not force:
+        try:
+            with engine.begin() as conn:
+                existing = conn.execute(text("SELECT count(*) FROM yukti_rag_documents")).scalar()
+                if existing and existing >= 10:
+                    return int(existing)
+        except Exception:
+            pass
+
     indexed_count = 0
     for doc in OFFICIAL_CORPUS_DOCUMENTS:
         try:
@@ -109,6 +122,16 @@ def seed_rag_corpus() -> int:
             logger.info("[RAG SEED] Indexed %s (%d chunks)", doc["title"], res.get("chunks", 0))
         except Exception as e:
             logger.error("[RAG SEED] Failed to index %s: %s", doc["title"], str(e))
+
+    # Ingest project documents from D:\Ai workshop\Documents SIH 26 if available
+    external_dir = r"D:\Ai workshop\Documents SIH 26"
+    try:
+        ext_count = ingest_directory(external_dir, source="Official SIH 2026 Knowledge Repository")
+        indexed_count += ext_count
+        logger.info("[RAG SEED] Ingested %d documents from %s", ext_count, external_dir)
+    except Exception as exc:
+        logger.warning("[RAG SEED] Could not ingest from %s: %s", external_dir, exc)
+
     return indexed_count
 
 if __name__ == "__main__":
