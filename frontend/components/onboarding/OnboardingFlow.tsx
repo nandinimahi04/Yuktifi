@@ -29,7 +29,7 @@ export function OnboardingFlow({ onCancel, onComplete }: OnboardingFlowProps) {
     state: '', district: '', village: ''
   });
   const [capitalData, setCapitalData] = useState<CapitalData>({
-    investment: '', source: ''
+    investment: '', loanIntent: ''
   });
   const [businessData, setBusinessData] = useState<BusinessData>({
     industry: '', experience: '', ideaDetails: ''
@@ -59,9 +59,9 @@ export function OnboardingFlow({ onCancel, onComplete }: OnboardingFlowProps) {
       case 2:
         return <StepLocation data={locationData} updateData={(d) => setLocationData({...locationData, ...d})} onNext={nextStep} onBack={prevStep} />;
       case 3:
-        return <StepCapital data={capitalData} updateData={(d) => setCapitalData({...capitalData, ...d})} onNext={nextStep} onBack={prevStep} />;
-      case 4:
         return <StepBusiness data={businessData} updateData={(d) => setBusinessData({...businessData, ...d})} onNext={nextStep} onBack={prevStep} />;
+      case 4:
+        return <StepCapital data={capitalData} updateData={(d) => setCapitalData({...capitalData, ...d})} onNext={nextStep} onBack={prevStep} />;
       case 5:
         return <StepReview data={{ about: aboutData, location: locationData, capital: capitalData, business: businessData }} onNext={handleComplete} onBack={prevStep} isSubmitting={isSubmitting} />;
       default:

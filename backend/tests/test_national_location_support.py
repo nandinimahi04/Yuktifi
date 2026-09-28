@@ -21,7 +21,7 @@ class TestNationalLocationSupport(unittest.TestCase):
         retrieval = DataRetrieval()
         
         # Test Pune location
-        pune_data = retrieval.get_category_data("pune_district", "kirana")
+        pune_data = retrieval.get_category_data("pune_district", "retail_kirana")
         self.assertIn("unit_economics", pune_data)
         self.assertIn("initial_setup_costs", pune_data)
 

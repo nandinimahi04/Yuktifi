@@ -119,7 +119,8 @@ export function StepLocation({ data, updateData, onNext, onBack }: StepLocationP
         
         <button 
           onClick={onNext}
-          className="bg-[#ea580c] hover:bg-[#c2410c] text-white px-8 py-2 rounded-xl text-sm font-bold flex items-center justify-center shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-saffron"
+          disabled={!data.state || !data.district || !data.village}
+          className="bg-[#ea580c] hover:bg-[#c2410c] text-white px-8 py-2 rounded-xl text-sm font-bold flex items-center justify-center shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-saffron disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {tCommon('next')} <ArrowRight size={18} className="ml-2" />
         </button>

@@ -119,6 +119,11 @@ export function StepAboutYou({ data, updateData, onNext, onBack }: StepAboutYouP
               })}
             </div>
           </div>
+          
+          <div className="text-xs text-ink-soft bg-cream-deep p-3 rounded-xl border border-premium-border flex items-center">
+            <Lightbulb size={16} className="text-[#ea580c] mr-2 shrink-0" />
+            <span>{t('schemeNote')}</span>
+          </div>
         </div>
       </div>
 
@@ -133,7 +138,8 @@ export function StepAboutYou({ data, updateData, onNext, onBack }: StepAboutYouP
         
         <button 
           onClick={onNext}
-          className="bg-[#ea580c] hover:bg-[#c2410c] text-white px-8 py-2 rounded-xl text-sm font-bold flex items-center justify-center shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-saffron"
+          disabled={!data.fullName || !data.gender || !data.category}
+          className="bg-[#ea580c] hover:bg-[#c2410c] text-white px-8 py-2 rounded-xl text-sm font-bold flex items-center justify-center shadow-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-saffron disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {tCommon('next')} <ArrowRight size={18} className="ml-2" />
         </button>
