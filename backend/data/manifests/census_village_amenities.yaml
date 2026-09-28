@@ -1,0 +1,7 @@
+dataset: census_village_amenities
+source: Census of India
+source_url: https://censusindia.gov.in/nada/index.php/catalog/833
+observed_at: '2011'
+geography: village
+format: xlsx
+is_estimate: false

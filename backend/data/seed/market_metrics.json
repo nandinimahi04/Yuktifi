@@ -1,0 +1,14 @@
+[
+  {
+    "id": "mm_akkalkot_dairy",
+    "location_id": "loc_akkalkot",
+    "category_id": "dairy",
+    "metric_name": "estimated_demand",
+    "value": 15000.0,
+    "unit": "liters_per_month",
+    "confidence": "Medium",
+    "source_id": "ds_worldpop",
+    "transformation_note": "WorldPop grid sum, 5km radius",
+    "effective_date": "2026-09-06T00:00:00"
+  }
+]

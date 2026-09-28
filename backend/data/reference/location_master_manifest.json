@@ -1,0 +1,20 @@
+{
+  "name": "YUKTI canonical location master",
+  "status": "awaiting_official_master_download",
+  "master_path": "data/reference/location_master.csv",
+  "preferred_sources": [
+    {
+      "name": "Local Government Directory (LGD)",
+      "url": "https://lgdirectory.gov.in/demo/downloadDirectory.do",
+      "use": "current administrative hierarchy and government codes"
+    },
+    {
+      "name": "Census 2011 Solapur PCA TV",
+      "url": "https://censusindia.gov.in/nada/index.php/catalog/6717",
+      "use": "village/sub-district/district identity cross-check and historical population"
+    }
+  ],
+  "required_fields": ["state", "district", "village"],
+  "optional_fields": ["subdistrict", "block", "state_code", "district_code", "subdistrict_code", "block_code", "village_code", "lat", "lng", "admin_level"],
+  "policy": "Never invent an administrative code or silently substitute a district-level record for a village-level record."
+}

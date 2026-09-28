@@ -1,0 +1,955 @@
+{
+  "location": {
+    "district": "Solapur",
+    "state": "Maharashtra",
+    "country": "India"
+  },
+  "categories": {
+    "retail_shop": {
+      "category_name": "Retail & Shop",
+      "competitor_market_data": {
+        "competitor_count": 150,
+        "competitor_list": [
+          {
+            "name": "Yashoda Shopping Centre",
+            "latitude": 17.6605,
+            "longitude": 75.907,
+            "distance_km": 0.4
+          },
+          {
+            "name": "Shri Siddheshwar Shopping Center",
+            "latitude": 17.6612,
+            "longitude": 75.9058,
+            "distance_km": 0.6
+          },
+          {
+            "name": "Mahalaxmi Mall",
+            "latitude": 17.655,
+            "longitude": 75.901,
+            "distance_km": 1.3
+          },
+          {
+            "name": "Modi Mall",
+            "latitude": 17.647,
+            "longitude": 75.911,
+            "distance_km": 2.0
+          },
+          {
+            "name": "Raj Enterprises Shopping Complex",
+            "latitude": 17.672,
+            "longitude": 75.92,
+            "distance_km": 2.8
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 150000
+        },
+        "daily_footfall": 300,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 200,
+          "highest": 3000,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 30
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 150000,
+        "equipment_and_furniture": 200000,
+        "initial_inventory": 400000,
+        "total_setup_cost": 750000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 25000,
+        "utilities": {
+          "electricity": 4000,
+          "water": 1000
+        },
+        "salaries": 30000,
+        "total_fixed_costs": 60000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 350000,
+        "variable_costs": 227500,
+        "net_operating_income": 62500,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur City's retail trade is still dominated by unorganized bazaars (Darbi Cloth Market, Navi Peth, Mangalwar Bazar); a fixed-price, well-merchandised general store or specialty retail outlet has room to differentiate.",
+          "Growth of residential colonies on the city's outer ring (near Hotgi Road, Akkalkot Road) is creating new neighbourhood retail catchments not yet served by established market clusters."
+        ],
+        "strengths": [
+          "Dense, walkable market clusters with established daily footfall",
+          "Low real-estate cost compared to metro cities",
+          "Strong local buying culture tied to festivals and weddings"
+        ],
+        "weaknesses": [
+          "Heavy price competition from unorganized market vendors",
+          "Seasonal demand swings around festivals and monsoon lull",
+          "Limited access to formal retail credit/financing"
+        ],
+        "opportunities": [
+          "WhatsApp/online ordering with local delivery to widen catchment beyond walk-in footfall",
+          "Stock GI-tagged regional products (Solapuri chaddars, towels) as differentiators",
+          "Loyalty tie-ups with nearby housing societies"
+        ],
+        "threats": [
+          "Growth of e-commerce and quick-commerce platforms reaching tier-2 cities",
+          "Rising commercial rents in prime market areas (Navi Peth, Railway Lines)",
+          "Fragmented low-margin competition from informal shops"
+        ]
+      }
+    },
+    "manufacturing": {
+      "category_name": "Manufacturing",
+      "competitor_market_data": {
+        "competitor_count": 40,
+        "competitor_list": [
+          {
+            "name": "Precision Camshafts Limited",
+            "latitude": 17.5945,
+            "longitude": 75.9425,
+            "distance_km": 1.2
+          },
+          {
+            "name": "Ambey Iron Pvt. Ltd.",
+            "latitude": 17.592,
+            "longitude": 75.941,
+            "distance_km": 1.6
+          },
+          {
+            "name": "Bhutada Weaving Mill Pvt. Ltd.",
+            "latitude": 17.598,
+            "longitude": 75.944,
+            "distance_km": 0.9
+          },
+          {
+            "name": "Dhullam Textile Pvt. Ltd.",
+            "latitude": 17.596,
+            "longitude": 75.945,
+            "distance_km": 1.0
+          },
+          {
+            "name": "Chetan Foundries Ltd.",
+            "latitude": 17.59,
+            "longitude": 75.948,
+            "distance_km": 2.1
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 2000
+        },
+        "daily_footfall": 5,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 150,
+          "highest": 1200,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 20
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 60000,
+        "equipment_and_furniture": 300000,
+        "initial_inventory": 90000,
+        "total_setup_cost": 450000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 15000,
+        "utilities": {
+          "electricity": 12000,
+          "water": 500
+        },
+        "salaries": 35000,
+        "total_fixed_costs": 62500,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 220000,
+        "variable_costs": 130000,
+        "net_operating_income": 27500,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur is home to an established MIDC industrial belt (Akkalkot Road/Chincholi) and a large powerloom weaving base, so a new small manufacturing unit can plug into existing raw-material, labour and buyer supply chains rather than build an ecosystem from scratch.",
+          "Solapuri Chaddar and Solapur Terry Towel both carry Geographical Indication (GI) status, giving small textile manufacturers in the district a branding and export edge unavailable to producers elsewhere."
+        ],
+        "strengths": [
+          "Existing MIDC infrastructure with power and road connectivity",
+          "Deep pool of skilled powerloom and metal-working labour",
+          "Proximity to cotton-growing regions for raw material sourcing"
+        ],
+        "weaknesses": [
+          "High upfront machinery cost relative to a single-entrepreneur budget",
+          "Power-cost pressure on margins for energy-intensive processes",
+          "Dependence on a small number of wholesale buyers/traders"
+        ],
+        "opportunities": [
+          "Sell GI-tagged textile products (chaddars, towels) directly to buyers outside the district",
+          "Take up job-work/contract manufacturing for larger established mills nearby",
+          "Access MSME cluster-development support available to units in the powerloom cluster"
+        ],
+        "threats": [
+          "Competition from larger, capital-heavy textile hubs (Ichalkaranji, Bhiwandi)",
+          "Volatile cotton yarn and dye input prices",
+          "Rising machinery/electricity cost eroding thin unit margins"
+        ]
+      }
+    },
+    "agri_business": {
+      "category_name": "Agri-Business",
+      "competitor_market_data": {
+        "competitor_count": 60,
+        "competitor_list": [
+          {
+            "name": "Munot Agri Business",
+            "latitude": 17.6435,
+            "longitude": 75.9205,
+            "distance_km": 0.3
+          },
+          {
+            "name": "Maharastra Agriculture Consultancy Limited",
+            "latitude": 17.648,
+            "longitude": 75.915,
+            "distance_km": 1.0
+          },
+          {
+            "name": "Shivagro Industries",
+            "latitude": 17.644,
+            "longitude": 75.921,
+            "distance_km": 0.4
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 25000
+        },
+        "daily_footfall": 80,
+        "confidence": "Low"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 300,
+          "highest": 2500,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 12
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 100000,
+        "equipment_and_furniture": 150000,
+        "initial_inventory": 600000,
+        "total_setup_cost": 850000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 20000,
+        "utilities": {
+          "electricity": 3000,
+          "water": 1000
+        },
+        "salaries": 25000,
+        "total_fixed_costs": 49000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 500000,
+        "variable_costs": 420000,
+        "net_operating_income": 31000,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "About 68% of Solapur district's population is rural, and the district has the highest number of cooperative sugar factories in Maharashtra, so the underlying farmer base for agri-inputs, equipment hire and post-harvest services is unusually large for an agri-trading business located near the Market Yard.",
+          "Sugarcane, jowar, cotton and grape-growing belts around the district create demand that continues across multiple crop cycles rather than a single narrow season."
+        ],
+        "strengths": [
+          "Large existing farmer base and proximity to APMC market yard infrastructure",
+          "Established supply links to seed and fertilizer manufacturers",
+          "Government schemes supporting agri-input and cooperative financing exist locally"
+        ],
+        "weaknesses": [
+          "Thin margins typical of commodity fertilizer/seed trading",
+          "High dependence on monsoon timing and crop-cycle seasonality",
+          "Working-capital intensive due to seasonal bulk purchasing"
+        ],
+        "opportunities": [
+          "Add value-added services such as soil testing or drip-irrigation consultancy",
+          "Tap growing demand for organic/bio-fertilizer inputs",
+          "Build direct linkages with sugarcane, cotton and grape farmers for input supply"
+        ],
+        "threats": [
+          "Price volatility in fertilizer and seed input costs",
+          "Delayed or erratic monsoons reducing farmer purchasing power",
+          "Competition from large cooperative societies and subsidized state input channels"
+        ]
+      }
+    },
+    "services_tech": {
+      "category_name": "Services & Tech",
+      "competitor_market_data": {
+        "competitor_count": 25,
+        "competitor_list": [
+          {
+            "name": "Signature Software Lab",
+            "latitude": 17.66,
+            "longitude": 75.907,
+            "distance_km": 0.5
+          },
+          {
+            "name": "RB Tech Services",
+            "latitude": 17.662,
+            "longitude": 75.904,
+            "distance_km": 0.8
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 3000
+        },
+        "daily_footfall": 8,
+        "confidence": "Low"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 3000,
+          "highest": 100000,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 45
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 80000,
+        "equipment_and_furniture": 200000,
+        "initial_inventory": 20000,
+        "total_setup_cost": 300000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 20000,
+        "utilities": {
+          "electricity": 4000,
+          "water": 500
+        },
+        "salaries": 80000,
+        "total_fixed_costs": 104500,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 300000,
+        "variable_costs": 60000,
+        "net_operating_income": 135500,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur's MSME, textile, sugar-cooperative, hospital and education sectors increasingly need GST billing, ERP and website/digital-marketing services, but the number of locally established IT/software service providers is still small relative to that demand.",
+          "A small services provider who understands local workflows (sugar-factory accounting, textile-mill ERP, school administration) has a real edge over remote metro-based vendors who don't know the local business context."
+        ],
+        "strengths": [
+          "Low competitive intensity compared to metro IT markets",
+          "Latent demand from manufacturing, healthcare and education verticals in the district",
+          "Lower operating and talent costs than Tier-1 cities"
+        ],
+        "weaknesses": [
+          "Limited local tech talent pool, with risk of migration to Pune/Mumbai/Bengaluru",
+          "Low awareness of paid digital services among traditional SMEs",
+          "Client price sensitivity typical of a tier-2/3 market"
+        ],
+        "opportunities": [
+          "Offer vertical-specific accounting/ERP support to sugar-cooperative and textile-mill clients",
+          "Digital marketing/e-commerce enablement for local retail and garment sellers",
+          "Remote/hybrid delivery to clients outside Solapur to expand the addressable market"
+        ],
+        "threats": [
+          "Competition from national and remote freelance/agency providers",
+          "Talent attrition to larger cities",
+          "Rapid technology change requiring continuous re-skilling"
+        ]
+      }
+    },
+    "food_beverage": {
+      "category_name": "Food & Beverage",
+      "competitor_market_data": {
+        "competitor_count": 200,
+        "competitor_list": [
+          {
+            "name": "Preeti Dining Hall",
+            "latitude": 17.659,
+            "longitude": 75.908,
+            "distance_km": 0.4
+          },
+          {
+            "name": "Hotel Nisarg",
+            "latitude": 17.656,
+            "longitude": 75.904,
+            "distance_km": 0.9
+          },
+          {
+            "name": "Hotel Mantralaya",
+            "latitude": 17.657,
+            "longitude": 75.9055,
+            "distance_km": 0.7
+          },
+          {
+            "name": "Hotel Priyanka",
+            "latitude": 17.665,
+            "longitude": 75.91,
+            "distance_km": 1.0
+          },
+          {
+            "name": "Balaji Sarovar Premiere",
+            "latitude": 17.63,
+            "longitude": 75.935,
+            "distance_km": 3.4
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 80000
+        },
+        "daily_footfall": 180,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 100,
+          "highest": 400,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 50
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 150000,
+        "equipment_and_furniture": 300000,
+        "initial_inventory": 80000,
+        "total_setup_cost": 530000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 25000,
+        "utilities": {
+          "electricity": 10000,
+          "water": 2000
+        },
+        "salaries": 60000,
+        "total_fixed_costs": 97000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 450000,
+        "variable_costs": 202500,
+        "net_operating_income": 150500,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur has a distinct local food identity (Solapuri thali, kala mutton, shenga chutney) that draws consistent repeat local demand, so a small pure-vegetarian or regional-specialty eatery can differentiate from generic multi-cuisine competitors.",
+          "The annual Pandharpur Wari pilgrimage and steady Akkalkot religious tourism bring large transient footfall through the district, creating seasonal upside for food businesses positioned along pilgrim travel routes."
+        ],
+        "strengths": [
+          "Distinctive regional cuisine that differentiates from generic chains",
+          "High daily footfall in established food clusters and highway-facing locations",
+          "Relatively low ingredient cost due to proximity to local agri-produce markets"
+        ],
+        "weaknesses": [
+          "Intense competition and low differentiation among thali/vegetarian eateries",
+          "Service and quality-consistency issues commonly reported for smaller outlets",
+          "High dependence on peak meal-time footfall"
+        ],
+        "opportunities": [
+          "Add a delivery/takeaway channel via aggregator apps",
+          "Package specialty items (chutneys, chivda, sweets) for retail/gifting",
+          "Cater weddings and the Wari pilgrimage season, both strong regional demand spikes"
+        ],
+        "threats": [
+          "Rising input costs (cooking oil, LPG, vegetables)",
+          "Entry of national QSR and cloud-kitchen chains into tier-2 cities",
+          "Seasonal footfall dips during extreme summer heat and heavy monsoon"
+        ]
+      }
+    },
+    "handicrafts_artisanal": {
+      "category_name": "Handicrafts & Artisanal",
+      "competitor_market_data": {
+        "competitor_count": 80,
+        "competitor_list": [
+          {
+            "name": "Solapur Terry Towel weaving units (Sidheshwar Peth cluster)",
+            "latitude": 17.658,
+            "longitude": 75.906,
+            "distance_km": 0.5
+          },
+          {
+            "name": "Solapuri Chaddar weaving units (Mangalwar Peth cluster)",
+            "latitude": 17.666,
+            "longitude": 75.9085,
+            "distance_km": 0.8
+          },
+          {
+            "name": "Kasarwadi Market (handloom products)",
+            "latitude": 17.67,
+            "longitude": 75.915,
+            "distance_km": 1.6
+          },
+          {
+            "name": "Textile Development Foundation, Dist. Solapur (GI registrant body)",
+            "latitude": 17.659,
+            "longitude": 75.907,
+            "distance_km": 0.4
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 25000
+        },
+        "daily_footfall": 30,
+        "confidence": "Low"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 150,
+          "highest": 2000,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 25
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 80000,
+        "equipment_and_furniture": 250000,
+        "initial_inventory": 200000,
+        "total_setup_cost": 530000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 12000,
+        "utilities": {
+          "electricity": 8000,
+          "water": 1000
+        },
+        "salaries": 40000,
+        "total_fixed_costs": 61000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 220000,
+        "variable_costs": 140000,
+        "net_operating_income": 19000,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapuri Chaddar and Solapur Terry Towel both hold Geographical Indication (GI) status, giving artisanal handloom products made in this district a protected, brand-worthy identity few competing regions can claim.",
+          "The district's handloom sector is estimated to support around 200,000 livelihoods, indicating a deep base of skilled artisan labour a small, well-organized artisanal business can draw on."
+        ],
+        "strengths": [
+          "GI-protected, recognizable product identity (chaddars, terry towels)",
+          "Deep multi-generational artisan skill base",
+          "Existing export history for handloom textile products from the district"
+        ],
+        "weaknesses": [
+          "Historically low and inconsistent artisan household incomes",
+          "Fragmented, home-based production makes quality standardization difficult",
+          "Limited direct-to-consumer branding; intermediaries capture much of the value"
+        ],
+        "opportunities": [
+          "Direct-to-consumer sales leveraging the GI tag for premium positioning",
+          "E-commerce listing and participation in government handloom marketing events",
+          "Diversify into home-furnishing and gifting products beyond bedsheets/towels"
+        ],
+        "threats": [
+          "Competition from power-loom mass production eroding the handloom premium",
+          "Rising raw cotton yarn costs squeezing already-thin artisan margins",
+          "Declining youth interest in continuing traditional handloom weaving"
+        ]
+      }
+    },
+    "logistics_delivery": {
+      "category_name": "Logistics & Delivery",
+      "competitor_market_data": {
+        "competitor_count": 20,
+        "competitor_list": [
+          {
+            "name": "DTDC Courier Service (Hotgi Road)",
+            "latitude": 17.635,
+            "longitude": 75.9,
+            "distance_km": 2.5
+          },
+          {
+            "name": "Blue Dart Express Limited (Sakhar Peth)",
+            "latitude": 17.652,
+            "longitude": 75.902,
+            "distance_km": 1.1
+          },
+          {
+            "name": "Shree Tirupati Courier Services Pvt. Ltd.",
+            "latitude": 17.636,
+            "longitude": 75.899,
+            "distance_km": 2.6
+          },
+          {
+            "name": "Shree Anjani Courier Service Pvt. Ltd.",
+            "latitude": 17.648,
+            "longitude": 75.903,
+            "distance_km": 1.2
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 100000
+        },
+        "daily_footfall": 80,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 30,
+          "highest": 500,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 20
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 100000,
+        "equipment_and_furniture": 350000,
+        "initial_inventory": 50000,
+        "total_setup_cost": 500000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 18000,
+        "utilities": {
+          "electricity": 3000,
+          "water": 500
+        },
+        "salaries": 60000,
+        "total_fixed_costs": 81500,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 300000,
+        "variable_costs": 180000,
+        "net_operating_income": 38500,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur's textile-export and manufacturing base generates steady B2B parcel and freight volume beyond ordinary e-commerce last-mile demand, giving a small courier/logistics operator more than one customer segment to serve.",
+          "National courier brands already run franchise operations here (DTDC, Blue Dart), which shows the local market can support a franchise or last-mile delivery partner business without needing to build a new brand from zero."
+        ],
+        "strengths": [
+          "Established national courier franchise presence provides a proven operating model",
+          "Outbound B2B shipment demand from textile and manufacturing exporters",
+          "Growing e-commerce adoption in tier-2/3 India driving parcel volumes"
+        ],
+        "weaknesses": [
+          "Thin per-parcel margins typical of franchise commission models",
+          "Dependence on parent-network reliability and service-level agreements",
+          "Fuel and last-mile delivery costs weigh on margins"
+        ],
+        "opportunities": [
+          "Offer small-scale warehousing/fulfilment support to local online sellers",
+          "Specialize in B2B freight for textile exporters and MIDC manufacturers",
+          "Add cash-on-delivery and reverse-logistics handling for growing local D2C sellers"
+        ],
+        "threats": [
+          "Price competition from national e-commerce logistics arms",
+          "Fuel price volatility affecting delivery cost structure",
+          "Franchise-model dependency limiting pricing and brand control"
+        ]
+      }
+    },
+    "education_training": {
+      "category_name": "Education & Training",
+      "competitor_market_data": {
+        "competitor_count": 90,
+        "competitor_list": [
+          {
+            "name": "Walchand Institute of Technology (WIT)",
+            "latitude": 17.621,
+            "longitude": 75.928,
+            "distance_km": 4.3
+          },
+          {
+            "name": "Walchand College of Arts and Science",
+            "latitude": 17.658,
+            "longitude": 75.909,
+            "distance_km": 0.5
+          },
+          {
+            "name": "Hirachand Nemchand College of Commerce",
+            "latitude": 17.6585,
+            "longitude": 75.9095,
+            "distance_km": 0.5
+          },
+          {
+            "name": "Government Polytechnic, Solapur",
+            "latitude": 17.654,
+            "longitude": 75.919,
+            "distance_km": 1.5
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 40000
+        },
+        "daily_footfall": 60,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 1500,
+          "highest": 25000,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 55
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 100000,
+        "equipment_and_furniture": 150000,
+        "initial_inventory": 30000,
+        "total_setup_cost": 280000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 25000,
+        "utilities": {
+          "electricity": 5000,
+          "water": 1000
+        },
+        "salaries": 60000,
+        "total_fixed_costs": 91000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 300000,
+        "variable_costs": 50000,
+        "net_operating_income": 159000,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur has well-established engineering, arts/science, commerce and polytechnic institutions (Walchand Institute of Technology, Walchand College of Arts and Science, Hirachand Nemchand College of Commerce, Government Polytechnic) that anchor a large, sustained student population around which coaching and skill-training demand naturally clusters.",
+          "There are limited specialized skill-training options (coding, spoken English, competitive-exam coaching) in the city outside the main colleges themselves, leaving room for a focused small coaching/training centre."
+        ],
+        "strengths": [
+          "Established, reputed anchor institutions drive a large local student population",
+          "High margins typical of coaching/training businesses with low variable costs",
+          "Multi-generational trust in the city's older educational institutions"
+        ],
+        "weaknesses": [
+          "Seasonal enrollment cycles tied to the academic calendar",
+          "Price-sensitive student/parent base typical of a tier-2/3 city",
+          "Dependence on faculty quality and retention"
+        ],
+        "opportunities": [
+          "Offer skill/vocational training aligned to local industry needs (ERP, textile design, engineering software)",
+          "Hybrid online-offline coaching to reach students from surrounding taluka towns",
+          "Placement-oriented add-on certification tie-ups with local colleges"
+        ],
+        "threats": [
+          "Competition from large national coaching brands and online ed-tech platforms",
+          "Migration of top students to Pune/Mumbai for higher education",
+          "Regulatory changes to exam patterns affecting coaching demand"
+        ]
+      }
+    },
+    "healthcare_wellness": {
+      "category_name": "Healthcare & Wellness",
+      "competitor_market_data": {
+        "competitor_count": 70,
+        "competitor_list": [
+          {
+            "name": "Yashodhara Super Speciality Hospital (Sidheshwar Peth)",
+            "latitude": 17.6575,
+            "longitude": 75.9065,
+            "distance_km": 0.4
+          },
+          {
+            "name": "Metropolis Healthcare Ltd. (Diagnostic Lab, Muraraji Peth)",
+            "latitude": 17.6555,
+            "longitude": 75.9035,
+            "distance_km": 0.9
+          },
+          {
+            "name": "Ashwini Sahakari Rugnalaya & Research Centre",
+            "latitude": 17.665,
+            "longitude": 75.901,
+            "distance_km": 1.0
+          },
+          {
+            "name": "Dr. V.M. Government Medical College",
+            "latitude": 17.655,
+            "longitude": 75.92,
+            "distance_km": 1.5
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 100000
+        },
+        "daily_footfall": 40,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 150,
+          "highest": 1500,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 45
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 100000,
+        "equipment_and_furniture": 400000,
+        "initial_inventory": 80000,
+        "total_setup_cost": 580000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 20000,
+        "utilities": {
+          "electricity": 6000,
+          "water": 1000
+        },
+        "salaries": 40000,
+        "total_fixed_costs": 67000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 250000,
+        "variable_costs": 90000,
+        "net_operating_income": 93000,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur's large tertiary hospitals (Ashwini group, Government Medical College) mainly handle high-acuity/referral cases, leaving room for smaller neighbourhood diagnostic centres, clinics and wellness services located closer to residential catchments.",
+          "As a regional referral hub for a largely rural district (about 68% rural population), Solapur draws patients from across the district, supporting demand for small diagnostic/clinic services beyond what the city's own population alone would suggest."
+        ],
+        "strengths": [
+          "Established multi-specialty hospital anchors build overall trust in the local healthcare ecosystem",
+          "Regional catchment area extending into rural taluka beyond city limits",
+          "NABH/NABL-accredited larger facilities set a visible local quality benchmark"
+        ],
+        "weaknesses": [
+          "Meaningful upfront cost for basic diagnostic/clinical equipment",
+          "Dependence on qualified doctor/technician availability, which can be scarce outside metro cities",
+          "Regulatory and compliance overhead (licensing, biomedical waste handling)"
+        ],
+        "opportunities": [
+          "Preventive-care and diagnostic services targeting the growing middle-class demand",
+          "Outreach tie-ups with rural taluka areas within the district",
+          "Corporate and school health-checkup partnerships"
+        ],
+        "threats": [
+          "Consolidation by larger hospital/diagnostic chains entering tier-2 cities",
+          "Rising cost of medical equipment and imported consumables",
+          "Patients migrating to Pune/Mumbai for complex tertiary care"
+        ]
+      }
+    },
+    "fashion_apparel": {
+      "category_name": "Fashion & Apparel",
+      "competitor_market_data": {
+        "competitor_count": 180,
+        "competitor_list": [
+          {
+            "name": "Darbi Cloth Market",
+            "latitude": 17.6605,
+            "longitude": 75.9075,
+            "distance_km": 0.2
+          },
+          {
+            "name": "V R Pawar Sarees Pvt Ltd",
+            "latitude": 17.661,
+            "longitude": 75.908,
+            "distance_km": 0.3
+          },
+          {
+            "name": "The Fashion Passion Store",
+            "latitude": 17.6615,
+            "longitude": 75.906,
+            "distance_km": 0.4
+          },
+          {
+            "name": "Taparia Collection",
+            "latitude": 17.6595,
+            "longitude": 75.905,
+            "distance_km": 0.3
+          },
+          {
+            "name": "Chandni NX",
+            "latitude": 17.6598,
+            "longitude": 75.9065,
+            "distance_km": 0.2
+          }
+        ],
+        "market_reach": {
+          "estimated_target_customer_base": 120000
+        },
+        "daily_footfall": 150,
+        "confidence": "Medium"
+      },
+      "pricing_margins": {
+        "pricing_band": {
+          "lowest": 300,
+          "highest": 4000,
+          "currency": "INR"
+        },
+        "average_margin_percentage": 35
+      },
+      "initial_setup_costs": {
+        "shop_deposit": 150000,
+        "equipment_and_furniture": 150000,
+        "initial_inventory": 300000,
+        "total_setup_cost": 600000,
+        "currency": "INR"
+      },
+      "monthly_running_costs": {
+        "rent": 20000,
+        "utilities": {
+          "electricity": 4000,
+          "water": 1000
+        },
+        "salaries": 25000,
+        "total_fixed_costs": 50000,
+        "currency": "INR"
+      },
+      "unit_economics": {
+        "expected_monthly_revenue": 280000,
+        "variable_costs": 182000,
+        "net_operating_income": 48000,
+        "currency": "INR"
+      },
+      "qualitative_insights": {
+        "opportunity_gaps": [
+          "Solapur is home to Darbi Cloth Market, described as the largest cloth market in Maharashtra, alongside dedicated garment clusters (Navi Peth, the Solapur textile market), reflecting deep-rooted consumer demand for apparel and fabric.",
+          "The city's own textile manufacturing base (powerloom units, terry-towel and chaddar producers) gives apparel retailers access to competitively priced local sourcing that most cities importing all their stock don't have."
+        ],
+        "strengths": [
+          "Large, well-established wholesale and retail cloth market infrastructure",
+          "Local textile manufacturing base for competitively priced sourcing",
+          "Strong festival and wedding-season demand culture"
+        ],
+        "weaknesses": [
+          "High competitive density and price-based competition among garment retailers",
+          "Fashion trends shift faster than a small stock-heavy retail model can adapt to",
+          "Inventory holding costs tied up in seasonal/festive stock"
+        ],
+        "opportunities": [
+          "Blend traditional wear (sarees, sherwanis) with contemporary lines for younger customers",
+          "Use Instagram/WhatsApp catalog selling to reach beyond walk-in footfall",
+          "Small private-label runs using local terry-towel/chaddar textile capacity for home-fashion crossover items"
+        ],
+        "threats": [
+          "Online fashion marketplaces (Myntra, Meesho, Ajio) drawing price-sensitive younger shoppers",
+          "Rising raw cotton/fabric costs pressuring margins",
+          "Market saturation given the very high existing competitor density"
+        ]
+      }
+    }
+  }
+}

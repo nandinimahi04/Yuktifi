@@ -1,0 +1,16 @@
+{
+  "name": "YuktiFi 2.0 Business Planner",
+  "short_name": "YuktiFi",
+  "description": "AI-powered business discovery and financing platform for rural entrepreneurs.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F6",
+  "theme_color": "#D35400",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

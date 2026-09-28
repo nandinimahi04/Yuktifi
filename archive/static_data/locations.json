@@ -1,0 +1,35 @@
+[
+  {
+    "id": "loc_karha",
+    "district": "Pune",
+    "state": "Maharashtra",
+    "village": "Karha",
+    "block": "Baramati",
+    "lat": 18.15,
+    "lng": 74.58,
+    "admin_level": "village",
+    "data_richness": "sparse"
+  },
+  {
+    "id": "loc_akkalkot",
+    "district": "Solapur",
+    "state": "Maharashtra",
+    "village": "Akkalkot",
+    "block": "Akkalkot",
+    "lat": 17.52,
+    "lng": 76.21,
+    "admin_level": "block",
+    "data_richness": "rich"
+  },
+  {
+    "id": "loc_sparse_rural",
+    "district": "Remote District",
+    "state": "Maharashtra",
+    "village": "Unknown",
+    "block": "Unknown",
+    "lat": 19.0,
+    "lng": 76.0,
+    "admin_level": "village",
+    "data_richness": "sparse"
+  }
+]

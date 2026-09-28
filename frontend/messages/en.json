@@ -1,0 +1,382 @@
+{
+  "Landing": {
+    "title_1": "Don’t just start a business.",
+    "title_2": "Start the right one.",
+    "subtitle": "Before you invest, know if it can work.",
+    "description": "YuktiFi helps aspiring entrepreneurs discover viable local business opportunities, understand market conditions, and build a practical business plan.",
+    "start_journey": "Start My Business Journey",
+    "see_how_it_works": "See How It Works",
+    "institutional_login": "Institutional Login",
+    "go_back": "Go Back",
+    "officer_id": "Officer ID",
+    "security_code": "Security Code",
+    "authenticate": "Authenticate & Enter",
+    "loading": {
+      "step_1": "Understanding your business idea...",
+      "step_2": "Finding relevant local market data...",
+      "step_3": "Evaluating competition...",
+      "step_4": "Checking financial feasibility...",
+      "step_5": "Generating your YUKTI insights..."
+    }
+  },
+  "Navbar": {
+    "login": "Login as Advisor"
+  },
+  "common": {
+    "govInit": "Initiative by Government of India",
+    "cancel": "Cancel",
+    "next": "Next Step",
+    "back": "Back"
+  },
+  "Stepper": {
+    "step_1": "About You",
+    "step_2": "Location",
+    "step_3": "Capital",
+    "step_4": "Business",
+    "step_5": "Review"
+  },
+  "onboarding": {
+    "step1": {
+      "title": "Tell us about yourself",
+      "subtitle": "We use this to tailor opportunities to your background.",
+      "fullName": "Full Name",
+      "namePlaceholder": "Enter your full name",
+      "age": "Age",
+      "agePlaceholder": "e.g. 35",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "socialCategory": "Social Category"
+    },
+    "step2": {
+      "title": "Where do you want to start?",
+      "subtitle": "Local market conditions determine business success.",
+      "state": "State",
+      "stateSelect": "Select State",
+      "district": "District",
+      "districtSelect": "Select District",
+      "village": "Village / Taluka / City",
+      "villagePlaceholder": "Enter your location"
+    },
+    "step3": {
+      "title": "What is your budget?",
+      "subtitle": "We will only suggest businesses you can afford.",
+      "investment": "Available Investment",
+      "investmentSelect": "Select your budget",
+      "source": "Primary Source of Funds",
+      "sourceSelect": "Select source of funds",
+      "under50k": "Under ₹50,000",
+      "above5L": "Above ₹5L",
+      "investmentPlaceholder": "Or type a custom amount (e.g. 75,000)",
+      "sourceSavings": "Personal Savings",
+      "descSavings": "Your own money",
+      "sourceLoan": "Bank Loan",
+      "descLoan": "Planning to borrow from a bank",
+      "sourceGovt": "Govt Scheme",
+      "descGovt": "Mudra, PMEGP, etc.",
+      "sourceFriends": "Friends / Family",
+      "descFriends": "Borrowing from relatives"
+    },
+    "step4": {
+      "title": "Your Business Interests",
+      "subtitle": "What kind of business are you thinking about?",
+      "industry": "Industry / Sector",
+      "selectIndustry": "Select a sector",
+      "indRetail": "Retail & Shop",
+      "indMfg": "Manufacturing",
+      "indAgri": "Agri-Business",
+      "indServices": "Services & Tech",
+      "indFood": "Food & Beverage",
+      "indCrafts": "Handicrafts & Artisanal",
+      "indLogistics": "Logistics & Delivery",
+      "indEdu": "Education & Training",
+      "indHealth": "Healthcare & Wellness",
+      "indFashion": "Fashion & Apparel",
+      "otherSpecify": "Other (Specify)",
+      "otherPlaceholder": "Type your industry",
+      "suggestedIdeas": "Suggested Ideas",
+      "idea": "Specific Idea (Optional)",
+      "ideaPlaceholder": "e.g. I want to open a small grocery store near the bus stand...",
+      "experience": "Prior Experience",
+      "expNone": "None, I am a beginner",
+      "exp1to3": "1-3 Years",
+      "exp3to5": "3-5 Years",
+      "exp5plus": "5+ Years"
+    },
+    "step5": {
+      "title": "Review Your Details",
+      "subtitle": "Make sure everything is correct before we generate your analysis.",
+      "personalProfile": "Personal Profile",
+      "name": "Name",
+      "age": "Age",
+      "category": "Social Category",
+      "locationCapital": "Location & Capital",
+      "district": "District",
+      "investment": "Investment",
+      "interest": "Interest",
+      "agreement": "By proceeding, you agree to let YuktiFi analyze your data to generate business insights.",
+      "processing": "Processing...",
+      "generateBtn": "Generate My Analysis"
+    },
+    "helpPanel": {
+      "title": "Your details help us find the best opportunities for you.",
+      "point1": "Personalised business recommendations",
+      "point2": "Location-based market analysis",
+      "point3": "Financial planning & loan guidance",
+      "point4": "Better risk assessment"
+    }
+  },
+  "dashboard": {
+    "scoreCard": {
+      "title": "YuktiFi Viability Score",
+      "verdicts": {
+        "weak": "Weak",
+        "strong": "Strong",
+        "moderate": "Moderate",
+        "risky": "Risky"
+      },
+      "desc": "This score indicates the overall viability of the business opportunity based on market demand, competition, and your capital.",
+      "viewDetails": "View Detailed Analytics",
+      "unavailable": "Not scored",
+      "unavailableDesc": "A viability score was withheld because too few of the underlying dimensions could be computed from the available evidence. Complete the missing inputs to earn a score.",
+      "verdictWithheld": "Score published, verdict withheld for low evidence coverage",
+      "notScored": "Not scored"
+    },
+    "recommended": {
+      "title": "RECOMMENDED BUSINESS",
+      "score": "Score",
+      "exploreBtn": "Explore Full Business Plan",
+      "notScored": "Not scored"
+    },
+    "journey": {
+      "title": "Your Entrepreneurship Journey",
+      "profile": "Profile",
+      "location": "Location",
+      "capital": "Capital",
+      "business": "Business",
+      "plan": "Business Plan",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "next": "Next Step"
+    },
+    "loading": {
+      "title": "Preparing Your Dashboard",
+      "subtitle": "Loading insights and opportunities..."
+    },
+    "error": {
+      "title": "Dashboard Unavailable",
+      "btn": "Return to Home"
+    },
+    "greeting": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening",
+      "subtitle": "Here is your personalized business dashboard based on the latest market data."
+    },
+    "aiInsights": {
+      "title": "YuktiFi AI Insights"
+    },
+    "metrics": {
+      "marketOpp": "Market Opportunity",
+      "finViability": "Financial Viability",
+      "riskExp": "Risk Exposure",
+      "capEff": "Capital Efficiency",
+      "status": {
+        "high": "High",
+        "medium": "Medium",
+        "good": "Good",
+        "warning": "Warning",
+        "low": "Low",
+        "excellent": "Excellent",
+        "fair": "Fair",
+        "na": "N/A"
+      }
+    }
+  },
+  "report": {
+    "loading": "Preparing your final report...",
+    "title": "Business Viability Report",
+    "export": "Export to PDF",
+    "exporting": "Generating PDF...",
+    "cover": {
+      "title": "BUSINESS\nVIABILITY\nREPORT",
+      "for": "Prepared for",
+      "prepared": "Prepared for",
+      "location": "Location",
+      "date": "Date Generated",
+      "version": "Version"
+    },
+    "summary": {
+      "title": "Executive Summary",
+      "viability": "Overall Viability:",
+      "highly": "Highly Viable",
+      "caution": "Proceed with Caution",
+      "risk": "High Risk",
+      "strategies": "Recommended Strategies"
+    },
+    "financials": {
+      "title": "Financial Projections",
+      "metric": "Metric",
+      "value": "Value",
+      "cost": "Total Initial Setup Cost",
+      "loan": "Estimated Loan Requirement",
+      "emi": "Estimated Monthly EMI (5 years @ 10%)",
+      "profit": "Expected Monthly Net Profit (Year 1)",
+      "roi": "Return on Investment (ROI)",
+      "dscr": "Debt Service Coverage Ratio (DSCR)"
+    },
+    "disclaimer": {
+      "title": "CONFIDENTIALITY & DISCLAIMER",
+      "p1": "This report is generated by YuktiFi AI for informational purposes only. The financial projections and market data are estimates based on available datasets and algorithmic models. They do not constitute professional financial advice.",
+      "p2": "Actual results may vary significantly based on execution, local market dynamics, and unforeseen risks. We recommend consulting with a certified financial advisor before making any investment decisions."
+    }
+  },
+  "simulator": {
+    "error": "Failed to run simulation.",
+    "title": "What-If Simulator",
+    "subtitle": "Stress test your business model for:",
+    "yourBusiness": "Your Business",
+    "generateReport": "Generate Final Report",
+    "variables": {
+      "title": "Adjust Variables",
+      "demand": "Market Demand (-50% to +50%)",
+      "demandLow": "-50%",
+      "demandHigh": "+50%",
+      "costs": "Operating Costs (-30% to +50%)",
+      "costsLow": "-30%",
+      "costsHigh": "+50%",
+      "price": "Selling Price (-20% to +20%)",
+      "priceLow": "-20%",
+      "priceHigh": "+20%",
+      "runTest": "Run Stress Test"
+    },
+    "results": {
+      "title": "Simulation Results",
+      "placeholder": "Run a simulation to see impact.",
+      "before": "Baseline (Before)",
+      "roi": "ROI",
+      "dscr": "DSCR",
+      "after": "Simulated (After)",
+      "safe": "SAFE",
+      "risk": "AT RISK",
+      "viableTitle": "Business Remains Viable",
+      "riskTitle": "Business is at Risk",
+      "viableDesc": "Under these conditions, your DSCR is {dscr}. You can still cover loan obligations safely.",
+      "riskDesc": "Under these conditions, your DSCR drops to {dscr}. You will struggle to cover monthly loan obligations."
+    }
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "discover": "Discover",
+    "marketIntelligence": "Market Intelligence",
+    "financials": "Financials",
+    "score": "YuktiFi Score",
+    "simulator": "Simulator",
+    "plans": "Business Plans",
+    "actionPlan": "Action Plan",
+    "documents": "Documents",
+    "ask": "Ask YuktiFi",
+    "analytics": "Regional Analytics",
+    "reviewQueue": "Application Queue",
+    "regionalReports": "Regional Reports"
+  },
+  "market": {
+    "searchPlaceholder": "Search metrics...",
+    "changeBtn": "Change",
+    "oppScore": "Opportunity Score",
+    "error": {
+      "desc": "Failed to load market intelligence data.",
+      "title": "Data Unavailable",
+      "btn": "Return to Dashboard"
+    },
+    "loading": {
+      "title": "Analyzing local market data..."
+    },
+    "title": "Market Intelligence for",
+    "tabs": {
+      "snapshot": "Snapshot",
+      "map": "Map View",
+      "competitors": "Competitors",
+      "customers": "Customers",
+      "swot": "SWOT",
+      "pricing": "Pricing",
+      "schemes": "Gov Schemes"
+    },
+    "snapshot": {
+      "title": "Market Snapshot",
+      "demand": "Demand",
+      "competition": "Competition",
+      "saturation": "Saturation",
+      "pricing": "Avg Pricing",
+      "accessibility": "Accessibility",
+      "supplyRisk": "Supply Risk",
+      "seasonality": "Seasonality",
+      "keyInsights": "Key Insights",
+      "compFound": "Found {count} competitors within 5km radius."
+    },
+    "map": {
+      "title": "Catchment & Market Competition Map",
+      "legend": {
+        "competitors": "Competitors",
+        "customers": "Target Clusters",
+        "transport": "Transport Hubs",
+        "markets": "Local Markets",
+        "schools": "Schools",
+        "hospitals": "Hospitals",
+        "opportunity": "High Opportunity Zone"
+      }
+    },
+    "competitors": {
+      "title": "Local Competitors (5km Radius)",
+      "name": "Name",
+      "distance": "Distance",
+      "volume": "Est. Volume",
+      "threat": "Threat Level",
+      "noComp": "No competitors found in the immediate vicinity.",
+      "customers": "customers/day"
+    },
+    "customers": {
+      "demographics": "Target Demographics",
+      "ageGroup": "Primary Age Group",
+      "income": "Income Segment",
+      "useCase": "Primary Use Case",
+      "peakHours": "Peak Hours",
+      "size": "Market Size Estimate",
+      "potential": "~{count} potential consumers in catchment area"
+    },
+    "swot": {
+      "title": "SWOT Analysis",
+      "strengths": "Strengths",
+      "noStrengths": "No strengths identified.",
+      "weaknesses": "Weaknesses",
+      "noWeaknesses": "No weaknesses identified.",
+      "opportunities": "Opportunities",
+      "noOpportunities": "No opportunities identified.",
+      "threats": "Threats",
+      "noThreats": "No threats identified."
+    },
+    "pricing": {
+      "title": "Pricing Strategy",
+      "optimal": "Optimal Price Point",
+      "basedOn": "Based on local purchasing power",
+      "valueProp": "Value Proposition",
+      "desc": "Positioning your product at {price} places it firmly in the competitive sweet spot for this neighborhood.",
+      "revenue": "Est. Monthly Revenue Limit"
+    },
+    "schemes": {
+      "title": "Government Schemes & Subsidies",
+      "highly": "Highly Recommended",
+      "loading": "Loading scheme rules…",
+      "unavailable": "Scheme information is unavailable",
+      "unavailableHint": "The rule table could not be reached, so no scheme terms are shown. Terms are not repeated from memory: check the official portal for current figures.",
+      "ruleId": "Rule",
+      "status": "Status",
+      "ceiling": "Prototype ceiling",
+      "rate": "Prototype rate",
+      "noTerms": "This build does not evaluate the financial terms of this scheme, so none are shown.",
+      "effectiveDate": "Effective-date state",
+      "officialLink": "Check current terms on the official portal"
+    }
+  }
+}

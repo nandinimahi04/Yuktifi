@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: sqlite:////app/runtime_data/yukti.db
+      CORS_ORIGINS: http://localhost:3000
+      SEED_ON_STARTUP: "true"
+      YUKTI_API_KEY: ""
+    ports:
+      - "8000:8000"
+    volumes:
+      - yukti_data:/app/runtime_data
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+volumes:
+  yukti_data:

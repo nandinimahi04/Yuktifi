@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ds_osm",
+    "name": "OpenStreetMap Commercial Data",
+    "type": "open_data",
+    "dataset": "competitors",
+    "confidence": "medium",
+    "url": "https://openstreetmap.org"
+  },
+  {
+    "id": "ds_worldpop",
+    "name": "WorldPop Spatial Demographics",
+    "type": "open_data",
+    "dataset": "market_metrics",
+    "confidence": "high",
+    "url": "https://worldpop.org"
+  },
+  {
+    "id": "ds_agmarknet",
+    "name": "Agmarknet Price Indices",
+    "type": "government",
+    "dataset": "prices",
+    "confidence": "high",
+    "url": "https://agmarknet.gov.in"
+  },
+  {
+    "id": "ds_nsfdc",
+    "name": "NSFDC Scheme Directives",
+    "type": "government",
+    "dataset": "schemes",
+    "confidence": "high",
+    "url": "https://nsfdc.nic.in"
+  },
+  {
+    "id": "ds_pmegp",
+    "name": "PMEGP E-Portal",
+    "type": "government",
+    "dataset": "schemes",
+    "confidence": "high",
+    "url": "https://kviconline.gov.in/pmegpeportal"
+  },
+  {
+    "id": "ds_local_survey",
+    "name": "Local Survey Data",
+    "type": "user_input",
+    "dataset": "cost_models",
+    "confidence": "low",
+    "url": ""
+  }
+]

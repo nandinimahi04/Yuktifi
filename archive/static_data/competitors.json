@@ -1,0 +1,41 @@
+[
+  {
+    "id": "comp_1",
+    "location_id": "loc_akkalkot",
+    "category_id": "dairy",
+    "name": "Gokul Dairy",
+    "latitude": 17.521,
+    "longitude": 76.211,
+    "estimated_scale": 10000,
+    "source_id": "ds_osm",
+    "confidence": "Medium",
+    "last_verified": "2026-09-06T00:00:00",
+    "synthetic": false
+  },
+  {
+    "id": "comp_2",
+    "location_id": "loc_akkalkot",
+    "category_id": "retail",
+    "name": "Mahalaxmi Kirana",
+    "latitude": 17.522,
+    "longitude": 76.215,
+    "estimated_scale": 5000,
+    "source_id": "ds_osm",
+    "confidence": "Medium",
+    "last_verified": "2026-09-06T00:00:00",
+    "synthetic": false
+  },
+  {
+    "id": "comp_3",
+    "location_id": "loc_karha",
+    "category_id": "textiles",
+    "name": "Sanjay Tailors",
+    "latitude": 18.151,
+    "longitude": 74.582,
+    "estimated_scale": 2000,
+    "source_id": "ds_osm",
+    "confidence": "Medium",
+    "last_verified": "2026-09-06T00:00:00",
+    "synthetic": true
+  }
+]

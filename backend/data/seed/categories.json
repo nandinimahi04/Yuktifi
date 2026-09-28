@@ -1,0 +1,7 @@
+[
+  {"id": "dairy", "name": "Dairy", "description": "Small-scale dairy farming (5-10 cattle), milk collection & sale."},
+  {"id": "retail", "name": "Retail / Kirana Store", "description": "General provisions and FMCG retail shop."},
+  {"id": "textiles", "name": "Textiles & Tailoring", "description": "Garment stitching and alteration unit."},
+  {"id": "food_processing", "name": "Food Processing", "description": "Grain grinding, flour and spices processing unit."},
+  {"id": "services", "name": "Local Services", "description": "Barber, repair shop, and other local services."}
+]

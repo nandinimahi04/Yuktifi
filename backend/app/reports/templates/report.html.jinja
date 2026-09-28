@@ -1,0 +1,196 @@
+<style>
+    .report-content { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b; line-height: 1.6; }
+    .report-content h3 { font-size: 1.5rem; color: #0f172a; border-bottom: 2px solid #ea580c; padding-bottom: 0.5rem; margin-top: 2rem; margin-bottom: 1rem; page-break-after: avoid; }
+    .report-content p { margin-bottom: 1rem; }
+    .report-content strong { color: #0f172a; }
+    .report-table { width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 2rem; }
+    .report-table th { padding: 0.75rem; text-align: left; background-color: #f8fafc; border-bottom: 2px solid #ea580c; font-weight: bold; color: #0f172a; }
+    .report-table td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
+    .report-table tr:nth-child(even) { background-color: #fcfcfc; }
+    .page-break { page-break-before: always; }
+    .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    .swot-box { padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .swot-box h4 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .swot-s { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+    .swot-w { background-color: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .swot-o { background-color: #f0f9ff; border-color: #bae6fd; color: #075985; }
+    .swot-t { background-color: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    .analyst-note { margin-top: 1.5rem; padding: 1rem; background-color: #f8fafc; border-left: 4px solid #ea580c; border-radius: 4px; font-size: 0.95rem; }
+    .checklist { list-style: none; padding-left: 0; }
+    .checklist li { padding-left: 1.5rem; position: relative; margin-bottom: 0.5rem; }
+    .checklist li::before { content: '✓'; position: absolute; left: 0; color: #ea580c; font-weight: bold; }
+</style>
+
+<div class="report-content">
+    <h3>1. Business Overview</h3>
+    <table class="report-table">
+        <tbody>
+            <tr>
+                <td style="width: 40%;"><strong>Business Category</strong></td>
+                <td>{{ category.name if category else 'Not Selected' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Target Location</strong></td>
+                <td>{{ location.district if location else 'Unknown' }}{% if location and location.state %}, {{ location.state }}{% endif %}</td>
+            </tr>
+            <tr>
+                <td><strong>User Margin Capital</strong></td>
+                <td>₹{{ "{:,.2f}".format(session.margin_capital) if session and session.margin_capital else '0.00' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Target Consumer Base</strong></td>
+                <td>{% if market_reach and market_reach.value and market_reach.value.population %}
+                    {{ "{:,.0f}".format(market_reach.value.population) }} people
+                    <span style="color: #6b7280;">({{ market_reach.data_origin }} — village-scale estimate, {{ market_reach.confidence }} confidence)</span>
+                {% else %}
+                    Not established from available data &mdash; no population figure is
+                    asserted for this location.
+                {% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if loan %}
+    <h3 class="page-break">2. Capital Requirements & Proposed Financing</h3>
+    <p>This section outlines the total capital expenditure (CapEx) and working capital required to launch the business, alongside the recommended financing structure under the targeted government scheme.</p>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Capital Metric</th>
+                <th style="text-align: right;">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total Estimated Project Cost</td>
+                <td style="text-align: right; font-weight: bold;">₹{{ "{:,.2f}".format(loan.project_cost) }}</td>
+            </tr>
+            <tr>
+                <td>Beneficiary Contribution (Margin)</td>
+                <td style="text-align: right; font-weight: bold;">₹{{ "{:,.2f}".format(loan.beneficiary_contribution) }}</td>
+            </tr>
+            <tr>
+                <td>Required Term Loan Amount</td>
+                <td style="text-align: right; font-weight: bold; color: #ea580c;">₹{{ "{:,.2f}".format(loan.loan_amount) }}</td>
+            </tr>
+            <tr>
+                <td>Unfunded Gap</td>
+                <td style="text-align: right; font-weight: bold; {% if loan.project_cost - loan.beneficiary_contribution - loan.loan_amount > 0 %}color: #dc2626;{% else %}color: #059669;{% endif %}">
+                    ₹{{ "{:,.2f}".format([loan.project_cost - loan.beneficiary_contribution - loan.loan_amount, 0] | max) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% if loan.project_cost - loan.beneficiary_contribution - loan.loan_amount > 0 %}
+    <p style="font-size: 11px; color: #dc2626;">
+        Warning: the financing structure does not fully cover the project cost. The
+        remaining gap of ₹{{ "{:,.2f}".format(loan.project_cost - loan.beneficiary_contribution - loan.loan_amount) }}
+        must be met from additional sources before the project can proceed.
+    </p>
+    {% endif %}
+    {% endif %}
+
+    {% if projection %}
+    <h3 class="page-break">3. Financial Projections & Feasibility (Year 1)</h3>
+    <p>Financial projections are based on local market pricing, standard operating expenses for this category, and the selected term loan structure. Projections assume a gradual ramp-up to target capacity utilization.</p>
+    
+    <table class="report-table">
+        <thead>
+            <tr>
+                <th>Financial Indicator</th>
+                <th style="text-align: right;">Projected Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Estimated Monthly Revenue</td>
+                <td style="text-align: right; font-weight: bold;">₹{{ "{:,.2f}".format(projection.monthly_revenue) }}</td>
+            </tr>
+            <tr>
+                <td>Estimated Monthly Net Profit</td>
+                <td style="text-align: right; font-weight: bold;">₹{{ "{:,.2f}".format(projection.net_profit) }}</td>
+            </tr>
+            <tr>
+                <td>Estimated Monthly EMI</td>
+                <td style="text-align: right; font-weight: bold;">₹{{ "{:,.2f}".format(projection.monthly_emi) if projection.monthly_emi else 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td>Return on Investment (ROI)</td>
+                <td style="text-align: right; font-weight: bold; color: #059669;">{{ "{:,.1f}".format(projection.roi) }}%</td>
+            </tr>
+            <tr>
+                <td>Debt Service Coverage Ratio (DSCR)</td>
+                <td style="text-align: right; font-weight: bold;">{% if projection.dscr is not none %}{{ "{:,.2f}".format(projection.dscr) }}{% else %}N/A (no debt){% endif %}</td>
+            </tr>
+            <tr>
+                <td>Break-Even Point (Units/Month)</td>
+                <td style="text-align: right; font-weight: bold;">{% if projection.break_even_units %}{{ "{:,.0f}".format(projection.break_even_units) }}{% else %}N/A{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="analyst-note">
+        <strong>Analyst Note:</strong>
+        {% if projection.dscr is not none %}
+        A DSCR of {{ "{:,.2f}".format(projection.dscr) }} indicates that the business generates sufficient cash flow to cover its debt obligations.
+        {% else %}
+        No debt is assumed for this business, so debt service coverage does not apply.
+        {% endif %}
+        An ROI of {{ "{:,.1f}".format(projection.roi) }}% represents the return on the initial capital outlay.
+        {% if projection.break_even_units %}
+        The business must achieve sales of {{ "{:,.0f}".format(projection.break_even_units) }} units per month to cover all fixed and variable costs.
+        {% else %}
+        Break-even cannot be stated because contribution per unit is not positive.
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <h3 class="page-break">4. Market & SWOT Analysis</h3>
+    <p>Strategic evaluation of the business category within the selected micro-market.</p>
+    
+    <div class="swot-grid">
+        <div class="swot-box swot-s">
+            <h4>Strengths</h4>
+            <ul style="margin:0; padding-left:1.2rem;">
+                <li>High local demand relative to supply</li>
+                <li>Low technological barrier to entry</li>
+                <li>Favorable unit economics</li>
+            </ul>
+        </div>
+        <div class="swot-box swot-w">
+            <h4>Weaknesses</h4>
+            <ul style="margin:0; padding-left:1.2rem;">
+                <li>Dependence on local foot traffic</li>
+                <li>Working capital constraints in Year 1</li>
+                <li>Limited initial brand recognition</li>
+            </ul>
+        </div>
+        <div class="swot-box swot-o">
+            <h4>Opportunities</h4>
+            <ul style="margin:0; padding-left:1.2rem;">
+                <li>Government subsidies (PMEGP/Mudra)</li>
+                <li>Digital payment integration</li>
+                <li>Local B2B supply partnerships</li>
+            </ul>
+        </div>
+        <div class="swot-box swot-t">
+            <h4>Threats</h4>
+            <ul style="margin:0; padding-left:1.2rem;">
+                <li>Incumbent competition within 2km</li>
+                <li>Raw material price fluctuations</li>
+                <li>Unforeseen operational delays</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="page-break">5. Action Plan & Next Steps</h3>
+    <p>To proceed with business implementation and secure financing, complete the following milestones:</p>
+    <ul class="checklist">
+        <li><strong>Formalize Business Entity:</strong> Register for Udyam Aadhaar and secure necessary local municipal licenses (Shop & Establishment Act).</li>
+        <li><strong>Finalize Location Lease:</strong> Secure a commercial rental agreement in {{ location.district if location else 'the target area' }}, ensuring it meets foot-traffic requirements.</li>
+        <li><strong>Submit Loan Application:</strong> Use this DPR to apply for the recommended scheme via the JanSamarth portal or directly with a partner bank.</li>
+        <li><strong>Vendor Quotations:</strong> Procure pro-forma invoices for machinery, equipment, and initial inventory as required by the lending agency.</li>
+        <li><strong>Open Current Account:</strong> Establish a business banking relationship to handle loan disbursal and operational cash flows.</li>
+    </ul>
+</div>

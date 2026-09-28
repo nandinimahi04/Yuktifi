@@ -1,0 +1,9 @@
+[
+  {
+    "id": "risk_dairy_1",
+    "category_id": "dairy",
+    "risk_type": "Weather",
+    "description": "Milk yield decreases during summer peak.",
+    "severity": "Medium"
+  }
+]

@@ -1,0 +1,7 @@
+dataset: udyam_registration
+source: Open Government Data Platform India
+source_url: https://www.data.gov.in/
+observed_at: null
+geography: district
+format: csv_or_api
+is_estimate: false

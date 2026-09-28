@@ -1,0 +1,70 @@
+# ─── Secrets ──────────────────────────────────────────────────────────────────
+# `.env` held a live third-party API key when this repository was audited. Any
+# file of this name is ignored, and the only committed example is the
+# placeholder `.env.example`.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+credentials.json
+service-account*.json
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ─── Node / Next.js ───────────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+.turbo/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# ─── Runtime state ────────────────────────────────────────────────────────────
+# The SQLite database is created at runtime and seeded from data/seed. Shipping
+# a copy freezes whatever state the last run left behind, which is how an
+# effectively-empty database came to be delivered as part of the project.
+*.db
+*.sqlite
+*.sqlite3
+backend/yukti.db
+
+# ─── Logs and scratch output ──────────────────────────────────────────────────
+*.log
+logs/
+test_api_log.txt
+*.tmp
+
+# ─── Large unused assets ─────────────────────────────────────────────────────
+# 4.6 MB, referenced by zero files under frontend/ (checked every .tsx/.ts/.css/
+# .mjs/.json). Kept locally, not shipped. The other public/*.png files are
+# referenced and are staged normally.
+frontend/public/Gemini_Generated_Image_*.png
+
+# ─── One-off dev scripts ────────────────────────────────────────────────────
+# `rename_script.py` is a throwaway bulk-rename helper with hardcoded absolute
+# paths from the original machine (`d:\yukti\...`). It has no role in the
+# application and would mislead anyone who tried to run it elsewhere.
+/rename_script.py
+
+# ─── OS / editor ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
