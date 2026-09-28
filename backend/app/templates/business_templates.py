@@ -494,9 +494,11 @@ ALIAS_MAP: Dict[str, str] = {
 }
 
 
-def get_business_template(category_id: str) -> BusinessTemplate:
-    """Retrieve template by canonical ID or alias with safe fallback to retail_kirana."""
+def get_business_template(category_id: str) -> BusinessTemplate | None:
+    """Retrieve template by canonical ID or alias."""
     cid = (category_id or "").strip().lower()
+    if not cid:
+        return None
     if cid in TEMPLATES:
         return TEMPLATES[cid]
     mapped = ALIAS_MAP.get(cid)
@@ -506,4 +508,4 @@ def get_business_template(category_id: str) -> BusinessTemplate:
     for key in TEMPLATES:
         if key in cid or cid in key:
             return TEMPLATES[key]
-    return TEMPLATES["retail_kirana"]
+    return None
