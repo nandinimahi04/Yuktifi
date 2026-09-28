@@ -210,7 +210,7 @@ TEMPLATES: Dict[str, BusinessTemplate] = {
     )
 }
 
-def get_business_template(category_id: str) -> BusinessTemplate:
+def get_business_template(category_id: str) -> BusinessTemplate | None:
     if not category_id or category_id not in TEMPLATES:
-        raise ValueError(f"Unknown or missing category_id: {category_id}")
+        return None
     return TEMPLATES[category_id]

@@ -155,8 +155,8 @@ def compute_cashflow_projection(
     monthly_fixed_cost: float,
     monthly_variable_cost: float,
     emi: float,
-    moratorium_months: int = 0,
     category_id: str,
+    moratorium_months: int = 0,
     num_months: int = 12,
 ) -> List[Dict[str, Any]]:
     """
@@ -342,8 +342,8 @@ def compute_payback_period(
     monthly_fixed_cost: float,
     emi: float,
     total_investment: float,
-    moratorium_months: int = 0,
     category_id: str,
+    moratorium_months: int = 0,
     max_months: int = 60,
     interest_rate_annual_pct: float = 0.0,
     outstanding_balance: Optional[float] = None,
@@ -520,8 +520,8 @@ def run_financial_engine(
     setup_costs: Dict[str, Any],
     pricing_margins: Dict[str, Any],
     monthly_costs: Dict[str, Any],
-    unit_economics: Optional[Dict[str, Any]] = None,
     category_id: str,
+    unit_economics: Optional[Dict[str, Any]] = None,
     working_capital_cfg: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """

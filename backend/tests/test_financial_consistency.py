@@ -150,6 +150,7 @@ def test_the_cash_flow_projection_cumulative_agrees_with_its_own_months():
         monthly_fixed_cost=MONTHLY_FIXED_COST,
         monthly_variable_cost=MONTHLY_VARIABLE_COST,
         emi=0.0,
+        category_id="retail_kirana",
     )
 
     running = 0.0
@@ -230,6 +231,7 @@ def dataset_plan(**overrides):
         setup_costs={"total_setup_cost": TOTAL_INVESTMENT},
         pricing_margins={"average_margin_percentage": 46.7},
         monthly_costs={"total_fixed_costs": MONTHLY_FIXED_COST},
+        category_id="retail_kirana",
         unit_economics=unit_economics,
     )
     kwargs.update(overrides)
@@ -281,6 +283,7 @@ def test_the_legacy_entry_point_refuses_an_incomplete_dataset():
         setup_costs={},
         pricing_margins={},
         monthly_costs={},
+        category_id="retail_kirana",
     )
 
     assert out["financial_data_available"] is False

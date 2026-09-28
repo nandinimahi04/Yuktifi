@@ -35,6 +35,7 @@ def test_engine_never_infers_project_cost_from_margin_capital():
         user_capital=100_000.0,
         setup_costs={}, pricing_margins={},
         monthly_costs={}, unit_economics={},
+        category_id="retail_kirana",
     )
     assert result["financial_data_available"] is False
     assert "loan_amount" not in result
