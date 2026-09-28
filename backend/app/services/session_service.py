@@ -445,17 +445,68 @@ def get_base_state(db: DBSession, session_id: str) -> dict:
             "confidence_multiplier": 0.85,
         }
 
-    # Rebuild the canonical input from the cost profile so the simulator
-    # applies shocks to the same declared cost lines.
-    cost_result = data_layer.get_cost_profile(
-        session.location_id, session.category_id
-    )
-    canonical_input, _ = build_canonical_input(
-        session.category_id,
-        session.margin_capital,
-        cost_result.get("value"),
-        overrides=getattr(session, "financial_overrides", {}),
-    )
+    from app.models.financial_assumptions import ProjectFinancialAssumptions
+    assumptions_record = db.query(ProjectFinancialAssumptions).filter(
+        ProjectFinancialAssumptions.session_id == session_id
+    ).first()
+
+    if assumptions_record:
+        tmpl = get_business_template(session.category_id or "retail_kirana")
+        if assumptions_record.is_direct_revenue_mode:
+            monthly_rev = assumptions_record.monthly_revenue
+            price = assumptions_record.selling_price if assumptions_record.selling_price > 0 else tmpl.typical_selling_price
+            units_m = (monthly_rev / price) if price > 0 else 1.0
+            var_cost = assumptions_record.variable_cost_per_unit if assumptions_record.variable_cost_per_unit > 0 else (price * (tmpl.typical_cogs_pct / 100.0))
+        else:
+            price = assumptions_record.selling_price
+            units_m = assumptions_record.units_per_day * assumptions_record.operating_days
+            var_cost = assumptions_record.variable_cost_per_unit
+            monthly_rev = price * units_m
+
+        wc_cfg = WorkingCapitalConfig(
+            inventory_days=tmpl.default_inventory_days,
+            receivable_days=tmpl.default_receivable_days,
+            payable_days=tmpl.default_payable_days,
+        )
+
+        canonical_input = CanonicalFinancialInput(
+            business_type=session.category_id or "retail_kirana",
+            products=[ProductItem(
+                name=tmpl.name,
+                units_per_month=units_m,
+                selling_price=price,
+                variable_cost_per_unit=var_cost,
+            )],
+            opex=OpexBreakdown(other=assumptions_record.monthly_expenses),
+            own_capital=assumptions_record.own_capital,
+            total_project_cost=assumptions_record.project_cost,
+            asset_cost=assumptions_record.project_cost * tmpl.depreciable_asset_share if assumptions_record.project_cost else None,
+            useful_life_years=tmpl.asset_useful_life_years,
+            derive_debt_from_scheme=False,
+            debt_amount=assumptions_record.loan_amount,
+            interest_rate_annual_pct=assumptions_record.interest_rate_annual_pct,
+            tenure_months=assumptions_record.loan_tenure_months,
+            moratorium_months=assumptions_record.moratorium_months,
+            tax_rate_pct=assumptions_record.tax_rate_pct,
+            working_capital_cfg=wc_cfg,
+        )
+        rate = assumptions_record.interest_rate_annual_pct
+        tenure_months = assumptions_record.loan_tenure_months
+        moratorium_months = assumptions_record.moratorium_months
+        financing_status = "DECLARED"
+        financing_note = f"Declared loan terms: {rate}% over {tenure_months} months."
+    else:
+        # Rebuild the canonical input from the cost profile so the simulator
+        # applies shocks to the same declared cost lines.
+        cost_result = data_layer.get_cost_profile(
+            session.location_id, session.category_id or "retail_kirana"
+        )
+        canonical_input, _ = build_canonical_input(
+            session.category_id or "retail_kirana",
+            session.margin_capital,
+            cost_result.get("value"),
+            overrides=getattr(session, "financial_overrides", {}),
+        )
 
         scheme = match_scheme(
             loan.project_cost,
