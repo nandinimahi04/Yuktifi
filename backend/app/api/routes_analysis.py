@@ -38,8 +38,8 @@ async def generate_analysis(req: AnalysisRequest):
     """
 
     # ── 1. DYNAMIC LOCATION RESOLUTION ───────────────────────────────────────
-    district = req.location.get("district", "").strip() or req.location.get("query", "").strip() or "General Location"
-    state = req.location.get("state", "").strip() or "India"
+    district = req.location.get("district", "").strip()
+    state = req.location.get("state", "").strip()
 
     from app.location.resolver import LocationResolver
     resolver = LocationResolver([])
@@ -54,7 +54,7 @@ async def generate_analysis(req: AnalysisRequest):
     area_of_interest = req.business.get("area_of_interest", "")
     suggested_idea   = req.business.get("suggested_idea", "")
     detailed_idea    = req.business.get("detailed_idea_description", "")
-    prior_experience = req.business.get("prior_experience", "Beginner")
+    prior_experience = req.business.get("prior_experience")
 
     logger.info(
         "[ANALYSIS] Matching category: area='%s' idea='%s' experience='%s'",
@@ -210,7 +210,7 @@ async def generate_analysis(req: AnalysisRequest):
         # Build compact context (Step 19 — do NOT dump raw JSON)
         gemini_context = {
             "user": {
-                "name": req.profile.get("name", "Entrepreneur"),
+                "name": req.profile.get("name"),
                 "experience": prior_experience,
             },
             "location": {"district": district, "state": req.location.get("state", "")},
@@ -305,7 +305,7 @@ Return strict JSON: {{"rationale": "...", "recommendations": ["...", "...", "...
         },
 
         "profile": {
-            "name": req.profile.get("name", "Entrepreneur"),
+            "name": req.profile.get("name"),
             "age": req.profile.get("age"),
             "gender": req.profile.get("gender", ""),
             "social_category": req.profile.get("social_category", ""),

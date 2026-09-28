@@ -156,7 +156,7 @@ def compute_cashflow_projection(
     monthly_variable_cost: float,
     emi: float,
     moratorium_months: int = 0,
-    category_id: str = "retail_kirana",
+    category_id: str,
     num_months: int = 12,
 ) -> List[Dict[str, Any]]:
     """
@@ -343,7 +343,7 @@ def compute_payback_period(
     emi: float,
     total_investment: float,
     moratorium_months: int = 0,
-    category_id: str = "retail_kirana",
+    category_id: str,
     max_months: int = 60,
     interest_rate_annual_pct: float = 0.0,
     outstanding_balance: Optional[float] = None,
@@ -423,7 +423,7 @@ def compute_payback_period(
 
 def compute_seasonal_revenue(
     monthly_revenue: float,
-    category_id: str = "retail_kirana",
+    category_id: str,
 ) -> List[Dict[str, Any]]:
     """
     Twelve months of revenue under this category's seasonal profile.
@@ -521,7 +521,7 @@ def run_financial_engine(
     pricing_margins: Dict[str, Any],
     monthly_costs: Dict[str, Any],
     unit_economics: Optional[Dict[str, Any]] = None,
-    category_id: str = "retail_kirana",
+    category_id: str,
     working_capital_cfg: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """

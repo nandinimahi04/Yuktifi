@@ -54,25 +54,22 @@ export default function LandingPage() {
     }, 2000);
 
     try {
-      // Normalize investment string → numeric value
-      let investmentAmount = 0;
-      const invStr = (onboardingData.investment || "").trim();
-      if (invStr.includes("Under") && invStr.includes("50,000")) investmentAmount = 25000;
-      else if (invStr.includes("50,000") && invStr.includes("1L")) investmentAmount = 75000;
-      else if (invStr.includes("1L") && invStr.includes("3L")) investmentAmount = 200000;
-      else if (invStr.includes("3L") && invStr.includes("5L")) investmentAmount = 400000;
-      else if (invStr.includes("5L")) investmentAmount = 600000;
-      else {
-        // Parse custom numeric entry (strip ₹ commas spaces)
-        const numeric = parseFloat(invStr.replace(/[₹,\s]/g, ""));
-        if (!isNaN(numeric) && numeric > 0) investmentAmount = numeric;
-      }
+      // Parse numeric investment
+      const investmentAmount = parseFloat(onboardingData.investment || "0");
 
       // Create user profile
       const resProfile = await api.createProfile({
         name: onboardingData.fullName || "Entrepreneur",
+        age: parseInt(onboardingData.age) || 0,
+        gender: onboardingData.gender,
+        social_category: onboardingData.category,
         location_input: `${onboardingData.village ? onboardingData.village + ', ' : ''}${onboardingData.district}, ${onboardingData.state}`,
-        language: "en"
+        language: "en",
+        business_idea: onboardingData.ideaDetails || "",
+        business_industry: onboardingData.industry || "",
+        business_experience: onboardingData.experience || "",
+        available_capital_inr: investmentAmount > 0 ? investmentAmount : undefined,
+        loan_intent: onboardingData.loanIntent || "not_sure"
       });
       
       // Generate full dynamic analysis via the SINGLE authoritative endpoint
@@ -90,11 +87,10 @@ export default function LandingPage() {
         },
         capital: {
           investment_amount: investmentAmount,
-          primary_source: onboardingData.source
+          loan_intent: onboardingData.loanIntent
         },
         business: {
           area_of_interest: onboardingData.industry,
-          suggested_idea: onboardingData.selectedIdea || "",
           detailed_idea_description: onboardingData.ideaDetails || "",
           prior_experience: onboardingData.experience
         },

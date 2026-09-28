@@ -211,4 +211,6 @@ TEMPLATES: Dict[str, BusinessTemplate] = {
 }
 
 def get_business_template(category_id: str) -> BusinessTemplate:
-    return TEMPLATES.get(category_id, TEMPLATES["retail_kirana"])
+    if not category_id or category_id not in TEMPLATES:
+        raise ValueError(f"Unknown or missing category_id: {category_id}")
+    return TEMPLATES[category_id]

@@ -31,8 +31,8 @@
   "Stepper": {
     "step_1": "About You",
     "step_2": "Location",
-    "step_3": "Capital",
-    "step_4": "Business",
+    "step_3": "Business",
+    "step_4": "Investment",
     "step_5": "Review"
   },
   "onboarding": {
@@ -47,7 +47,8 @@
       "male": "Male",
       "female": "Female",
       "other": "Other",
-      "socialCategory": "Social Category"
+      "socialCategory": "Social Category",
+      "schemeNote": "Used only to match you with government schemes you may be eligible for."
     },
     "step2": {
       "title": "Where do you want to start?",

@@ -244,7 +244,7 @@ def compute_full_financials(
         raise ValueError(f"Session {session_id} not found")
 
     location_id = session.location_id
-    category_id = session.category_id or "retail_kirana"
+    category_id = session.category_id
     margin_capital = session.margin_capital
 
     cost_result = data_layer.get_cost_profile(location_id, category_id) if category_id else {"value": None}
@@ -448,10 +448,10 @@ def get_base_state(db: DBSession, session_id: str) -> dict:
     # Rebuild the canonical input from the cost profile so the simulator
     # applies shocks to the same declared cost lines.
     cost_result = data_layer.get_cost_profile(
-        session.location_id, session.category_id or "retail_kirana"
+        session.location_id, session.category_id
     )
     canonical_input, _ = build_canonical_input(
-        session.category_id or "retail_kirana",
+        session.category_id,
         session.margin_capital,
         cost_result.get("value"),
         overrides=getattr(session, "financial_overrides", {}),
