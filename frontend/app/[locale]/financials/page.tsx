@@ -1103,8 +1103,37 @@ const EvidenceTab = ({ data }: { data: FinanceResponse }) => {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FinancialsPage() {
-  const { analysisResult } = useStore();
+  const { analysisResult, sessionId: rawSessionId } = useStore();
+  const sessionId = rawSessionId || analysisResult?.session_id;
   const [activeTab, setActiveTab] = useState("overview");
+
+  // Fetch and synchronize latest verified financial assumptions on mount
+  useEffect(() => {
+    if (!sessionId) return;
+    const fetchLatestFinancials = async () => {
+      try {
+        const res = await api.getFinancialAssumptions(sessionId);
+        if (res && res.financials && analysisResult) {
+          useStore.setState({
+            analysisResult: {
+              ...analysisResult,
+              financials: res.financials,
+              scores: res.scores ? {
+                ...analysisResult.scores,
+                overall: res.scores.yukti_score,
+                dimensions: res.scores,
+                verdict: res.scores.verdict,
+                score_available: res.scores.yukti_score !== null,
+              } : analysisResult.scores,
+            }
+          });
+        }
+      } catch (e) {
+        console.warn("Could not sync latest financials on mount:", e);
+      }
+    };
+    fetchLatestFinancials();
+  }, [sessionId]);
 
   if (!analysisResult || !analysisResult.financials) {
     return (

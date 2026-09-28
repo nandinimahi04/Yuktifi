@@ -608,7 +608,7 @@ export default function FinancialAssumptionsPanel({
                   </div>
                   <div>
                     <span className="text-[11px] font-bold text-ink-soft uppercase block">Gross Margin</span>
-                    <span className={`text-base font-bold ${grossMarginPct >= 20 ? "text-emerald-700" : grossMarginPct > 0 ? "text-amber-600" : "text-red-600 font-black"}`}>
+                    <span className={`text-base font-bold ${grossMarginPct >= 20 ? "text-emerald-700" : grossMarginPct > 0 ? "text-ink" : "text-red-600 font-black"}`}>
                       {grossMarginPct}%
                     </span>
                   </div>
