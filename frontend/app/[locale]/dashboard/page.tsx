@@ -24,16 +24,16 @@ const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; ve
   const t = useTranslations('dashboard.scoreCard');
   const verdictText = typeof verdict === 'object' && verdict !== null ? (verdict.text || verdict.label || '') : (typeof verdict === 'string' ? verdict : '');
   return (
-    <div className="flex-1 bg-gradient-to-br from-[#15803d] via-[#166534] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden">
+    <div className="flex-1 bg-gradient-to-br from-[#15803d] via-[#166534] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden min-h-[320px]">
       <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none"></div>
       
       <div>
-        <div className="flex justify-between items-start mb-6">
-          <span className="text-xs font-bold uppercase tracking-wider text-white/80 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+        <div className="flex justify-between items-center mb-6 gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-white/90 bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
             {t('badge')}
           </span>
-          <span className="text-xs bg-emerald-400 text-forest-deep font-bold px-3 py-1 rounded-full shadow-sm">
-            {score !== null ? (verdictText || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : 'NOT ASSESSED'}
+          <span className="text-xs bg-emerald-400 text-forest-deep font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wide">
+            {score !== null ? (verdictText || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : t('notAssessed')}
           </span>
         </div>
 
@@ -44,20 +44,20 @@ const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; ve
           <span className="text-2xl font-bold text-white/70">/ 100</span>
         </div>
 
-        <p className="text-sm font-medium text-white/90 max-w-sm leading-relaxed">
+        <p className="text-sm font-medium text-white/90 max-w-md leading-relaxed">
           {score !== null
             ? (score >= 75
                 ? t('descriptions.high')
                 : score >= 50
                 ? t('descriptions.moderate')
                 : t('descriptions.low'))
-            : reason || 'Complete required data points to calculate score.'}
+            : (reason || t('unavailableDesc'))}
         </p>
       </div>
 
       <div className="mt-8 pt-4 border-t border-white/20 flex justify-between items-center text-xs font-bold">
-        <span>{t('confidence')}</span>
-        <span className="text-emerald-300">HIGH (0.85)</span>
+        <span className="text-white/80">{t('confidence')}</span>
+        <span className="text-emerald-300 font-semibold uppercase tracking-wider">HIGH (0.85)</span>
       </div>
     </div>
   );
@@ -66,46 +66,50 @@ const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; ve
 // Recommended Business Card
 const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails }: { categoryId: string; categoryName: string; score: number | null; ideaDetails?: string }) => {
   const t = useTranslations('dashboard.recommendedCard');
+  const descText = (ideaDetails && ideaDetails.trim().toLowerCase() !== categoryName.trim().toLowerCase())
+    ? ideaDetails
+    : t('defaultIdea');
+
   return (
-    <div className="flex-1 bg-white border border-premium-border rounded-3xl p-8 shadow-card flex flex-col justify-between">
+    <div className="flex-1 bg-white border border-premium-border rounded-3xl p-8 shadow-card flex flex-col justify-between min-h-[320px]">
       <div>
-        <div className="flex justify-between items-start mb-4">
-          <span className="text-xs font-bold uppercase tracking-wider text-forest bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+        <div className="flex justify-between items-center mb-4 gap-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-forest bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
             {t('badge')}
           </span>
-          <span className="text-xs font-bold text-ink-soft bg-cream px-2.5 py-1 rounded-lg">
+          <span className="text-xs font-bold text-ink-soft bg-cream border border-premium-border/80 px-2.5 py-1 rounded-lg">
             {t('rank')}
           </span>
         </div>
 
-        <h3 className="font-display text-2xl sm:text-3xl font-bold text-forest-deep mb-2">
+        <h3 className="font-display text-2xl sm:text-3xl font-bold text-forest-deep mb-2 capitalize">
           {categoryName}
         </h3>
 
-        <p className="text-sm text-ink-soft font-medium mb-4 leading-relaxed">
-          {ideaDetails || t('defaultIdea')}
+        <p className="text-sm text-ink-soft font-medium mb-6 leading-relaxed">
+          {descText}
         </p>
 
         <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="p-3 bg-cream rounded-2xl border border-premium-border">
-            <span className="text-[11px] font-bold text-ink-soft block mb-0.5">{t('stats.marketDemand')}</span>
+          <div className="p-3.5 bg-cream/70 rounded-2xl border border-premium-border/80">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-soft block mb-1">{t('stats.marketDemand')}</span>
             <span className="text-sm font-bold text-forest-deep">{t('stats.highGrowth')}</span>
           </div>
-          <div className="p-3 bg-cream rounded-2xl border border-premium-border">
-            <span className="text-[11px] font-bold text-ink-soft block mb-0.5">{t('stats.estPayback')}</span>
+          <div className="p-3.5 bg-cream/70 rounded-2xl border border-premium-border/80">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-soft block mb-1">{t('stats.estPayback')}</span>
             <span className="text-sm font-bold text-forest-deep">{t('stats.paybackMonths')}</span>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Link href={`/market-intelligence/${categoryId}`} className="flex-1">
+      <div className="flex flex-col sm:flex-row gap-3 pt-2">
+        <Link href={`/market-intelligence/${categoryId || 'food_beverage'}`} className="flex-1">
           <button className="w-full py-3 bg-forest hover:bg-forest-deep text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center space-x-1.5 group">
             <span>{t('actions.viewIntel')}</span>
             <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
           </button>
         </Link>
-        <Link href={`/financials/${categoryId}`} className="flex-1">
+        <Link href={`/financials/${categoryId || 'food_beverage'}`} className="flex-1">
           <button className="w-full py-3 bg-cream hover:bg-cream-deep text-forest-deep border border-premium-border text-xs font-bold rounded-xl transition-all flex items-center justify-center">
             <span>{t('actions.finModel')}</span>
           </button>
@@ -114,6 +118,7 @@ const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails 
     </div>
   );
 };
+
 
 // Metric Cards with View Calculation Action
 const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass, onViewCalculation }: any) => {

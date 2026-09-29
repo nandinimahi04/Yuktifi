@@ -131,11 +131,21 @@
   "dashboard": {
     "scoreCard": {
       "title": "YuktiFi Viability Score",
+      "badge": "YUKTIFI VIABILITY SCORE",
+      "confidence": "CONFIDENCE LEVEL",
+      "notAssessed": "NOT ASSESSED",
       "verdicts": {
+        "high": "Strong Opportunity",
+        "moderate": "Moderate Potential",
+        "low": "High Risk",
         "weak": "Weak",
         "strong": "Strong",
-        "moderate": "Moderate",
         "risky": "Risky"
+      },
+      "descriptions": {
+        "high": "This enterprise demonstrates strong commercial viability with healthy margins, solid debt service coverage, and steady local market demand.",
+        "moderate": "This enterprise exhibits moderate viability with manageable operational costs and steady catchment opportunity.",
+        "low": "This opportunity carries elevated operational or competitive risk. Review the financial model and cost baseline."
       },
       "desc": "This score indicates the overall viability of the business opportunity based on market demand, competition, and your capital.",
       "viewDetails": "View Detailed Analytics",
@@ -143,6 +153,21 @@
       "unavailableDesc": "A viability score was withheld because too few of the underlying dimensions could be computed from the available evidence. Complete the missing inputs to earn a score.",
       "verdictWithheld": "Score published, verdict withheld for low evidence coverage",
       "notScored": "Not scored"
+    },
+    "recommendedCard": {
+      "badge": "RECOMMENDED BUSINESS",
+      "rank": "#1 Top Match",
+      "defaultIdea": "Curated high-potential enterprise based on your profile and local market demand signals.",
+      "stats": {
+        "marketDemand": "MARKET DEMAND",
+        "highGrowth": "High Growth",
+        "estPayback": "EST. PAYBACK",
+        "paybackMonths": "12-18 Months"
+      },
+      "actions": {
+        "viewIntel": "Market Intelligence",
+        "finModel": "Financial Model"
+      }
     },
     "recommended": {
       "title": "RECOMMENDED BUSINESS",
@@ -152,6 +177,14 @@
     },
     "journey": {
       "title": "Your Entrepreneurship Journey",
+      "status": "In Progress",
+      "steps": {
+        "profile": "Profile",
+        "market": "Market",
+        "finance": "Finance",
+        "schemes": "Schemes",
+        "report": "Report"
+      },
       "profile": "Profile",
       "location": "Location",
       "capital": "Capital",
@@ -161,6 +194,7 @@
       "inProgress": "In Progress",
       "next": "Next Step"
     },
+
     "loading": {
       "title": "Preparing Your Dashboard",
       "subtitle": "Loading insights and opportunities..."

@@ -16,15 +16,6 @@ ALLOWED_CATEGORIES = [
     "education_training",
     "healthcare_wellness",
     "fashion_apparel",
-    "dairy",
-    "kirana",
-    "vada_pav",
-    "tailoring",
-    "diagnostic",
-    "agri_machinery",
-    "food_processing",
-    "repair_services",
-    "small_hospitality",
 ]
 
 # Deterministic mapping for explicit frontend options.
@@ -47,29 +38,29 @@ CATEGORY_MAP = {
 }
 
 LEGACY_LABEL_ALIASES = {
-    "Dairy Farming & Collection": "dairy",
-    "Dairy Farming": "dairy",
-    "Dairy Farming & Milk Chilling": "dairy",
-    "Kirana & General Store": "kirana",
-    "Kirana / Grocery Store": "kirana",
-    "Grocery Store": "kirana",
-    "General Store": "kirana",
+    "Dairy Farming & Collection": "agri_business",
+    "Dairy Farming": "agri_business",
+    "Dairy Farming & Milk Chilling": "agri_business",
+    "Kirana & General Store": "retail_shop",
+    "Kirana / Grocery Store": "retail_shop",
+    "Grocery Store": "retail_shop",
+    "General Store": "retail_shop",
     "Supermarket & Mart": "retail_shop",
-    "Pooja Samagri Store": "kirana",
+    "Pooja Samagri Store": "retail_shop",
     "Stationery & Xerox": "retail_shop",
-    "Vada Pav & Fast Food": "vada_pav",
+    "Vada Pav & Fast Food": "food_beverage",
     "Tea & Snacks Shop": "food_beverage",
     "Tea & Snacks Stall": "food_beverage",
-    "Vada Pav Center": "vada_pav",
+    "Vada Pav Center": "food_beverage",
     "Bakery & Confectionery": "food_beverage",
     "Juice & Milkshake Bar": "food_beverage",
     "Fast Food & Chaat Stall": "food_beverage",
-    "Tailoring & Garments": "tailoring",
-    "Diagnostic Centre": "diagnostic",
-    "Diagnostic & Pathology Lab": "diagnostic",
-    "Pathology & Clinical Lab": "diagnostic",
-    "Agri Machinery": "agri_machinery",
-    "Micro Food Processing": "food_processing",
+    "Tailoring & Garments": "fashion_apparel",
+    "Diagnostic Centre": "healthcare_wellness",
+    "Diagnostic & Pathology Lab": "healthcare_wellness",
+    "Pathology & Clinical Lab": "healthcare_wellness",
+    "Agri Machinery": "agri_business",
+    "Micro Food Processing": "manufacturing",
     "Atta Chakki / Flour Mill": "manufacturing",
     "Flour Mill": "manufacturing",
     "Mobile Repair Shop": "services_tech",
@@ -86,10 +77,11 @@ LEGACY_LABEL_ALIASES = {
     "Poultry Farm": "agri_business",
     "Goat Farming": "agri_business",
     "Organic Fertilizer & Vermicompost": "agri_business",
-    "Small Hospitality & Dhaba": "small_hospitality",
+    "Small Hospitality & Dhaba": "food_beverage",
 }
 
 _CATEGORY_LOOKUP: dict[str, str] = {**LEGACY_LABEL_ALIASES, **CATEGORY_MAP}
+
 
 
 async def match_business_category(
