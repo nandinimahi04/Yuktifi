@@ -1,7 +1,7 @@
 [project]
 name = "yuktifi-backend"
 version = "0.1.0"
-description = "Yuktifi backend"
+description = "Yuktifi AI-Driven Hyper-Local Business Advisory and Financial Structuring Assistant"
 requires-python = ">=3.12,<3.13"
 
 dependencies = [
@@ -13,7 +13,7 @@ dependencies = [
     "sqlalchemy",
     "httpx",
     "numpy",
-    "pandas"
+    "pandas",
 ]
 
 [tool.vercel]
