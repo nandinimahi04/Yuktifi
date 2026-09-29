@@ -1,7 +1,13 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
 
-from app.schemas.scheme import SchemeMatchRequest, SchemeMatchResponse
+from app.schemas.scheme import (
+    SchemeMatchRequest,
+    SchemeMatchResponse,
+    SchemeEvaluationRequest,
+    SchemeEvaluationResponse,
+)
 from app.engines.scheme_engine import match_scheme, SCHEMES, NOT_EVALUATED, DISCLAIMER
 from app.core.db import get_db
 
@@ -91,3 +97,91 @@ def match(req: SchemeMatchRequest, db: DBSession = Depends(get_db)):
         )
 
     return SchemeMatchResponse(**match_scheme(project_cost, own_contribution=own_contribution).to_dict())
+
+
+@router.post("/schemes/evaluate", response_model=SchemeEvaluationResponse)
+def evaluate_schemes(
+    req: SchemeEvaluationRequest,
+    db: DBSession = Depends(get_db)
+):
+    """
+    RAG-grounded multi-scheme evaluator tailored to applicant's profile and enterprise plan.
+    Calculates exact subsidy %, loan amount, own margin requirement, and attaches
+    official RAG citations.
+    """
+    from app.engines.scheme_evaluator import evaluate_applicant_schemes
+    from app.models import Session, User
+
+    social_cat = req.social_category or "General"
+    gender = req.gender or "Male"
+    loc_type = req.location_type or "Rural"
+    state = req.state or "Maharashtra"
+    district = req.district or "Solapur"
+    cat_id = req.category_id or "retail_kirana"
+    proj_cost = req.project_cost or 200000.0
+    own_contrib = req.own_contribution
+
+    if req.session_id:
+        session = db.query(Session).filter(Session.id == req.session_id).first()
+        if session:
+            if session.category_id:
+                cat_id = session.category_id
+            if session.margin_capital and own_contrib is None:
+                own_contrib = float(session.margin_capital)
+            if session.user_id:
+                user = db.query(User).filter(User.id == session.user_id).first()
+                if user:
+                    if getattr(user, "social_category", None):
+                        social_cat = str(user.social_category)
+                    elif getattr(user, "caste_category", None):
+                        social_cat = str(user.caste_category)
+                    if getattr(user, "gender", None):
+                        gender = str(user.gender)
+                    if getattr(user, "location_type", None):
+                        loc_type = str(user.location_type)
+                    if getattr(user, "state", None):
+                        state = str(user.state)
+                    if getattr(user, "district", None):
+                        district = str(user.district)
+
+    result = evaluate_applicant_schemes(
+        social_category=social_cat,
+        gender=gender,
+        location_type=loc_type,
+        state=state,
+        district=district,
+        category_id=cat_id,
+        project_cost=proj_cost,
+        own_contribution=own_contrib,
+    )
+
+    return SchemeEvaluationResponse(**result)
+
+
+@router.get("/schemes/evaluate", response_model=SchemeEvaluationResponse)
+def evaluate_schemes_get(
+    social_category: str = "General",
+    gender: str = "Male",
+    location_type: str = "Rural",
+    state: str = "Maharashtra",
+    district: str = "Solapur",
+    category_id: str = "retail_kirana",
+    project_cost: float = 200000.0,
+    own_contribution: Optional[float] = None,
+    session_id: Optional[str] = None,
+    db: DBSession = Depends(get_db)
+):
+    """GET endpoint for simple scheme evaluation lookup."""
+    req = SchemeEvaluationRequest(
+        session_id=session_id,
+        social_category=social_category,
+        gender=gender,
+        location_type=location_type,
+        state=state,
+        district=district,
+        category_id=category_id,
+        project_cost=project_cost,
+        own_contribution=own_contribution,
+    )
+    return evaluate_schemes(req=req, db=db)
+

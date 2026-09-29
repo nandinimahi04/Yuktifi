@@ -541,6 +541,56 @@ export interface SchemeListResponse {
   disclaimer: string;
 }
 
+export interface EvaluatedScheme {
+  scheme_id: string;
+  scheme_name: string;
+  ministry: string;
+  match_status: "HIGHLY_RECOMMENDED" | "ELIGIBLE" | "POTENTIALLY_ELIGIBLE" | "CONDITIONAL" | string;
+  is_eligible: boolean;
+  eligibility_score: number;
+  subsidy_pct: number;
+  subsidy_amount: number;
+  subsidy_label: string;
+  max_loan: number;
+  loan_amount: number;
+  required_equity: number;
+  equity_pct: number;
+  interest_rate: string;
+  tenure_months: number;
+  moratorium_months: number;
+  highlights: string[];
+  criteria_met: string[];
+  criteria_unmet: string[];
+  special_benefit?: string;
+  portal_url: string;
+  rag_citation?: {
+    source_title: string;
+    source_agency: string;
+    source_url: string;
+    verified_excerpts: string;
+    effective_date?: string;
+    grounding_status: string;
+  };
+}
+
+export interface SchemeEvaluationResponse {
+  applicant_profile: {
+    social_category: string;
+    gender: string;
+    location_type: string;
+    state: string;
+    district: string;
+    business_category: string;
+    is_special_category: boolean;
+  };
+  project_cost: number;
+  own_contribution?: number;
+  eligible_schemes: EvaluatedScheme[];
+  total_eligible_count: number;
+  top_recommended_scheme?: EvaluatedScheme;
+  disclaimer: string;
+}
+
 export interface MarketSnapshotResponse {
   location: {
     state: string;
@@ -852,4 +902,17 @@ export const api = {
   runAdvisory: (data: any, signal?: AbortSignal) => ApiClient.post<AdvisoryResponse>("/api/v3/advisory", data, STANDARD_TIMEOUT_MS, signal),
   getAdvisoryRun: (runId: string) => ApiClient.get<AdvisoryResponse>(`/api/v3/advisory/${runId}`),
   listAdvisoryRuns: (limit = 20) => ApiClient.get<{runs:any[]}>(`/api/v3/advisory-runs?limit=${limit}`),
+
+  evaluateEligibleSchemes: (data: {
+    session_id?: string;
+    social_category?: string;
+    gender?: string;
+    location_type?: string;
+    state?: string;
+    district?: string;
+    category_id?: string;
+    project_cost?: number;
+    own_contribution?: number;
+  }, signal?: AbortSignal) =>
+    ApiClient.post<SchemeEvaluationResponse>("/schemes/evaluate", data, undefined, signal),
 };

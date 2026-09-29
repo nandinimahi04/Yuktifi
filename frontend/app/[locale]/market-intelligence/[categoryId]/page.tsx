@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useMemo } from "react";
 import { useStore } from "@/lib/store";
-import { api, MarketSnapshotResponse, SchemeListResponse } from "@/lib/api-client";
+import { api, MarketSnapshotResponse, SchemeListResponse, EvaluatedScheme, SchemeEvaluationResponse } from "@/lib/api-client";
 import { 
   Bell, ChevronDown, Search, ArrowRight, Home, IndianRupee, ShieldAlert, ShieldCheck, MapPin, Check,
   Activity, Users, TrendingUp, AlertTriangle, Crosshair, Target, Loader2, Sparkles,
@@ -663,42 +663,230 @@ const CompetitorAnalysis = ({ competitors }: any) => {
   );
 };
 
-// 12. Pricing Strategy Section
-const PricingStrategy = ({ low, high, unit, unitPrice, grossMargin, monthlyRevenue }: any) => {
+// Helper: Category-Specific Unit Economics Configuration
+const getCategoryUnitConfig = (catId?: string, catName?: string) => {
+  const id = (catId || "").toLowerCase();
+  const name = (catName || "").toLowerCase();
+
+  if (id.includes("kirana") || id.includes("grocery") || name.includes("kirana") || name.includes("grocery") || id.includes("retail")) {
+    return {
+      unit: "basket",
+      unitLabel: "Average Grocery Basket",
+      unitDesc: "Standard household purchase basket of essential packaged FMCG, pulses, edible oil, and dry rations.",
+      defaultPrice: 250,
+      defaultCogsPct: 75,
+      defaultUnitsDay: 60,
+      defaultDays: 30,
+      defaultFixedOpex: 25000,
+      keyInputs: ["FMCG Wholesale Inventory", "Shop Rent & Electricity", "Shrinkage & Spoilage Allowance"]
+    };
+  }
+  if (id.includes("tea") || name.includes("tea")) {
+    return {
+      unit: "cup / snack",
+      unitLabel: "Cup & Snack Serving",
+      unitDesc: "Fresh hot milk tea paired with local bakery toast and savory snacks.",
+      defaultPrice: 20,
+      defaultCogsPct: 40,
+      defaultUnitsDay: 200,
+      defaultDays: 30,
+      defaultFixedOpex: 15000,
+      keyInputs: ["Daily Dairy Milk & Tea Leaves", "Commercial LPG Fuel", "Stall Rental & Disposables"]
+    };
+  }
+  if (id.includes("vada_pav") || name.includes("vada pav") || id.includes("snack")) {
+    return {
+      unit: "plate",
+      unitLabel: "Vada Pav & Snack Plate",
+      unitDesc: "Freshly fried vada pav / batata vada portion served with chutney and fried chilies.",
+      defaultPrice: 20,
+      defaultCogsPct: 40,
+      defaultUnitsDay: 250,
+      defaultDays: 30,
+      defaultFixedOpex: 18000,
+      keyInputs: ["Potatoes, Besan & Refined Oil", "Fresh Pav Buns", "Stall Rent & Commercial LPG"]
+    };
+  }
+  if (id.includes("panipuri") || id.includes("chaat") || name.includes("panipuri")) {
+    return {
+      unit: "plate",
+      unitLabel: "Panipuri Plate (6 pcs)",
+      unitDesc: "Crisp puris filled with spiced potato-chickpea mash and tangy herb-infused mint water.",
+      defaultPrice: 25,
+      defaultCogsPct: 35,
+      defaultUnitsDay: 200,
+      defaultDays: 30,
+      defaultFixedOpex: 15000,
+      keyInputs: ["Semolina Puris & Spices", "Mineral Water & Flavour Herbs", "Counter Rent & Assistant"]
+    };
+  }
+  if (id.includes("dairy") || name.includes("dairy") || id.includes("milk")) {
+    return {
+      unit: "litre",
+      unitLabel: "Litre of Fresh Milk",
+      unitDesc: "Chilled fresh milk collected from rural producers with fat/SNF testing verification.",
+      defaultPrice: 60,
+      defaultCogsPct: 80,
+      defaultUnitsDay: 300,
+      defaultDays: 30,
+      defaultFixedOpex: 22000,
+      keyInputs: ["Raw Milk Farmgate Procurement", "Chilling Bulk Cooler Electricity", "Cans & Transit Logistics"]
+    };
+  }
+  if (id.includes("manufacturing") || id.includes("atta_chakki") || id.includes("flour") || id.includes("spice") || id.includes("food_processing")) {
+    return {
+      unit: "kg / pack",
+      unitLabel: "Kg Processed Flour / Spice Pack",
+      unitDesc: "Value-added milled whole wheat flour / processed spices packed in food-grade pouches.",
+      defaultPrice: 400,
+      defaultCogsPct: 60,
+      defaultUnitsDay: 25,
+      defaultDays: 26,
+      defaultFixedOpex: 35000,
+      keyInputs: ["Raw Grain & Whole Spice Procurement", "3-Phase Commercial Electricity", "Pouch Packaging & Sealing"]
+    };
+  }
+  if (id.includes("tailor") || name.includes("tailor")) {
+    return {
+      unit: "garment",
+      unitLabel: "Custom Stitched Garment",
+      unitDesc: "Measurement-to-order tailored shirt, trousers, blouse, or dress alteration.",
+      defaultPrice: 450,
+      defaultCogsPct: 25,
+      defaultUnitsDay: 8,
+      defaultDays: 26,
+      defaultFixedOpex: 20000,
+      keyInputs: ["Thread, Zippers & Lining Fabric", "Sewing Machine Maintenance", "Shop Rent & Electricity"]
+    };
+  }
+  if (id.includes("repair") || id.includes("mobile") || name.includes("repair")) {
+    return {
+      unit: "job / repair",
+      unitLabel: "Device Repair / Service Job",
+      unitDesc: "Component-level screen replacement, charging port fix, or diagnostic service.",
+      defaultPrice: 600,
+      defaultCogsPct: 38,
+      defaultUnitsDay: 8,
+      defaultDays: 26,
+      defaultFixedOpex: 22000,
+      keyInputs: ["Display & IC Spare Parts", "Testing Tools & Consumables", "Shop Rent & Technician Pay"]
+    };
+  }
+  if (id.includes("restaurant") || id.includes("dhaba") || id.includes("hospitality")) {
+    return {
+      unit: "meal / order",
+      unitLabel: "Dine-in / Parcel Meal Order",
+      unitDesc: "Standard vegetarian/non-vegetarian full meal platter or multi-dish takeaway.",
+      defaultPrice: 200,
+      defaultCogsPct: 45,
+      defaultUnitsDay: 80,
+      defaultDays: 30,
+      defaultFixedOpex: 45000,
+      keyInputs: ["Pantry Grains & Fresh Perishables", "Cook & Service Staff Payroll", "Commercial Gas & Premises Lease"]
+    };
+  }
+  if (id.includes("bakery") || name.includes("bakery")) {
+    return {
+      unit: "pack / kg",
+      unitLabel: "Baked Pack / Cake Item",
+      unitDesc: "Fresh oven-baked bread, cookies, toast, or celebratory cake batch.",
+      defaultPrice: 120,
+      defaultCogsPct: 42,
+      defaultUnitsDay: 100,
+      defaultDays: 30,
+      defaultFixedOpex: 30000,
+      keyInputs: ["Flour, Sugar, Butter & Yeast", "Oven Electricity / LPG Fuel", "Packaging Cartons & Boxes"]
+    };
+  }
+  if (id.includes("diagnostic") || id.includes("lab") || id.includes("health")) {
+    return {
+      unit: "test / sample",
+      unitLabel: "Diagnostic Test / Sample Panel",
+      unitDesc: "Pathology blood sample testing, report generation, and medical biochemistry analysis.",
+      defaultPrice: 800,
+      defaultCogsPct: 35,
+      defaultUnitsDay: 15,
+      defaultDays: 26,
+      defaultFixedOpex: 40000,
+      keyInputs: ["Reagent Testing Kits & Tubes", "Qualified Lab Technician Salary", "Equipment Calibration & Lease"]
+    };
+  }
+  return {
+    unit: "unit",
+    unitLabel: "Unit Commercial Sale",
+    unitDesc: "Standard trade transaction unit based on category baseline assumptions.",
+    defaultPrice: 100,
+    defaultCogsPct: 60,
+    defaultUnitsDay: 60,
+    defaultDays: 26,
+    defaultFixedOpex: 20000,
+    keyInputs: ["Direct Operational Procurement", "Premises Rent & Power", "Staff & Consumables"]
+  };
+};
+
+// 12. Business-Specific Pricing Strategy Section
+const PricingStrategy = ({ 
+  categoryId, categoryName, financials, costPressure 
+}: { 
+  categoryId?: string; categoryName?: string; financials?: any; costPressure?: any;
+}) => {
   const t = useTranslations('market.pricing');
-  const targetLow = low || 25;
-  const targetHigh = high || 65;
-  const targetPrice = unitPrice || Math.round((targetLow + targetHigh) / 2);
-  const targetMargin = grossMargin || 38.5;
-  const unitCogs = Math.round(targetPrice * (1 - targetMargin / 100));
+  const config = useMemo(() => getCategoryUnitConfig(categoryId, categoryName), [categoryId, categoryName]);
+
+  const targetPrice = Number(financials?.selling_price || financials?.typical_selling_price || config.defaultPrice);
+  const targetLow = Math.round(targetPrice * 0.75);
+  const targetHigh = Math.round(targetPrice * 1.30);
+  
+  const cogsPct = Number(financials?.cogs_pct || config.defaultCogsPct);
+  const unitCogs = Number(financials?.variable_cost_per_unit || Math.round(targetPrice * (cogsPct / 100)));
   const unitGrossProfit = targetPrice - unitCogs;
-  const estimatedVolume = Math.round((monthlyRevenue || 72000) / targetPrice);
+  const targetMargin = Number(financials?.gross_margin_pct || Math.max(10, ((unitGrossProfit / targetPrice) * 100)));
+
+  const dailyUnits = Number(financials?.units_per_day || financials?.typical_units_per_day || config.defaultUnitsDay);
+  const operatingDays = Number(financials?.operating_days || financials?.typical_operating_days || config.defaultDays);
+  const monthlyVolume = Math.round(dailyUnits * operatingDays);
+  
+  const monthlyRevenue = Number(financials?.monthly_revenue || (monthlyVolume * targetPrice));
+  const monthlyCogs = Math.round(monthlyVolume * unitCogs);
+  const monthlyGrossProfit = monthlyRevenue - monthlyCogs;
+  const monthlyFixedOpex = Number(financials?.monthly_fixed_cost || financials?.typical_monthly_fixed_cost || config.defaultFixedOpex);
+  const netOperatingProfit = monthlyGrossProfit - monthlyFixedOpex;
+
+  const breakEvenUnits = unitGrossProfit > 0 ? Math.ceil(monthlyFixedOpex / unitGrossProfit) : 0;
+  const breakEvenRevenue = breakEvenUnits * targetPrice;
+  const breakEvenDays = dailyUnits > 0 ? Math.min(operatingDays, Number((breakEvenUnits / dailyUnits).toFixed(1))) : 0;
+
+  const inflationChange = costPressure?.weighted_30d_change_pct ?? "+1.8";
 
   return (
     <div className="animate-in fade-in duration-300">
       <div className="flex justify-between items-center mb-4">
         <div>
-          <h2 className="text-xl font-bold text-forest-deep">{t('title')}</h2>
-          <p className="text-xs text-ink-soft font-medium">
-            Grounded in local competitor price surveys, unit procurement economics, and consumer willingness-to-pay.
+          <h2 className="text-xl font-bold text-forest-deep">{t('title')} — {config.unitLabel}</h2>
+          <p className="text-xs text-ink-soft font-medium mt-0.5">
+            Unit economics calculated specifically for <strong>{categoryName || "your enterprise"}</strong> based on DCA retail monitor, eNAM wholesale arrivals, and local trade benchmarks.
           </p>
         </div>
-        <span className="px-3 py-1 bg-emerald-50 text-forest border border-emerald-200 text-xs font-bold rounded-full">
-          Optimized Margin Model
+        <span className="px-3.5 py-1.5 bg-emerald-50 text-forest border border-emerald-200 text-xs font-bold rounded-full shadow-sm flex items-center gap-1.5">
+          <Sparkles size={14} /> Grounded Unit Economics
         </span>
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6 mb-6">
+      {/* Hero Pricing & Positioning Cards */}
+      <div className="flex flex-col lg:flex-row gap-6 mb-8">
         <div className="flex-1 bg-gradient-to-br from-[#16a34a] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none"></div>
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-xs font-bold uppercase tracking-wider mb-4">
-              <Sparkles size={12} /> Recommended Benchmark Band
+              <Sparkles size={12} /> Local Benchmark Price Band
             </div>
             <div className="font-display font-black text-4xl sm:text-5xl mb-1 tracking-tight">
               ₹{targetLow} – ₹{targetHigh}
             </div>
-            <span className="text-base font-semibold text-white/80">/ {unit || 'unit'}</span>
+            <span className="text-sm font-semibold text-white/80">/ {config.unit} ({config.unitLabel})</span>
+            <p className="text-xs text-white/70 mt-3 leading-relaxed">
+              {config.unitDesc}
+            </p>
           </div>
 
           <div className="mt-6 pt-4 border-t border-white/20 flex justify-between items-end">
@@ -706,7 +894,7 @@ const PricingStrategy = ({ low, high, unit, unitPrice, grossMargin, monthlyReven
               <span className="text-xs text-white/70 block uppercase font-bold">Optimal Target Price</span>
               <span className="text-2xl font-black text-white">₹{targetPrice}</span>
             </div>
-            <span className="text-xs bg-white text-forest-deep font-bold px-3 py-1 rounded-xl shadow-sm">
+            <span className="text-xs bg-white text-forest-deep font-bold px-3 py-1.5 rounded-xl shadow-sm">
               {targetMargin.toFixed(0)}% Margin Target
             </span>
           </div>
@@ -718,17 +906,26 @@ const PricingStrategy = ({ low, high, unit, unitPrice, grossMargin, monthlyReven
               <Award size={18} className="text-forest mr-2" /> Value Proposition & Strategic Positioning
             </h3>
             <p className="text-sm text-ink-soft font-medium mb-5 leading-relaxed">
-              Position your enterprise at the <strong>₹{targetPrice} per {unit || 'unit'}</strong> mid-tier price point. This captures price-sensitive local consumers while preserving an estimated <strong>{targetMargin.toFixed(1)}% gross margin</strong> against unorganized competitors.
+              Position your enterprise at <strong>₹{targetPrice} per {config.unit}</strong>. At this pricing, you maintain price competitiveness against unorganized operators while securing an estimated <strong>{targetMargin.toFixed(1)}% gross margin</strong> (₹{unitGrossProfit} gross profit per {config.unit}).
             </p>
 
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                <span className="text-[11px] font-bold text-ink-soft uppercase block mb-0.5">Unit Procurement (COGS)</span>
-                <span className="text-base font-bold text-forest-deep">₹{unitCogs}</span>
+            {/* 4-Box Unit Breakdown */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div className="p-3 bg-cream rounded-xl border border-premium-border text-center">
+                <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Selling Price</span>
+                <span className="text-base font-bold text-forest-deep">₹{targetPrice}</span>
               </div>
-              <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                <span className="text-[11px] font-bold text-ink-soft uppercase block mb-0.5">Gross Profit per Unit</span>
-                <span className="text-base font-bold text-emerald-700">₹{unitGrossProfit} ({targetMargin.toFixed(0)}%)</span>
+              <div className="p-3 bg-cream rounded-xl border border-premium-border text-center">
+                <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Unit COGS</span>
+                <span className="text-base font-bold text-amber-700">₹{unitCogs}</span>
+              </div>
+              <div className="p-3 bg-cream rounded-xl border border-premium-border text-center">
+                <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Gross Profit</span>
+                <span className="text-base font-bold text-emerald-700">₹{unitGrossProfit}</span>
+              </div>
+              <div className="p-3 bg-cream rounded-xl border border-premium-border text-center">
+                <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Gross Margin</span>
+                <span className="text-base font-bold text-forest">{targetMargin.toFixed(0)}%</span>
               </div>
             </div>
           </div>
@@ -736,8 +933,109 @@ const PricingStrategy = ({ low, high, unit, unitPrice, grossMargin, monthlyReven
           <div className="flex items-center p-3.5 bg-emerald-50/80 border border-emerald-200 rounded-2xl">
             <CheckCircle2 size={18} className="text-forest mr-3 shrink-0" />
             <span className="text-xs font-bold text-forest-deep">
-              Target Monthly Capacity: ~{estimatedVolume.toLocaleString('en-IN')} units/mo yielding ₹{Math.round(monthlyRevenue || 72000).toLocaleString('en-IN')} revenue.
+              Daily Target: ~{dailyUnits} {config.unit}s/day across {operatingDays} days/mo yielding ₹{Math.round(monthlyRevenue).toLocaleString('en-IN')}/mo gross revenue.
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Production Model & Financial Sizing Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Card 1: Monthly Capacity Model */}
+        <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider mb-4 flex items-center">
+              <BarChart3 size={16} className="text-forest mr-2" /> Monthly Production & Capacity
+            </h3>
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Target Daily Volume:</span>
+                <span className="font-bold text-forest-deep">{dailyUnits} {config.unit}s / day</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Operating Days per Month:</span>
+                <span className="font-bold text-forest-deep">{operatingDays} days</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Monthly Unit Volume:</span>
+                <span className="font-bold text-forest-deep">{monthlyVolume.toLocaleString('en-IN')} {config.unit}s</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Gross Monthly Revenue:</span>
+                <span className="font-bold text-emerald-700">₹{Math.round(monthlyRevenue).toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-ink-soft">Monthly Variable Costs (COGS):</span>
+                <span className="font-bold text-amber-700">₹{monthlyCogs.toLocaleString('en-IN')}</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-premium-border flex justify-between items-center text-xs font-bold">
+            <span className="text-ink-soft">Gross Monthly Profit:</span>
+            <span className="text-emerald-700 text-sm font-black">₹{monthlyGrossProfit.toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+
+        {/* Card 2: Break-Even Operational Sizing */}
+        <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider mb-4 flex items-center">
+              <Scale size={16} className="text-forest mr-2" /> Break-Even Operational Sizing
+            </h3>
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Monthly Fixed Overhead:</span>
+                <span className="font-bold text-forest-deep">₹{monthlyFixedOpex.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Break-Even Volume:</span>
+                <span className="font-bold text-forest-deep">{breakEvenUnits.toLocaleString('en-IN')} {config.unit}s/mo</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Break-Even Revenue:</span>
+                <span className="font-bold text-forest-deep">₹{breakEvenRevenue.toLocaleString('en-IN')}</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b border-premium-border/50">
+                <span className="text-ink-soft">Operating Days to Break-Even:</span>
+                <span className="font-bold text-forest">{breakEvenDays} days of month</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-ink-soft">Safety Capacity Margin:</span>
+                <span className="font-bold text-emerald-700">{Math.round(((monthlyVolume - breakEvenUnits) / monthlyVolume) * 100)}% buffer</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-premium-border flex justify-between items-center text-xs font-bold">
+            <span className="text-ink-soft">Net Operating Margin:</span>
+            <span className={`text-sm font-black ${netOperatingProfit > 0 ? "text-emerald-700" : "text-amber-700"}`}>
+              ₹{netOperatingProfit.toLocaleString('en-IN')}/mo
+            </span>
+          </div>
+        </div>
+
+        {/* Card 3: Phase 2 Sourcing & Input-Cost Sensitivity */}
+        <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider mb-3 flex items-center">
+              <TrendingUp size={16} className="text-forest mr-2" /> Input Cost Sensitivity (DCA + eNAM)
+            </h3>
+            <p className="text-xs text-ink-soft font-medium mb-3">
+              Weighted 30-day input inflation is <strong>{inflationChange}%</strong>.
+            </p>
+            <div className="p-3 bg-cream rounded-2xl border border-premium-border mb-3 space-y-1.5 text-xs">
+              <span className="text-[10px] font-bold text-ink-soft uppercase block">Key Cost Drivers</span>
+              <ul className="space-y-1">
+                {config.keyInputs.map((inp, idx) => (
+                  <li key={idx} className="flex items-center text-forest-deep font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-forest mr-2"></span>
+                    <span>{inp}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="p-3 bg-emerald-50/80 border border-emerald-200 rounded-2xl text-[11px] text-emerald-900 font-medium leading-relaxed">
+            <strong>Procurement Strategy:</strong> Consolidating wholesale purchases directly at the nearest district APMC yields a 12-18% procurement advantage vs spot retail buying.
           </div>
         </div>
       </div>
@@ -745,150 +1043,271 @@ const PricingStrategy = ({ low, high, unit, unitPrice, grossMargin, monthlyReven
   );
 };
 
-// 13. Government Schemes Section
-const GovSchemes = () => {
-  const officialSchemes = [
-    {
-      id: "PMEGP",
-      name: "Prime Minister's Employment Generation Programme (PMEGP)",
-      ministry: "Ministry of MSME / KVIC",
-      subsidy: "15% – 35% Capital Subsidy",
-      maxLoan: "Up to ₹50,00,000 (Mfg) / ₹20,00,000 (Services)",
-      rate: "8.5% – 10.5% p.a.",
-      promoterContribution: "5% to 10% own equity",
-      highlights: [
-        "Government Margin Money subsidy credited directly to bank account.",
-        "Rural Special category applicants receive maximum 35% capital subsidy.",
-        "No collateral required for project loans up to ₹10 Lakhs."
-      ],
-      portalUrl: "https://www.kviconline.gov.in/pmegpeportal/",
-      status: "Verified Official Scheme"
-    },
-    {
-      id: "PMMY",
-      name: "Pradhan Mantri MUDRA Yojana (PMMY)",
-      ministry: "Ministry of Finance (DFS)",
-      subsidy: "Collateral-Free Institutional Credit",
-      maxLoan: "Shishu: ₹50K | Kishore: ₹5 Lakhs | Tarun: ₹10 Lakhs",
-      rate: "8.5% – 11.5% p.a.",
-      promoterContribution: "Nil to 10% depending on tier",
-      highlights: [
-        "100% collateral-free financing guaranteed by CGFMU.",
-        "Zero loan processing fee for Shishu and Kishore loan categories.",
-        "Fast-track sanction across all public, private, and rural regional banks."
-      ],
-      portalUrl: "https://www.mudra.org.in/",
-      status: "Verified Official Scheme"
-    },
-    {
-      id: "PMFME",
-      name: "PM Formalisation of Micro Food Processing Enterprises (PMFME)",
-      ministry: "Ministry of Food Processing Industries (MoFPI)",
-      subsidy: "35% Credit-Linked Capital Subsidy",
-      maxLoan: "Up to ₹10,00,000 subsidy per enterprise",
-      rate: "9.0% – 11.0% p.a.",
-      promoterContribution: "10% minimum contribution",
-      highlights: [
-        "Specifically tailored for food, beverage, bakeries, spices, and agri-processing units.",
-        "Special grants available for common branding and marketing support.",
-        "Capacity building, FSSAI compliance, and technical skill training funded."
-      ],
-      portalUrl: "https://pmfme.mofpi.gov.in/",
-      status: "Verified Official Scheme"
-    },
-    {
-      id: "STANDUP",
-      name: "Stand-Up India Scheme for Greenfield Enterprises",
-      ministry: "Department of Financial Services",
-      subsidy: "Concessional Margin & Composite Loan",
-      maxLoan: "₹10,00,000 to ₹1,00,00,000",
-      rate: "MCLR + 3% Tenor Premium",
-      promoterContribution: "15% (can converge with state subsidies)",
-      highlights: [
-        "Dedicated to SC, ST, and Women first-generation entrepreneurs.",
-        "Covers both Term Loan for plant/machinery and Working Capital composite.",
-        "Repayment tenure up to 7 years with up to 18 months moratorium."
-      ],
-      portalUrl: "https://www.standupmitra.in/",
-      status: "Verified Official Scheme"
+// 13. RAG-Grounded Government Schemes Section
+const GovSchemes = ({
+  categoryId, categoryName, locationData, financials
+}: {
+  categoryId?: string; categoryName?: string; locationData?: any; financials?: any;
+}) => {
+  const { sessionId, marginCapital, analysisResult } = useStore();
+  const [loading, setLoading] = useState(true);
+  const [schemesData, setSchemesData] = useState<SchemeEvaluationResponse | null>(null);
+  const [activeFilter, setActiveFilter] = useState<"ALL" | "SUBSIDY" | "COLLATERAL_FREE" | "CONCESSIONAL">("ALL");
+
+  const userObj = analysisResult?.user || analysisResult?.profile || {};
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchEvaluatedSchemes() {
+      setLoading(true);
+      try {
+        const socialCat = userObj?.social_category || userObj?.caste_category || "General";
+        const gender = userObj?.gender || "Male";
+        const locType = userObj?.location_type || (locationData?.district ? "Rural" : "Rural");
+        const state = locationData?.state || "Maharashtra";
+        const district = locationData?.district || "Solapur";
+        const catId = categoryId || "retail_kirana";
+        const projCost = financials?.total_project_cost || financials?.project_cost || marginCapital || 200000;
+        const ownEquity = marginCapital || (Number(projCost) * 0.10);
+
+        const res = await api.evaluateEligibleSchemes({
+          session_id: sessionId || undefined,
+          social_category: socialCat,
+          gender: gender,
+          location_type: locType,
+          state: state,
+          district: district,
+          category_id: catId,
+          project_cost: Number(projCost),
+          own_contribution: Number(ownEquity)
+        });
+
+        if (isMounted && res) {
+          setSchemesData(res);
+        }
+      } catch (err) {
+        console.error("Failed to evaluate government schemes via RAG:", err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
     }
-  ];
+    fetchEvaluatedSchemes();
+    return () => { isMounted = false; };
+  }, [sessionId, userObj, marginCapital, categoryId, locationData, financials]);
+
+  const applicant = schemesData?.applicant_profile || {
+    social_category: userObj?.social_category || userObj?.caste_category || "General",
+    gender: userObj?.gender || "Male",
+    location_type: "Rural",
+    state: locationData?.state || "Maharashtra",
+    district: locationData?.district || "Solapur",
+    business_category: categoryId || "retail_kirana",
+    is_special_category: true,
+  };
+
+  const schemes = schemesData?.eligible_schemes || [];
+
+  const filteredSchemes = useMemo(() => {
+    if (activeFilter === "SUBSIDY") {
+      return schemes.filter(s => s.subsidy_pct > 0 || s.subsidy_amount > 0);
+    }
+    if (activeFilter === "COLLATERAL_FREE") {
+      return schemes.filter(s => s.scheme_id.includes("MUDRA") || s.scheme_id.includes("SVANIDHI") || s.required_equity <= 10000);
+    }
+    if (activeFilter === "CONCESSIONAL") {
+      return schemes.filter(s => s.interest_rate.includes("4.0%") || s.interest_rate.includes("5.0%") || s.interest_rate.includes("6.5%") || s.interest_rate.includes("8.0%"));
+    }
+    return schemes;
+  }, [schemes, activeFilter]);
 
   return (
     <div className="animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+      {/* Section Header with Live Applicant Profile Badge */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-3">
         <div>
-          <h2 className="text-xl font-bold text-forest-deep">Government Credit & Subsidy Schemes</h2>
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-xl font-bold text-forest-deep">Government Credit & Subsidy Schemes (RAG Grounded)</h2>
+            <span className="px-2.5 py-0.5 bg-emerald-50 text-forest border border-emerald-200 text-[10px] font-extrabold rounded-md uppercase">
+              RAG Grounded
+            </span>
+          </div>
           <p className="text-xs text-ink-soft font-medium">
-            Eligible Central and State government schemes matching your micro-enterprise profile.
+            Accurately evaluated against official guidelines from KVIC, MoMSME, DFS, MoFPI, NSFDC, NSTFDC, NBCFDC indexed in YuktiFi corpus.
           </p>
         </div>
-        <span className="px-3.5 py-1.5 bg-emerald-50 text-forest border border-emerald-200 text-xs font-bold rounded-full shadow-sm flex items-center gap-1.5">
-          <ShieldCheck size={14} /> Official MSME Schemes
-        </span>
+
+        {/* Applicant Profile Tag */}
+        <div className="px-4 py-2 bg-cream border border-premium-border rounded-2xl flex flex-wrap items-center gap-2 text-xs font-bold text-forest-deep shadow-sm">
+          <span className="text-ink-soft">Evaluated Profile:</span>
+          <span className="px-2 py-0.5 bg-white rounded-lg border border-premium-border text-forest">{applicant.social_category}</span>
+          <span>•</span>
+          <span className="px-2 py-0.5 bg-white rounded-lg border border-premium-border text-forest">{applicant.gender}</span>
+          <span>•</span>
+          <span className="px-2 py-0.5 bg-white rounded-lg border border-premium-border text-forest">{applicant.location_type} ({applicant.district})</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {officialSchemes.map((scheme) => (
-          <div
-            key={scheme.id}
-            className="bg-white border border-premium-border rounded-3xl p-6 md:p-7 shadow-card flex flex-col justify-between relative overflow-hidden"
-          >
-            <div>
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <span className="text-[11px] font-bold text-forest uppercase tracking-wider block mb-1">
-                    {scheme.ministry}
-                  </span>
-                  <h3 className="text-lg font-bold text-forest-deep leading-tight">
-                    {scheme.name}
-                  </h3>
-                </div>
-                <div className="bg-forest p-2.5 rounded-2xl text-white shrink-0 shadow-sm ml-3">
-                  <Building2 size={22} />
-                </div>
-              </div>
+      {/* Filter Chips Bar */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        <button
+          onClick={() => setActiveFilter("ALL")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeFilter === "ALL" 
+              ? "bg-forest text-white shadow-sm" 
+              : "bg-white border border-premium-border text-ink-soft hover:text-ink"
+          }`}
+        >
+          All Eligible Schemes ({schemes.length})
+        </button>
+        <button
+          onClick={() => setActiveFilter("SUBSIDY")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeFilter === "SUBSIDY" 
+              ? "bg-forest text-white shadow-sm" 
+              : "bg-white border border-premium-border text-ink-soft hover:text-ink"
+          }`}
+        >
+          Capital Subsidies (Up to 35%)
+        </button>
+        <button
+          onClick={() => setActiveFilter("COLLATERAL_FREE")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeFilter === "COLLATERAL_FREE" 
+              ? "bg-forest text-white shadow-sm" 
+              : "bg-white border border-premium-border text-ink-soft hover:text-ink"
+          }`}
+        >
+          Zero Collateral Financing
+        </button>
+        <button
+          onClick={() => setActiveFilter("CONCESSIONAL")}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            activeFilter === "CONCESSIONAL" 
+              ? "bg-forest text-white shadow-sm" 
+              : "bg-white border border-premium-border text-ink-soft hover:text-ink"
+          }`}
+        >
+          Concessional Interest Rates (4% - 8%)
+        </button>
+      </div>
 
-              <div className="grid grid-cols-2 gap-2.5 my-4">
-                <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                  <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Subsidy Support</span>
-                  <span className="text-xs font-bold text-forest-deep">{scheme.subsidy}</span>
-                </div>
-                <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                  <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Loan Quantum</span>
-                  <span className="text-xs font-bold text-forest-deep">{scheme.maxLoan}</span>
-                </div>
-                <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                  <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Indicative Rate</span>
-                  <span className="text-xs font-bold text-forest-deep">{scheme.rate}</span>
-                </div>
-                <div className="p-3 bg-cream rounded-xl border border-premium-border">
-                  <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Own Equity</span>
-                  <span className="text-xs font-bold text-forest-deep">{scheme.promoterContribution}</span>
-                </div>
-              </div>
-
-              <ul className="space-y-1.5 mb-6 text-xs text-ink-soft font-medium">
-                {scheme.highlights.map((h, i) => (
-                  <li key={i} className="flex items-start">
-                    <Check size={14} className="text-forest mr-2 mt-0.5 shrink-0" />
-                    <span>{h}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <a
-              href={scheme.portalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center w-full py-3 bg-cream hover:bg-forest hover:text-white text-forest-deep border border-premium-border text-xs font-bold rounded-xl shadow-sm transition-all"
+      {loading ? (
+        <div className="w-full h-64 bg-white border border-premium-border rounded-3xl flex flex-col items-center justify-center text-ink-soft animate-pulse">
+          <Loader2 className="animate-spin mb-3 text-forest" size={32} />
+          <span className="text-sm font-semibold">Evaluating eligible government schemes via RAG knowledge corpus...</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {filteredSchemes.map((scheme) => (
+            <div
+              key={scheme.scheme_id}
+              className="bg-white border border-premium-border rounded-3xl p-6 md:p-7 shadow-card flex flex-col justify-between relative overflow-hidden"
             >
-              <span>Apply on Official Portal ({scheme.id})</span>
-              <ExternalLink size={14} className="ml-2" />
-            </a>
-          </div>
-        ))}
+              <div>
+                {/* Header: Score & Ministry & Scheme Title */}
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1 pr-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[11px] font-bold text-forest uppercase tracking-wider block">
+                        {scheme.ministry}
+                      </span>
+                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-black rounded-md">
+                        {scheme.eligibility_score}% MATCH
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-forest-deep leading-snug">
+                      {scheme.scheme_name}
+                    </h3>
+                  </div>
+                  <div className="bg-forest p-2.5 rounded-2xl text-white shrink-0 shadow-sm">
+                    <Building2 size={22} />
+                  </div>
+                </div>
+
+                {/* 4-Box Scheme Economics */}
+                <div className="grid grid-cols-2 gap-2.5 my-4">
+                  <div className="p-3 bg-cream rounded-xl border border-premium-border">
+                    <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Subsidy Benefit</span>
+                    <span className="text-xs font-bold text-forest-deep">
+                      {scheme.subsidy_amount > 0 ? `₹${scheme.subsidy_amount.toLocaleString('en-IN')} (${scheme.subsidy_pct}%)` : scheme.subsidy_label}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-cream rounded-xl border border-premium-border">
+                    <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Funded Loan Amount</span>
+                    <span className="text-xs font-bold text-forest-deep">
+                      ₹{scheme.loan_amount?.toLocaleString('en-IN') || "Eligible"}
+                    </span>
+                  </div>
+                  <div className="p-3 bg-cream rounded-xl border border-premium-border">
+                    <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Indicative Rate</span>
+                    <span className="text-xs font-bold text-forest-deep">{scheme.interest_rate}</span>
+                  </div>
+                  <div className="p-3 bg-cream rounded-xl border border-premium-border">
+                    <span className="text-[10px] font-bold text-ink-soft uppercase block mb-0.5">Required Own Margin</span>
+                    <span className="text-xs font-bold text-forest-deep">
+                      ₹{scheme.required_equity?.toLocaleString('en-IN')} ({scheme.equity_pct}%)
+                    </span>
+                  </div>
+                </div>
+
+                {/* Demographic Special Benefit Alert */}
+                {scheme.special_benefit && (
+                  <div className="mb-4 p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-xs font-semibold text-emerald-900 flex items-start gap-2">
+                    <Sparkles size={16} className="text-forest mt-0.5 shrink-0" />
+                    <span>{scheme.special_benefit}</span>
+                  </div>
+                )}
+
+                {/* Key Highlights */}
+                <ul className="space-y-1.5 mb-4 text-xs text-ink-soft font-medium">
+                  {scheme.highlights.map((h, i) => (
+                    <li key={i} className="flex items-start">
+                      <Check size={14} className="text-forest mr-2 mt-0.5 shrink-0" />
+                      <span>{h}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Verified RAG Grounding Citation Box */}
+                {scheme.rag_citation && (
+                  <div className="mb-5 p-3.5 bg-cream/70 rounded-2xl border border-premium-border text-xs">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="font-bold text-forest-deep flex items-center gap-1.5">
+                        <ShieldCheck size={14} className="text-forest" />
+                        RAG Grounded: {scheme.rag_citation.source_title}
+                      </span>
+                      <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded border border-premium-border">
+                        Verified Official Rule
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-ink-soft font-mono leading-relaxed line-clamp-3">
+                      {scheme.rag_citation.verified_excerpts}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Action Button */}
+              <a
+                href={scheme.portal_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center w-full py-3 bg-cream hover:bg-forest hover:text-white text-forest-deep border border-premium-border text-xs font-bold rounded-xl shadow-sm transition-all"
+              >
+                <span>Apply on Official Portal ({scheme.scheme_id})</span>
+                <ExternalLink size={14} className="ml-2" />
+              </a>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Disclaimers & Regulatory Transparency Box */}
+      <div className="p-4 bg-white border border-premium-border rounded-2xl text-xs font-medium text-ink-soft leading-relaxed flex items-start gap-3 shadow-sm">
+        <Info size={18} className="text-forest mt-0.5 shrink-0" />
+        <div>
+          <strong>Official Subsidy & Evaluation Disclaimer:</strong> Scheme parameters are derived from official circulars (KVIC, DFS, MoFPI, NSFDC, NSTFDC, NBCFDC) indexed in YuktiFi's RAG knowledge store. Actual subsidy release and final interest rates are subject to borrower credit appraisal, project report submission, and bank branch approval.
+        </div>
       </div>
     </div>
   );
@@ -952,6 +1371,8 @@ export default function MarketIntelligencePage({ params }: { params: { categoryI
   const compCount = snapshotData?.competition?.unique_mapped_count ?? (market?.competitor_count ?? (competitors.length || 6));
   const consumerBase: number = Number(snapshotData?.population?.catchment_population || market?.target_customer_base || market?.market_reach?.estimated_target_customer_base || 48500);
 
+  const rawCatId = analysisResult?.business?.matched_category_id || (params?.categoryId !== 'undefined' ? params?.categoryId : null) || "retail_kirana";
+
   const resolvedCategoryName = 
     businessData?.area_of_interest ||
     businessData?.matched_subcategory ||
@@ -968,10 +1389,6 @@ export default function MarketIntelligencePage({ params }: { params: { categoryI
       : locationName || "Solapur, Maharashtra";
 
   const unitPrice = Number(financials?.selling_price || financials?.typical_selling_price || 45.0);
-  const pricingLow = Math.round(unitPrice * 0.75);
-  const pricingHigh = Math.round(unitPrice * 1.35);
-  const grossMargin = Number(financials?.gross_margin_pct || 40.0);
-  const monthlyRevenue = Number(financials?.monthly_revenue || 72000);
   const calculatedMarketValue = roundVal((consumerBase * 0.25 * 3.5 * unitPrice) * 0.05);
 
   return (
@@ -1025,15 +1442,20 @@ export default function MarketIntelligencePage({ params }: { params: { categoryI
       {activeTab === "competitors" && <CompetitorAnalysis competitors={competitors} />}
       {activeTab === "pricing" && (
         <PricingStrategy 
-          low={pricingLow} 
-          high={pricingHigh} 
-          unit="unit"
-          unitPrice={unitPrice}
-          grossMargin={grossMargin}
-          monthlyRevenue={monthlyRevenue}
+          categoryId={rawCatId}
+          categoryName={resolvedCategoryName}
+          financials={financials}
+          costPressure={snapshotData?.input_cost_pressure}
         />
       )}
-      {activeTab === "schemes" && <GovSchemes />}
+      {activeTab === "schemes" && (
+        <GovSchemes 
+          categoryId={rawCatId}
+          categoryName={resolvedCategoryName}
+          locationData={locationData}
+          financials={financials}
+        />
+      )}
     </div>
   );
 }
@@ -1041,3 +1463,4 @@ export default function MarketIntelligencePage({ params }: { params: { categoryI
 function roundVal(num: number): number {
   return Math.round(num * 100) / 100;
 }
+

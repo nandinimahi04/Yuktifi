@@ -34,3 +34,51 @@ class SchemeMatchResponse(BaseModel):
     requires_confirmation: list[str] = []
     not_evaluated_schemes: list[str] = []
     disclaimer: str = ""
+
+
+class EvaluatedSchemeModel(BaseModel):
+    scheme_id: str
+    scheme_name: str
+    ministry: str
+    match_status: str
+    is_eligible: bool
+    eligibility_score: int
+    subsidy_pct: float
+    subsidy_amount: float
+    subsidy_label: str
+    max_loan: float
+    loan_amount: float
+    required_equity: float
+    equity_pct: float
+    interest_rate: str
+    tenure_months: int
+    moratorium_months: int
+    highlights: list[str] = []
+    criteria_met: list[str] = []
+    criteria_unmet: list[str] = []
+    special_benefit: Optional[str] = None
+    portal_url: str
+    rag_citation: Optional[dict[str, Any]] = None
+
+
+class SchemeEvaluationRequest(BaseModel):
+    session_id: Optional[str] = None
+    social_category: Optional[str] = "General"
+    gender: Optional[str] = "Male"
+    location_type: Optional[str] = "Rural"
+    state: Optional[str] = "Maharashtra"
+    district: Optional[str] = "Solapur"
+    category_id: Optional[str] = "retail_kirana"
+    project_cost: Optional[float] = 200000.0
+    own_contribution: Optional[float] = None
+
+
+class SchemeEvaluationResponse(BaseModel):
+    applicant_profile: dict[str, Any]
+    project_cost: float
+    own_contribution: Optional[float] = None
+    eligible_schemes: list[EvaluatedSchemeModel] = []
+    total_eligible_count: int
+    top_recommended_scheme: Optional[EvaluatedSchemeModel] = None
+    disclaimer: str
+

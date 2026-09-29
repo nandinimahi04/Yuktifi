@@ -90,6 +90,71 @@ ICAR Micro-Enterprise Technical Parameters:
    - Average processing capacity: 80-120 kg per hour for flour milling.
    - Expected gross margin: 35-45% over raw grain/spice procurement cost.
 """
+    },
+    {
+        "title": "PMFME Scheme Guidelines for Micro Food Processing",
+        "source": "Ministry of Food Processing Industries (MoFPI)",
+        "source_url": "https://pmfme.mofpi.gov.in/",
+        "effective_date": "2023-06-01",
+        "content": """
+PM Formalisation of Micro Food Processing Enterprises (PMFME) Scheme:
+1. Eligibility: Individual micro food processing units, self-help groups (SHGs), and producer cooperatives.
+2. Financial Support: Credit-linked capital subsidy at 35% of eligible project cost with a maximum ceiling of ₹10,00,000 (₹10 Lakhs) per unit.
+3. Beneficiary Contribution: Minimum 10% of project cost from the promoter's own funds.
+4. Covered Categories: Atta chakki, spices processing, oil extraction, bakery, dairy value-addition, fruit/vegetable processing, pickles, and snack manufacturing.
+5. Capacity Building: Technical training, FSSAI compliance, brand development, and packaging support grants.
+"""
+    },
+    {
+        "title": "Stand-Up India Scheme Guidelines for SC ST and Women",
+        "source": "Department of Financial Services, Ministry of Finance",
+        "source_url": "https://www.standupmitra.in/",
+        "effective_date": "2023-04-01",
+        "content": """
+Stand-Up India Scheme for Greenfield Enterprises:
+1. Eligibility: Scheduled Caste (SC), Scheduled Tribe (ST), and Women entrepreneurs above 18 years of age.
+2. Loan Quantum: Composite loan (term loan + working capital) between ₹10,00,000 (₹10 Lakhs) and ₹1,00,00,000 (₹1 Crore).
+3. Margin Money & Subsidy: Borrower contribution is minimum 15% of project cost (can be converged with eligible central/state subsidies).
+4. Covered Sectors: Manufacturing, services, trading, and agri-allied activities (greenfield ventures).
+5. Repayment & Moratorium: Up to 7 years repayment with an initial moratorium period of up to 18 months.
+"""
+    },
+    {
+        "title": "PM SVANidhi Scheme Guidelines for Urban and Rural Vendors",
+        "source": "Ministry of Housing and Urban Affairs (MoHUA)",
+        "source_url": "https://pmsvanidhi.mohua.gov.in/",
+        "effective_date": "2023-09-01",
+        "content": """
+PM Street Vendor's AtmaNirbhar Nidhi (PM SVANidhi):
+1. Eligibility: Street food stalls, tea/snack kiosks, cart vendors, and micro hawkers operating in urban and peri-urban areas.
+2. Loan Tranches: First tranche up to ₹10,000; Second tranche up to ₹20,000 upon timely repayment; Third tranche up to ₹50,000.
+3. Interest Subsidy: 7% per annum interest subsidy directly credited to borrower account.
+4. Collateral: Zero collateral security required; digital transaction cash-back incentives up to ₹1,200 per annum.
+"""
+    },
+    {
+        "title": "NSTFDC Adivasi Mahila and Term Loan Guidelines",
+        "source": "National Scheduled Tribes Finance and Development Corporation (NSTFDC)",
+        "source_url": "https://nstfdc.tribal.gov.in/",
+        "effective_date": "2023-04-01",
+        "content": """
+NSTFDC Credit Support Schemes:
+1. Adivasi Mahila Sashaktikaran Yojana (AMSY): Concessional loan up to ₹2,00,000 at 4% p.a. interest rate for Scheduled Tribe women.
+2. Term Loan Scheme: Up to ₹50,00,000 for income generating activities at 6.0% - 8.0% p.a. interest rate.
+3. Micro Credit Scheme for Self Help Groups: Up to ₹50,000 per member.
+"""
+    },
+    {
+        "title": "NBCFDC New Swarnima Scheme Guidelines for Backward Classes",
+        "source": "National Backward Classes Finance & Development Corporation (NBCFDC)",
+        "source_url": "https://nbcfdc.gov.in/",
+        "effective_date": "2023-04-01",
+        "content": """
+NBCFDC Credit Support Schemes:
+1. New Swarnima Special Scheme for Women: Term loan up to ₹2,00,000 at concessional 5.0% p.a. interest rate for OBC women.
+2. General Term Loan Scheme: Loan up to ₹15,00,000 at 6.0% to 8.0% p.a. interest rate for target backward class entrepreneurs.
+3. Micro Finance Scheme: Up to ₹1,25,000 per beneficiary at 6.5% p.a.
+"""
     }
 ]
 
