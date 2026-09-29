@@ -486,29 +486,14 @@ ALIAS_MAP: Dict[str, str] = {
     "kirana": "retail_kirana",
     "grocery": "retail_kirana",
     "supermarket": "retail_kirana",
-<<<<<<< HEAD
-=======
     "retail_shop": "retail_kirana",
     "pooja_samagri": "retail_kirana",
     "pooja_store": "retail_kirana",
     "general_store": "retail_kirana",
->>>>>>> cleanup-final
     "cafe": "restaurant",
     "bakery_unit": "bakery",
     "electronics_repair": "mobile_repair",
     "atta_chakki": "manufacturing",
-<<<<<<< HEAD
-    "clinical_lab": "service_business",
-}
-
-
-def get_business_template(category_id: str) -> BusinessTemplate | None:
-    """Retrieve template by canonical ID or alias."""
-    cid = (category_id or "").strip().lower()
-    if not cid:
-        return None
-    if cid in TEMPLATES:
-=======
     "flour_mill": "manufacturing",
     "tailoring": "retail_kirana",
     "dairy": "retail_kirana",
@@ -548,19 +533,12 @@ def get_business_template(category_id: Optional[str] = None) -> BusinessTemplate
     """Retrieve template by canonical ID or alias, guaranteed to return a valid BusinessTemplate."""
     cid = (category_id or "").strip().lower()
     if cid and cid in TEMPLATES:
->>>>>>> cleanup-final
         return TEMPLATES[cid]
     mapped = ALIAS_MAP.get(cid)
     if mapped and mapped in TEMPLATES:
         return TEMPLATES[mapped]
     # Fuzzy match substring
     for key in TEMPLATES:
-<<<<<<< HEAD
-        if key in cid or cid in key:
-            return TEMPLATES[key]
-    return None
-=======
         if cid and (key in cid or cid in key):
             return TEMPLATES[key]
     return TEMPLATES.get("retail_kirana", DEFAULT_TEMPLATE)
->>>>>>> cleanup-final

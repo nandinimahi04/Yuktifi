@@ -750,8 +750,6 @@ export const api = {
   analyzeMarket: (data: { session_id: string; location_id: string; category_id: string; category_name?: string; budget?: number; experience?: string; idea_details?: string }, signal?: AbortSignal) =>
     ApiClient.post<MarketResponse>("/analyze-market", data, AI_TIMEOUT_MS, signal),
 
-<<<<<<< HEAD
-=======
   getMarketSnapshot: (params: { location?: string; lat?: number; lon?: number; category_id?: string; radius_km?: number }, signal?: AbortSignal) => {
     const query = new URLSearchParams();
     if (params.location) query.append("location", params.location);
@@ -762,8 +760,6 @@ export const api = {
     const qs = query.toString();
     return ApiClient.get<MarketSnapshotResponse>(`/api/market/snapshot${qs ? `?${qs}` : ''}`, undefined, signal);
   },
-
->>>>>>> cleanup-final
   calculateFinance: (data: { session_id: string; overrides?: any }, signal?: AbortSignal) =>
     ApiClient.post<FinanceResponse>("/calculate-finance", data, undefined, signal),
 

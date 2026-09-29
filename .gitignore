@@ -40,6 +40,8 @@ yarn-error.log*
 # a copy freezes whatever state the last run left behind, which is how an
 # effectively-empty database came to be delivered as part of the project.
 *.db
+*.db-shm
+*.db-wal
 *.sqlite
 *.sqlite3
 backend/yukti.db

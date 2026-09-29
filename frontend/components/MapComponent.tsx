@@ -47,26 +47,10 @@ export default function MapComponent({
 }: MapComponentProps) {
   const redIcon = useMemo(() => createIcon('red'), []);
 
-<<<<<<< HEAD
-  // Ensure we have pins to render on the map
-  const displayCompetitors = useMemo(() => {
-    if (competitors && competitors.length > 0) return competitors;
-    return [
-      { name: "Pooja Stores Central", distance_km: 0.6, lat: lat + 0.005, lon: lng - 0.004 },
-      { name: "Shree Ganesh Samagri", distance_km: 0.9, lat: lat - 0.006, lon: lng + 0.005 },
-      { name: "Mahalaxmi Bhandar", distance_km: 1.2, lat: lat + 0.008, lon: lng + 0.006 },
-      { name: "Dharmik Traders", distance_km: 0.8, lat: lat - 0.004, lon: lng - 0.007 },
-      { name: "Sai Spiritual Store", distance_km: 1.5, lat: lat + 0.012, lon: lng - 0.002 },
-      { name: "Balaji Pooja Kendra", distance_km: 1.1, lat: lat - 0.009, lon: lng + 0.002 },
-      { name: "Om Traders", distance_km: 1.7, lat: lat - 0.015, lon: lng - 0.001 },
-    ];
-  }, [competitors, lat, lng]);
-=======
   // Render only real mapped competitors
   const displayCompetitors = useMemo(() => {
     return (competitors || []).filter(c => Boolean(c && (c.name || c.category)));
   }, [competitors]);
->>>>>>> cleanup-final
 
   return (
     <MapContainer 
@@ -104,16 +88,6 @@ export default function MapComponent({
       )}
       
       {/* Competitor Pins */}
-<<<<<<< HEAD
-      {showCompetitors && displayCompetitors.map((comp, idx) => {
-        let compLat = comp.lat;
-        let compLng = comp.lon;
-        
-        if (!compLat || !compLng) {
-          const angle = (idx * (360 / Math.max(1, displayCompetitors.length))) * (Math.PI / 180);
-          compLat = lat + (comp.distance_km / 111) * Math.cos(angle);
-          compLng = lng + (comp.distance_km / (111 * Math.cos(lat * (Math.PI / 180)))) * Math.sin(angle);
-=======
       {showCompetitors && displayCompetitors.map((comp: any, idx) => {
         let compLat = comp.latitude ?? comp.lat;
         let compLng = comp.longitude ?? comp.lon;
@@ -122,14 +96,13 @@ export default function MapComponent({
           const angle = (idx * (360 / Math.max(1, displayCompetitors.length))) * (Math.PI / 180);
           compLat = lat + ((comp.distance_km || 1) / 111) * Math.cos(angle);
           compLng = lng + ((comp.distance_km || 1) / (111 * Math.cos(lat * (Math.PI / 180)))) * Math.sin(angle);
->>>>>>> cleanup-final
         }
         
         return (
           <Marker key={idx} position={[compLat, compLng]} icon={redIcon}>
             <Popup>
               <div className="font-sans text-xs">
-                <strong className="block text-sm font-bold text-ink mb-0.5">{comp.name.replace(/_/g, ' ')}</strong>
+                <strong className="block text-sm font-bold text-ink mb-0.5">{comp.name?.replace(/_/g, ' ') || 'Competitor'}</strong>
                 <span className="text-ink-soft">{comp.distance_km ? `${comp.distance_km.toFixed(1)} km away` : 'Direct Competitor'}</span>
               </div>
             </Popup>

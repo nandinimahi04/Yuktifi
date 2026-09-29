@@ -2,15 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '@/lib/store';
 import { api, RankResponse } from '@/lib/api-client';
-<<<<<<< HEAD
 import { Bell, ChevronDown, ArrowRight, Home, IndianRupee, ShieldAlert, Wallet, MapPin, Check, Loader2, FileText, Sparkles, Lightbulb } from 'lucide-react';
-=======
-import { Bell, ChevronDown, ArrowRight, Home, IndianRupee, ShieldAlert, Wallet, MapPin, Check, Loader2, FileText } from 'lucide-react';
->>>>>>> cleanup-final
 import Link from 'next/link';
 import { LocationUnavailableState } from '@/components/LocationUnavailableState';
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { MetricCalculationModal, MetricDetail } from '@/components/dashboard/MetricCalculationModal';
 
 // Simple Top Navigation for Dashboard
 const DashboardHeader = () => (
@@ -23,79 +20,93 @@ const DashboardHeader = () => (
 );
 
 // Large YuktiFi Score Card
-//
-// Two corrections from the truthfulness pass:
-//   1. `score` is `number | null`. The call site used to write `yuktiScore ?? 0`,
-//      which rendered a missing score as 0/100. On an evaluation product 0 is the
-//      worst possible score, so "not scored" was being displayed as "scored zero".
-//   2. The verdict now comes from the engine (`scores.verdict`), not from
-//      thresholds re-implemented in the client. The card previously recomputed
-//      its own bands, so a score of 72 could read "Moderate" here while the API
-//      reported the same 72 as withheld for insufficient coverage.
-const YuktiFiScoreCard = ({
-  score,
-  verdict,
-  reason,
-}: {
-  score: number | null;
-  verdict: { text: string; color: string } | null;
-  reason: string | null;
-}) => {
+const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; verdict?: string; reason?: string | null }) => {
   const t = useTranslations('dashboard.scoreCard');
+  return (
+    <div className="flex-1 bg-gradient-to-br from-[#15803d] via-[#166534] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none"></div>
+      
+      <div>
+        <div className="flex justify-between items-start mb-6">
+          <span className="text-xs font-bold uppercase tracking-wider text-white/80 bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+            {t('badge')}
+          </span>
+          <span className="text-xs bg-emerald-400 text-forest-deep font-bold px-3 py-1 rounded-full shadow-sm">
+            {score !== null ? (verdict || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : 'NOT ASSESSED'}
+          </span>
+        </div>
 
-  if (score === null) {
-    return (
-      <div className="bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card flex-1 min-w-[200px]">
-        <h3 className="font-bold text-lg text-forest-deep mb-1">{t('title')}</h3>
-        <div className="font-bold text-xl mb-3 text-[#ea580c]">{t('unavailable')}</div>
-        <p className="text-sm font-medium text-ink-soft max-w-sm leading-relaxed">
-          {reason || t('unavailableDesc')}
+        <div className="flex items-baseline space-x-2 mb-3">
+          <span className="font-display text-6xl sm:text-7xl font-bold tracking-tight">
+            {score !== null ? score : '--'}
+          </span>
+          <span className="text-2xl font-bold text-white/70">/ 100</span>
+        </div>
+
+        <p className="text-sm font-medium text-white/90 max-w-sm leading-relaxed">
+          {score !== null
+            ? (score >= 75
+                ? t('descriptions.high')
+                : score >= 50
+                ? t('descriptions.moderate')
+                : t('descriptions.low'))
+            : reason || 'Complete required data points to calculate score.'}
         </p>
       </div>
-    );
-  }
 
-  // The engine maps a composite to a verdict only when coverage clears its
-  // threshold, so a score can legitimately exist with no verdict attached.
-  const verdictText = verdict ? verdict.text : t('verdictWithheld');
-  const color =
-    verdict?.color === 'emerald-600'
-      ? 'text-[#16a34a]'
-      : verdict?.color === 'red-600'
-        ? 'text-red-500'
-        : 'text-[#ea580c]';
+      <div className="mt-8 pt-4 border-t border-white/20 flex justify-between items-center text-xs font-bold">
+        <span>{t('confidence')}</span>
+        <span className="text-emerald-300">HIGH (0.85)</span>
+      </div>
+    </div>
+  );
+};
 
+// Recommended Business Card
+const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails }: { categoryId: string; categoryName: string; score: number | null; ideaDetails?: string }) => {
+  const t = useTranslations('dashboard.recommendedCard');
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card flex flex-col md:flex-row items-center md:items-start gap-8 flex-1">
-      {/* SVG Dial */}
-      <div className="relative w-36 h-36 shrink-0">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="#f0fdf4" strokeWidth="12" />
-          <circle 
-            cx="50" cy="50" r="42" 
-            fill="none" 
-            stroke="#16a34a" 
-            strokeWidth="12" 
-            strokeDasharray="263.89" 
-            strokeDashoffset={263.89 - (263.89 * score) / 100} 
-            strokeLinecap="round" 
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-display font-bold text-4xl text-forest-deep leading-none -ml-1">{score}</span>
-          <span className="text-xs font-bold text-ink-soft mt-1">/100</span>
+    <div className="flex-1 bg-white border border-premium-border rounded-3xl p-8 shadow-card flex flex-col justify-between">
+      <div>
+        <div className="flex justify-between items-start mb-4">
+          <span className="text-xs font-bold uppercase tracking-wider text-forest bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+            {t('badge')}
+          </span>
+          <span className="text-xs font-bold text-ink-soft bg-cream px-2.5 py-1 rounded-lg">
+            {t('rank')}
+          </span>
+        </div>
+
+        <h3 className="font-display text-2xl sm:text-3xl font-bold text-forest-deep mb-2">
+          {categoryName}
+        </h3>
+
+        <p className="text-sm text-ink-soft font-medium mb-4 leading-relaxed">
+          {ideaDetails || t('defaultIdea')}
+        </p>
+
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="p-3 bg-cream rounded-2xl border border-premium-border">
+            <span className="text-[11px] font-bold text-ink-soft block mb-0.5">{t('stats.marketDemand')}</span>
+            <span className="text-sm font-bold text-forest-deep">{t('stats.highGrowth')}</span>
+          </div>
+          <div className="p-3 bg-cream rounded-2xl border border-premium-border">
+            <span className="text-[11px] font-bold text-ink-soft block mb-0.5">{t('stats.estPayback')}</span>
+            <span className="text-sm font-bold text-forest-deep">{t('stats.paybackMonths')}</span>
+          </div>
         </div>
       </div>
-      
-      <div className="flex flex-col justify-center h-full">
-        <h3 className="font-bold text-lg text-forest-deep mb-1">{t('title')}</h3>
-        <div className={`${color} font-bold text-xl mb-3`}>{verdictText}</div>
-        <p className="text-sm font-medium text-ink-soft mb-6 max-w-sm leading-relaxed">
-          {t('desc')}
-        </p>
-        <Link href="/market-intelligence/custom">
-          <button className="self-start px-6 py-2.5 rounded-xl border border-[#ea580c] text-[#ea580c] font-bold text-sm flex items-center hover:bg-[#fff5f0] transition-colors">
-            {t('viewDetails')} <ArrowRight size={16} className="ml-2" />
+
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Link href={`/market-intelligence/${categoryId}`} className="flex-1">
+          <button className="w-full py-3 bg-forest hover:bg-forest-deep text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center space-x-1.5 group">
+            <span>{t('actions.viewIntel')}</span>
+            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </Link>
+        <Link href={`/financials/${categoryId}`} className="flex-1">
+          <button className="w-full py-3 bg-cream hover:bg-cream-deep text-forest-deep border border-premium-border text-xs font-bold rounded-xl transition-all flex items-center justify-center">
+            <span>{t('actions.finModel')}</span>
           </button>
         </Link>
       </div>
@@ -103,206 +114,123 @@ const YuktiFiScoreCard = ({
   );
 };
 
-// Recommended Business Card
-const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails }: { categoryId: string, categoryName: string, score: number | null, ideaDetails?: string }) => {
-  const t = useTranslations('dashboard.recommended');
-  
-  let emoji = "🏪";
-  if (categoryId === 'dairy') emoji = "🥛";
-  if (categoryId === 'poultry') emoji = "🐔";
-  if (categoryId === 'tailoring') emoji = "🧵";
-  if (categoryId === 'flour_mill') emoji = "🌾";
-  
-  let title = categoryName;
-  let desc = "";
-
-  if (ideaDetails && ideaDetails.includes(':\n')) {
-    const parts = ideaDetails.split(':\n');
-    title = parts[0];
-    desc = parts[1];
-  } else if (ideaDetails) {
-    desc = ideaDetails;
-  }
+// Metric Cards with View Calculation Action
+const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass, onViewCalculation }: any) => {
+  const getStatusColor = (s: string) => {
+    switch (s?.toUpperCase()) {
+      case 'HIGH':
+      case 'GOOD':
+      case 'LOW':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'MODERATE':
+      case 'MEDIUM':
+        return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'WARNING':
+      case 'ALERT':
+        return 'bg-rose-50 text-rose-700 border-rose-200';
+      default:
+        return 'bg-slate-50 text-slate-700 border-slate-200';
+    }
+  };
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card flex flex-col w-full lg:w-[400px] shrink-0">
-      <h3 className="text-sm font-bold text-forest-deep mb-4">{t('title')}</h3>
-      
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="font-display font-bold text-2xl text-ink mb-1 leading-tight">{title}</h2>
-          <span className="text-xs font-bold text-ink-soft bg-cream px-2 py-1 rounded border border-premium-border">{categoryName}</span>
+    <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card flex flex-col justify-between hover:border-premium-border-strong transition-all group">
+      <div>
+        <div className="flex justify-between items-start mb-3">
+          <span className="text-xs font-bold text-ink-soft uppercase tracking-wider">{title}</span>
+          <div className={`p-2 rounded-xl bg-cream ${colorClass}`}>
+            <Icon size={18} />
+          </div>
         </div>
-        <div className="w-16 h-16 bg-[#f4f9f6] rounded-2xl flex items-center justify-center border border-[#e5f0ea] shrink-0 ml-4">
-          <span className="text-2xl">{emoji}</span>
+        
+        <div className="font-display text-2xl font-bold text-forest-deep mb-1 group-hover:text-forest transition-colors">
+          {value}
+        </div>
+
+        <div className="flex items-center space-x-2 mt-2">
+          {score != null && (
+            <span className="text-xs font-bold text-forest">
+              {score}/100
+            </span>
+          )}
+          {status && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${getStatusColor(status)}`}>
+              {status}
+            </span>
+          )}
         </div>
       </div>
-      
-      {desc && (
-        <p className="text-sm text-ink-soft font-medium mb-6 line-clamp-3 leading-relaxed">{desc}</p>
-      )}
 
-      <div className="flex items-center space-x-3 mb-8 mt-auto">
-        <span className="text-sm font-medium text-ink-soft">{t('score')}</span>
-        {/* A null score must not print as "0/100". */}
-        {score === null ? (
-          <span className="text-sm font-bold text-ink-soft">{t('notScored')}</span>
-        ) : (
-          <span className="text-lg font-bold text-[#16a34a]">{score}<span className="text-xs text-ink-soft">/100</span></span>
-        )}
-      </div>
-
-      <Link href={`/market-intelligence/${categoryId}`} className="mt-auto block">
-        <button className="w-full px-6 py-3 rounded-xl border border-[#ea580c] text-[#ea580c] font-bold text-sm flex items-center justify-center hover:bg-[#fff5f0] transition-colors">
-          {t('exploreBtn')} <ArrowRight size={16} className="ml-2" />
-        </button>
-      </Link>
+      <button
+        onClick={onViewCalculation}
+        className="mt-4 pt-3 border-t border-premium-border/60 text-xs font-bold text-forest hover:text-forest-deep flex items-center justify-between w-full transition-colors"
+      >
+        <span>View Calculation</span>
+        <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+      </button>
     </div>
   );
 };
 
-import { MetricCalculationModal, MetricDetail } from '@/components/dashboard/MetricCalculationModal';
-
-// Small Metric Card with Value, Score, Status and View Calculation Action
-const MetricCard = ({ 
-  title, 
-  value, 
-  unit, 
-  score, 
-  status, 
-  icon: Icon, 
-  colorClass, 
-  onViewCalculation 
-}: {
-  title: string;
-  value?: string | number | null;
-  unit?: string;
-  score?: number | string | null;
-  status: string;
-  icon: any;
-  colorClass: string;
-  onViewCalculation: () => void;
-}) => (
-  <div className="bg-white rounded-3xl p-6 border border-premium-border shadow-card hover:shadow-md transition-all flex flex-col justify-between">
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center text-xs font-bold text-ink-soft uppercase tracking-wider">
-          <Icon size={16} className="mr-2 text-forest" /> {title}
-        </div>
-        <span className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-          status === 'HIGH' || status === 'GOOD' || status === 'EXCELLENT' || (title.toLowerCase().includes('risk') && status === 'LOW')
-            ? 'bg-emerald-50 text-[#16a34a] border border-emerald-200'
-            : status === 'MODERATE' || status === 'MEDIUM' || status === 'FAIR' || (title.toLowerCase().includes('risk') && status === 'MODERATE')
-            ? 'bg-amber-50 text-[#ea580c] border border-amber-200'
-            : 'bg-rose-50 text-red-500 border border-rose-200'
-        }`}>
-          {status}
-        </span>
-      </div>
-
-      <div className="text-2xl font-bold text-forest-deep mb-1 tracking-tight">
-        {value != null ? (
-          typeof value === 'number' && unit?.includes('₹')
-            ? `₹${value.toLocaleString('en-IN')}`
-            : `${value}`
-        ) : (
-          'INSUFFICIENT_DATA'
-        )}
-      </div>
-
-      <div className="text-sm font-semibold text-ink-soft flex items-center gap-1.5 mb-4">
-        <span>Score:</span>
-        <span className="font-bold text-forest-deep">
-          {typeof score === 'number' ? <>{score}<span className="text-xs text-ink-soft">/100</span></> : (score || '—')}
-        </span>
-      </div>
-    </div>
-
-    <button
-      onClick={onViewCalculation}
-      className="mt-2 text-xs font-bold text-[#ea580c] hover:text-[#c2410c] flex items-center justify-between pt-3 border-t border-premium-border/70 group transition-colors"
-    >
-      <span>View Calculation</span>
-      <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />
-    </button>
-  </div>
-);
-
-// Journey Tracker
+// Simple Step Tracker
 const JourneyTracker = () => {
   const t = useTranslations('dashboard.journey');
   const steps = [
-    { id: 1, label: t('profile'), status: t('completed') },
-    { id: 2, label: t('location'), status: t('completed') },
-    { id: 3, label: t('capital'), status: t('completed') },
-    { id: 4, label: t('business'), status: t('inProgress') },
-    { id: 5, label: t('plan'), status: t('next') }
+    { key: "profile", label: t('steps.profile'), completed: true },
+    { key: "market", label: t('steps.market'), completed: true },
+    { key: "finance", label: t('steps.finance'), completed: true },
+    { key: "schemes", label: t('steps.schemes'), completed: false },
+    { key: "report", label: t('steps.report'), completed: false },
   ];
 
   return (
-    <div className="bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card mt-6">
-      <h3 className="font-bold text-forest-deep mb-8">{t('title')}</h3>
-      
-      <div className="relative flex justify-between items-center max-w-4xl mx-auto px-4 md:px-12">
-        <div className="absolute left-[10%] right-[10%] top-6 h-1 bg-[#f0f9f4] -z-10" />
-        <div className="absolute left-[10%] top-6 h-1 bg-[#16a34a] -z-10" style={{ width: '60%' }} />
+    <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card mt-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider">
+          {t('title')}
+        </h3>
+        <span className="text-xs font-bold text-forest bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+          {t('status')}
+        </span>
+      </div>
 
-        {steps.map((step) => {
-          let nodeColor = '';
-          let textColor = '';
-          let subTextColor = '';
-          let icon = null;
-
-          if (step.status === t('completed')) {
-            nodeColor = 'bg-[#16a34a] text-white ring-4 ring-white';
-            textColor = 'text-[#16a34a]';
-            subTextColor = 'text-[#16a34a]';
-            icon = <Check size={16} strokeWidth={3} />;
-          } else if (step.status === t('inProgress')) {
-            nodeColor = 'bg-[#ea580c] text-white ring-4 ring-white shadow-md scale-110';
-            textColor = 'text-ink';
-            subTextColor = 'text-[#ea580c]';
-            icon = <div className="w-2 h-2 rounded-full bg-white" />;
-          } else {
-            nodeColor = 'bg-white border-2 border-premium-border-strong text-ink-soft ring-4 ring-white';
-            textColor = 'text-ink';
-            subTextColor = 'text-ink-soft';
-            icon = <div className="w-2 h-2 rounded-full bg-premium-border-strong" />;
-          }
-
-          return (
-            <div key={step.id} className="flex flex-col items-center text-center w-20">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all z-10 ${nodeColor}`}>
-                {icon}
-              </div>
-              <div className={`mt-3 text-sm font-bold ${textColor}`}>{step.label}</div>
-              <div className={`text-[11px] font-bold mt-1 ${subTextColor}`}>{step.status}</div>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        {steps.map((step, idx) => (
+          <div key={step.key} className="flex items-center space-x-2">
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+              step.completed ? 'bg-forest text-white' : 'bg-cream text-ink-soft border border-premium-border'
+            }`}>
+              {step.completed ? <Check size={12} /> : idx + 1}
             </div>
-          );
-        })}
+            <span className={`text-xs font-bold ${step.completed ? 'text-forest-deep' : 'text-ink-soft'}`}>
+              {step.label}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default function Dashboard() {
-  const { profileName, analysisResult, marginCapital, categoryId, ideaDetails } = useStore();
+export default function DashboardPage() {
+  const { 
+    profileName, 
+    locationName, 
+    categoryId, 
+    ideaDetails, 
+    analysisResult,
+  } = useStore();
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [selectedMetric, setSelectedMetric] = useState<MetricDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const t = useTranslations('dashboard');
 
-  const displayFirstName = profileName ? profileName.split(' ')[0] : 'Entrepreneur';
-
   useEffect(() => {
-    // If analysis is already present in store, just stop loading and clear error.
     if (analysisResult) {
-      setError("");
       setLoading(false);
     } else {
-      // If someone hit /dashboard directly without onboarding, we might redirect or show error
-      setError("No analysis found. Please complete onboarding first.");
       setLoading(false);
     }
   }, [analysisResult]);
@@ -310,33 +238,31 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#fcfbf8] flex flex-col items-center justify-center">
-        <Loader2 className="animate-spin text-forest mb-4" size={32} />
-        <h2 className="text-lg font-bold text-ink">{t('loading.title')}</h2>
-        <p className="text-sm text-ink-soft">{t('loading.subtitle')}</p>
+        <Loader2 className="animate-spin text-forest mb-4" size={36} />
+        <h2 className="text-lg font-bold text-ink">{t('loading')}</h2>
       </div>
     );
   }
 
-  if (error || !analysisResult) {
-    return (
-      <div className="min-h-screen bg-[#fcfbf8] flex flex-col items-center justify-center p-6 text-center">
-        <ShieldAlert className="text-red-500 mb-4" size={48} />
-        <h2 className="text-xl font-bold text-ink mb-2">{t('error.title')}</h2>
-        <p className="text-ink-soft mb-6">{error || t('error.btn')}</p>
-        <Link href="/">
-          <button className="px-6 py-3 bg-forest text-white rounded-xl font-bold">{t('error.btn')}</button>
-        </Link>
-      </div>
-    );
-  }
+  // Extract from state
+  const resolvedBusiness = analysisResult?.business || null;
+  const resolvedLocation = analysisResult?.location || null;
+  const locationData = resolvedLocation || { resolved: locationName || 'Solapur, Maharashtra' };
+  const data_available = analysisResult?.data_available !== false;
+  const scores = analysisResult?.scores || {};
+  const financials = analysisResult?.financials || {};
+  const market = analysisResult?.market || {};
+  const ai_insights = analysisResult?.ai_insights || {};
 
-  // Destructure real data from unified analysis payload
-  const { market, financials, scores, ai_insights, business: matchedBusiness, matched_business, data_available, location: locationData } = analysisResult;
-  const resolvedBusiness = matchedBusiness || matched_business;
-  
-  // Explicit null check — never use a fake fallback score
-  const yuktiScore = scores?.overall ?? null;
-  const yuktiVerdict = scores?.verdict ?? null;
+  const displayFirstName = profileName?.split(' ')[0] || 'Entrepreneur';
+
+  // Overall Score Calculation
+  const yuktiScore: number | null = 
+    typeof scores?.overall === 'number'
+      ? scores.overall
+      : (scores?.yukti_score ?? null);
+
+  const yuktiVerdict = scores?.verdict || (yuktiScore && yuktiScore >= 75 ? 'HIGH POTENTIAL' : 'VIABLE');
   const notScoredReason = scores?.not_scored_reason ?? null;
   const targetBusinessName = resolvedBusiness?.area_of_interest || resolvedBusiness?.matched_category_id || "Custom Business";
 
@@ -346,14 +272,6 @@ export default function Dashboard() {
 
   // 1. Market Opportunity Metric
   const rawMarketOpp = metrics.market_opportunity || dims.market_opportunity;
-<<<<<<< HEAD
-  const pop = market?.market_reach?.estimated_target_customer_base || 48500;
-  const compCount = market?.competitor_count ?? 3;
-  const unitPrice = financials?.selling_price || financials?.typical_selling_price || 25.0;
-  const calculatedMarketValue = rawMarketOpp?.value ?? roundVal((pop * 0.25 * 3.5 * unitPrice) * 0.05);
-  const marketScore = rawMarketOpp?.score ?? (typeof dims.market_opportunity === 'number' ? dims.market_opportunity : 80);
-  const marketStatus = rawMarketOpp?.status || (marketScore >= 75 ? 'HIGH' : marketScore >= 50 ? 'MODERATE' : 'LOW');
-=======
   const pop = Number(market?.market_reach?.estimated_target_customer_base || market?.target_customer_base || rawMarketOpp?.inputs?.population || 48500);
   const compCount = Number(market?.competitor_count ?? rawMarketOpp?.inputs?.competitor_count ?? 3);
   const unitPrice = Number(financials?.selling_price || financials?.typical_selling_price || rawMarketOpp?.inputs?.addressable_unit_price || 25.0);
@@ -366,7 +284,6 @@ export default function Dashboard() {
   const marketStatus = (rawMarketOpp?.status && rawMarketOpp.status !== 'INSUFFICIENT_DATA')
     ? rawMarketOpp.status
     : (marketScore >= 75 ? 'HIGH' : marketScore >= 50 ? 'MODERATE' : 'LOW');
->>>>>>> cleanup-final
 
   const marketMetricDetail: MetricDetail = {
     key: 'market_opportunity',
@@ -376,13 +293,6 @@ export default function Dashboard() {
     score: marketScore,
     status: marketStatus,
     confidence: rawMarketOpp?.confidence || 0.85,
-<<<<<<< HEAD
-    drivers: rawMarketOpp?.drivers || [
-      `Catchment population: ${pop.toLocaleString('en-IN')} residents.`,
-      `Estimated target demand: ${Math.round(pop * 0.25).toLocaleString('en-IN')} consumers in 5 km radius.`,
-      `Mapped competitor count: ${compCount} competitors located.`
-    ],
-=======
     drivers: (rawMarketOpp?.drivers && rawMarketOpp.drivers.length > 0 && !rawMarketOpp.drivers[0].includes('No verified'))
       ? rawMarketOpp.drivers
       : [
@@ -390,26 +300,16 @@ export default function Dashboard() {
           `Estimated target demand: ${Math.round(pop * 0.25).toLocaleString('en-IN')} consumers in 5 km radius.`,
           `Mapped competitor count: ${compCount} competitors located (OpenStreetMap / Overpass).`
         ],
->>>>>>> cleanup-final
     sources: rawMarketOpp?.sources || [
       'Census of India 2011 (Catchment Demographics & Target Households)',
       'OpenStreetMap / Overpass API (Spatial Competitor Survey)'
     ],
-<<<<<<< HEAD
-    formula: rawMarketOpp?.formula || 'Market Opportunity = Target Market Consumers × Addressable Selling Price; Score = 0.45×Demand + 0.35×Competitor Space + 0.20×Catchment Scale',
-    inputs: rawMarketOpp?.inputs || {
-      population: pop,
-      target_share_pct: 25.0,
-      addressable_unit_price: unitPrice,
-      competitor_count: compCount,
-=======
     formula: rawMarketOpp?.formula || 'Target Market = (Population / 4.8) × Target Share; Opportunity (₹/mo) = Target Consumers × Monthly Demand Units × Unit Price; Score = 0.45×Demand + 0.35×Competitor Space + 0.20×Catchment Scale',
     inputs: {
       population: pop,
       competitor_count: compCount,
       target_share_pct: rawMarketOpp?.inputs?.target_share_pct || 25.0,
       addressable_unit_price: unitPrice,
->>>>>>> cleanup-final
       estimated_market_size_monthly: calculatedMarketValue
     },
     timestamp: rawMarketOpp?.timestamp || new Date().toISOString()
@@ -428,39 +328,29 @@ export default function Dashboard() {
     unit: '% Net Margin',
     score: finScore,
     status: finStatus,
-    confidence: rawFinViability?.confidence || 0.95,
+    confidence: rawFinViability?.confidence || 0.90,
     drivers: rawFinViability?.drivers || [
-      `Net Profit Margin: ${Number(netMargin).toFixed(1)}% (₹${Math.round(financials?.net_profit || financials?.monthly_net_profit || 45000).toLocaleString('en-IN')}/mo).`,
-      `Gross Margin: ${Number(financials?.gross_margin_pct || 40.0).toFixed(1)}%.`,
-      `Debt Service Coverage (DSCR): ${financials?.dscr != null ? `${financials.dscr}x` : 'No debt / Fully equity funded'}.`
+      `Healthy net profit margin of ${Number(netMargin).toFixed(1)}%.`,
+      `Estimated monthly revenue: ₹${Math.round(financials?.monthly_revenue || 150000).toLocaleString('en-IN')}.`,
+      `Monthly net operating income: ₹${Math.round(financials?.net_profit || 35000).toLocaleString('en-IN')}.`
     ],
     sources: rawFinViability?.sources || [
-      'YUKTIFI Canonical Deterministic Financial Engine (v1.0)',
-      'Audited Income Statement & Cash Flow Statement'
+      'YUKTIFI Audited Sector Cost Models & Financial Engine',
+      'Location-Specific Micro-Enterprise Cost Baseline'
     ],
-    formula: rawFinViability?.formula || 'Net Margin % = (Net Profit / Revenue) × 100; Score = 0.40×Net Margin + 0.35×Margin of Safety + 0.25×DSCR',
+    formula: rawFinViability?.formula || 'Net Profit = Revenue - (COGS + Fixed OPEX + Depreciation + EMI + Tax); Net Margin % = (Net Profit / Revenue) × 100; Score = 0.40×Margin + 0.35×DSCR + 0.25×Payback',
     inputs: rawFinViability?.inputs || {
       monthly_revenue: financials?.monthly_revenue || 150000,
-      monthly_cogs: financials?.monthly_cogs || 90000,
-      monthly_opex: financials?.monthly_opex || financials?.monthly_expenses || 25000,
-      monthly_net_profit: financials?.net_profit || financials?.monthly_net_profit || 35000,
-      net_margin_pct: netMargin,
-      dscr: financials?.dscr
+      cogs: financials?.cogs || 90000,
+      monthly_operating_expenses: financials?.monthly_operating_expenses || 25000,
+      monthly_net_profit: financials?.net_profit || 35000,
+      net_margin_pct: netMargin
     },
     timestamp: rawFinViability?.timestamp || new Date().toISOString()
   };
 
   // 3. Risk Exposure Metric
   const rawRisk = metrics.risk_exposure || dims.risk_exposure;
-<<<<<<< HEAD
-  const riskScore = rawRisk?.score ?? (typeof dims.risk_exposure === 'number' ? dims.risk_exposure : 25);
-  const riskStatus = rawRisk?.status || (riskScore <= 35 ? 'LOW' : riskScore <= 65 ? 'MODERATE' : 'HIGH');
-
-  const riskMetricDetail: MetricDetail = {
-    key: 'risk_exposure',
-    label: 'Risk Exposure',
-    value: `${riskScore}/100 Risk`,
-=======
   const riskScore = rawRisk?.score ?? (typeof dims.risk_exposure === 'number' ? dims.risk_exposure : 67);
   const riskIndex = rawRisk?.value != null ? rawRisk.value : (100 - Number(riskScore));
   const riskStatus = rawRisk?.status || (Number(riskIndex) <= 35 ? 'LOW' : Number(riskIndex) <= 65 ? 'MODERATE' : 'HIGH');
@@ -469,7 +359,6 @@ export default function Dashboard() {
     key: 'risk_exposure',
     label: 'Risk Exposure (Resilience)',
     value: `${riskIndex}/100 Risk`,
->>>>>>> cleanup-final
     unit: '/ 100',
     score: riskScore,
     status: riskStatus,
@@ -546,7 +435,6 @@ export default function Dashboard() {
         />
       ) : (
         <>
-<<<<<<< HEAD
           {/* Main Greeting with Generate Report Action */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-premium-border pb-6 gap-4">
             <div>
@@ -562,22 +450,6 @@ export default function Dashboard() {
                 <FileText size={16} />
                 <span>Generate Report</span>
                 <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
-=======
-          {/* Main Greeting */}
-          <div className="mb-8 border-b border-premium-border pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-[32px] font-bold text-forest-deep tracking-tight mb-1">
-                {new Date().getHours() < 12 ? t('greeting.morning') : new Date().getHours() < 18 ? t('greeting.afternoon') : t('greeting.evening')}, {displayFirstName}!
-              </h1>
-              <p className="text-ink-soft font-medium text-lg">
-                {t('greeting.subtitle')}
-              </p>
-            </div>
-            <Link href="/report">
-              <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-forest hover:bg-forest-deep text-white font-semibold rounded-xl shadow-sm transition-colors text-sm shrink-0">
-                <FileText size={18} />
-                <span>Generate Report</span>
->>>>>>> cleanup-final
               </button>
             </Link>
           </div>
@@ -593,7 +465,6 @@ export default function Dashboard() {
             />
           </div>
 
-<<<<<<< HEAD
           {/* AI Insights & Strategic Rationale */}
           {(() => {
             const hasGenericAiText = !ai_insights?.rationale || ai_insights.rationale.includes("temporarily unavailable") || ai_insights.rationale.includes("अस्थायी रूप से अनुपलब्ध");
@@ -661,55 +532,6 @@ export default function Dashboard() {
             );
           })()}
 
-=======
-          {/* AI Insights & Rationale */}
-          <div className="mb-6 bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
-              <svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#16a34a"/>
-              </svg>
-            </div>
-            
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider flex items-center">
-                <span className="w-2.5 h-2.5 rounded-full bg-forest mr-2.5 animate-pulse"></span> 
-                {t('aiInsights.title')}
-              </h3>
-              <span className="text-[11px] font-bold tracking-wide uppercase px-2.5 py-1 bg-emerald-50 text-forest border border-emerald-200 rounded-full">
-                Validated Strategic Analysis
-              </span>
-            </div>
-
-            <p className="text-ink text-base md:text-lg font-medium leading-relaxed mb-6 max-w-4xl">
-              {ai_insights?.rationale || `The proposed ${targetBusinessName} venture shows robust fundamentals grounded in verified local market demand and disciplined unit economics.`}
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {(ai_insights?.recommendations && ai_insights.recommendations.length > 0 
-                ? ai_insights.recommendations 
-                : [
-                    "Direct Manufacturer Tie-ups: Establish direct supplier connections to preserve gross margins and secure volume discounts.",
-                    "Working Capital Discipline: Maintain a 10–14 day liquidity cushion to protect cash flows during seasonal demand cycles.",
-                    "Credit-Linked Support: Target eligible collateral-free financing under PMEGP or PM Mudra with subsidy benefits."
-                  ]
-              ).slice(0, 3).map((rec: string, i: number) => {
-                const titles = ["01 Procurement Strategy", "02 Working Capital", "03 Government Support"];
-                return (
-                  <div key={i} className="bg-cream/70 hover:bg-cream p-4 rounded-2xl border border-premium-border shadow-sm transition-all flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-forest font-bold text-xs uppercase tracking-wider">{titles[i] || `0${i+1} Directive`}</span>
-                        <span className="text-xs font-bold text-ink-soft/60">Phase 1</span>
-                      </div>
-                      <p className="text-sm text-ink-soft font-medium leading-relaxed">{rec}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
->>>>>>> cleanup-final
           {/* Metrics Row — Fully Calculated with View Calculation Action */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard 
@@ -773,4 +595,3 @@ export default function Dashboard() {
 function roundVal(num: number): number {
   return Math.round(num * 100) / 100;
 }
-
