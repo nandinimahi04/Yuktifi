@@ -209,6 +209,7 @@ def test_run_financial_engine_abstains_when_dataset_is_incomplete():
         setup_costs={},
         pricing_margins={},
         monthly_costs={},
+        category_id="retail_kirana",
         unit_economics={},
     )
     assert result["financial_data_available"] is False

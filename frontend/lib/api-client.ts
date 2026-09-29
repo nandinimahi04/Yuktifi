@@ -542,7 +542,19 @@ export const api = {
   generateAnalysis: (data: any, signal?: AbortSignal) =>
     ApiClient.post<AnalysisResponse>("/api/analysis/generate", data, AI_TIMEOUT_MS, signal),
 
-  createProfile: (data: { name: string; location_input: string; language: string }, signal?: AbortSignal) =>
+  createProfile: (data: {
+    name: string;
+    age: number;
+    gender: "Male" | "Female" | "Other";
+    social_category: "SC" | "ST" | "OBC" | "General" | "Other";
+    location_input: string;
+    language: string;
+    business_idea?: string;
+    business_industry?: string;
+    business_experience?: string;
+    available_capital_inr?: number;
+    loan_intent?: "no" | "yes" | "not_sure";
+  }, signal?: AbortSignal) =>
     ApiClient.post<ProfileResponse>("/profile", data, undefined, signal),
 
   rankOpportunities: (data: { session_id: string; location_id: string; margin_capital: number }, signal?: AbortSignal) =>

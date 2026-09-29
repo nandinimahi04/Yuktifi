@@ -31,8 +31,8 @@
   "Stepper": {
     "step_1": "आपके बारे में",
     "step_2": "स्थान (Location)",
-    "step_3": "पूंजी (Capital)",
-    "step_4": "व्यवसाय (Business)",
+    "step_3": "व्यवसाय (Business)",
+    "step_4": "निवेश (Investment)",
     "step_5": "समीक्षा (Review)"
   },
   "onboarding": {
@@ -47,7 +47,8 @@
       "male": "पुरुष",
       "female": "महिला",
       "other": "अन्य",
-      "socialCategory": "सामाजिक श्रेणी"
+      "socialCategory": "सामाजिक श्रेणी",
+      "schemeNote": "इसका उपयोग केवल आपको उन सरकारी योजनाओं से मिलाने के लिए किया जाता है जिनके लिए आप पात्र हो सकते हैं।"
     },
     "step2": {
       "title": "आप व्यवसाय कहाँ शुरू करना चाहते हैं?",

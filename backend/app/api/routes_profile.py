@@ -1,7 +1,7 @@
 """POST /profile — create user + resolve location."""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session as DBSession
-from app.schemas.profile import ProfileRequest, ProfileResponse, OnboardingParseRequest, OnboardingParseResponse
+from app.schemas.profile import ProfileRequest, ProfileResponse, OnboardingParseRequest, OnboardingParseResponse, BusinessMatchRequest, BusinessMatchResponse
 from app.core.db import get_db
 from app.models import User, Location
 from app.models.core import uid
@@ -42,7 +42,19 @@ def create_profile(req: ProfileRequest, db: DBSession = Depends(get_db)):
             raise HTTPException(status_code=404, detail=f"Location '{location_id}' not found in database. Error: {e}")
 
     # Create user
-    user = User(id=uid(), name=req.name, language_pref=req.language)
+    user = User(
+        id=uid(), 
+        name=req.name, 
+        age=req.age,
+        gender=req.gender,
+        social_category=req.social_category,
+        business_idea=req.business_idea,
+        experience_level=req.experience_level,
+        available_capital_inr=req.available_capital_inr,
+        loan_intent=req.loan_intent,
+        business_category=req.business_category,
+        language_pref=req.language
+    )
     db.add(user)
     db.commit()
 
@@ -56,6 +68,53 @@ def create_profile(req: ProfileRequest, db: DBSession = Depends(get_db)):
         lng=meta.get("lng", location.lng),
         data_richness=meta.get("data_richness", location.data_richness),
     )
+
+@router.post("/business/match", response_model=BusinessMatchResponse)
+async def match_business(req: BusinessMatchRequest):
+    text = req.text.lower()
+    if not text:
+        return BusinessMatchResponse(detected_business=None, category=None, confidence=0.0, alternatives=[])
+    
+    # Very basic deterministic matcher based on CATEGORY_MAP in business_matcher
+    from app.ai_layer.business_matcher import CATEGORY_MAP
+    
+    best_match = None
+    best_score = 0.0
+    best_cat = None
+    
+    # We map keywords to categories
+    KEYWORDS = {
+        "retail_shop": ["grocery", "kirana", "mart", "hardware", "tools", "pooja", "shop", "store", "retail"],
+        "manufacturing": ["paper", "plate", "cup", "spice", "masala", "powerloom", "towel", "manufacturing", "factory"],
+        "agri_business": ["dairy", "milk", "poultry", "mushroom", "farming", "agriculture"],
+        "services_tech": ["csc", "seva", "repair", "garage", "mobile", "tech", "service"],
+        "food_beverage": ["kitchen", "tiffin", "mill", "chakki", "snacks", "bakery", "food", "cafe", "restaurant"],
+        "handicrafts_artisanal": ["handloom", "tailoring", "bamboo", "furniture", "pottery", "clay", "handicraft", "artisan"],
+        "logistics_delivery": ["courier", "delivery", "transport", "moving", "logistics"],
+        "education_training": ["computer", "typing", "tuition", "coaching", "training", "education", "school"],
+        "healthcare_wellness": ["medicine", "pharmacy", "diagnostic", "beauty", "salon", "parlour", "health", "wellness"],
+        "fashion_apparel": ["garment", "uniform", "jewellery", "cosmetics", "apparel", "fashion", "clothes"]
+    }
+    
+    words = set(text.split())
+    for cat_id, kws in KEYWORDS.items():
+        matches = len(words.intersection(kws))
+        if matches > 0:
+            score = min(1.0, matches * 0.4)
+            if score > best_score:
+                best_score = score
+                best_cat = cat_id
+                best_match = kws[0] # Just a simple representation
+                
+    if best_score >= 0.4:
+        return BusinessMatchResponse(
+            detected_business=best_match.capitalize(),
+            category=best_cat,
+            confidence=best_score,
+            alternatives=[]
+        )
+    
+    return BusinessMatchResponse(detected_business=None, category=None, confidence=0.0, alternatives=[])
 
 @router.post("/parse-onboarding", response_model=OnboardingParseResponse)
 async def parse_onboarding(req: OnboardingParseRequest):

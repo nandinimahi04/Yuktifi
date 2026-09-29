@@ -244,7 +244,7 @@ def compute_full_financials(
         raise ValueError(f"Session {session_id} not found")
 
     location_id = session.location_id
-    category_id = session.category_id or "retail_kirana"
+    category_id = session.category_id
     margin_capital = session.margin_capital
 
     cost_result = data_layer.get_cost_profile(location_id, category_id) if category_id else {"value": None}

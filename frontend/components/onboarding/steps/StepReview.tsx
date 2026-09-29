@@ -26,11 +26,6 @@ export function StepReview({ data, onNext, onBack, isSubmitting }: StepReviewPro
   const tStep3 = useTranslations('onboarding.step3');
   const tStep4 = useTranslations('onboarding.step4');
   
-  const PREDEFINED_CAPITAL: Record<string, string> = {
-    'Under ₹50,000': tStep3('under50k'),
-    'Above ₹5L': tStep3('above5L')
-  };
-  
   const PREDEFINED_INDUSTRIES: Record<string, string> = {
     'Retail & Shop': tStep4('indRetail'),
     'Manufacturing': tStep4('indMfg'),
@@ -44,7 +39,7 @@ export function StepReview({ data, onNext, onBack, isSubmitting }: StepReviewPro
     'Fashion & Apparel': tStep4('indFashion')
   };
 
-  const getCapitalLabel = (val: string) => PREDEFINED_CAPITAL[val] || val;
+  const formatCapital = (val: string) => val ? `₹${Number(val).toLocaleString('en-IN')}` : '-';
   const getIndustryLabel = (val: string) => PREDEFINED_INDUSTRIES[val] || val;
 
   return (
@@ -74,7 +69,7 @@ export function StepReview({ data, onNext, onBack, isSubmitting }: StepReviewPro
               <span className="text-ink-soft">{t('district')}:</span>
               <span className="font-bold text-ink">{data.location.district || '-'}, {data.location.state || '-'}</span>
               <span className="text-ink-soft">{t('investment')}:</span>
-              <span className="font-bold text-ink">{getCapitalLabel(data.capital.investment) || '-'}</span>
+              <span className="font-bold text-ink">{formatCapital(data.capital.investment)}</span>
               <span className="text-ink-soft">{t('interest')}:</span>
               <span className="font-bold text-ink">{getIndustryLabel(data.business.industry) || '-'}</span>
             </div>

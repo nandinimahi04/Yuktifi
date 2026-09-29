@@ -11,6 +11,8 @@ def run_test():
     print("1. Creating Profile...")
     res = requests.post(f"{BASE_URL}/profile", json={
         "name": "Test User",
+        "gender": "female",
+        "social_category": "obc",
         "location_input": "Solapur",
         "language": "en"
     })
