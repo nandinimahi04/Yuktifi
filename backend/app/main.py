@@ -51,26 +51,18 @@ app = FastAPI(title="YuktiFi API", lifespan=lifespan)
 _cors_origins = settings.cors_origin_list
 
 if _cors_origins == ["*"]:
-    # A wildcard origin and credentials cannot be combined: the response would
-    # carry `Access-Control-Allow-Origin: *` together with
-    # `Access-Control-Allow-Credentials: true`, which the CORS specification
-    # forbids and browsers reject. So the wildcard path drops credentials rather
-    # than emitting a combination that fails closed for every caller.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=_cors_origins,
+        allow_origins=["*"],
         allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
-    )
-    logger.warning(
-        "CORS is set to wildcard with credentials disabled. Use an explicit "
-        "CORS_ORIGINS list for any deployment that serves authenticated requests."
     )
 else:
     app.add_middleware(
         CORSMiddleware,
         allow_origins=_cors_origins,
+        allow_origin_regex=r"^https:\/\/([a-zA-Z0-9_-]+\.)*vercel\.app$",
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

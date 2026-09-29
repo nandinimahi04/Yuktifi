@@ -27,9 +27,9 @@ class Settings(BaseSettings):
 
     # ── Network ─────────────────────────────────────────────────────────────
     # Comma-separated. Default is local development only.
-    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,http://yuktifi.vercel.app"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,https://yuktifi.vercel.app"
     # Wildcard CORS is refused unless this is explicitly enabled.
-    allow_wildcard_cors: bool = False
+    allow_wildcard_cors: bool = True
 
     # ── Optional AI providers ───────────────────────────────────────────────
     # Unset => that provider is disabled. The core product never depends on it.
@@ -95,9 +95,7 @@ class Settings(BaseSettings):
     def cors_origin_list(self) -> list[str]:
         raw = (self.cors_origins or "").strip()
         if raw == "*":
-            if self.allow_wildcard_cors and self.env == "development":
-                return ["*"]
-            return ["http://localhost:3000", "http://127.0.0.1:3000"]
+            return ["*"]
         return [o.strip() for o in raw.split(",") if o.strip()]
 
     @property
