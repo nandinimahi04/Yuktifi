@@ -23,12 +23,15 @@ logger = logging.getLogger(__name__)
 CATEGORY_DEFAULT_AGRI_COMMODITIES = {
     "retail_kirana": ["rice", "wheat", "tur_dal", "gram_dal", "urad_dal", "moong_dal", "onion", "potato", "sugar"],
     "retail_shop": ["rice", "wheat", "tur_dal", "gram_dal", "urad_dal", "moong_dal", "onion", "potato", "sugar"],
-    "tea_snacks": ["sugar", "potato", "onion", "wheat", "gram_dal"],
-    "tea_stall": ["sugar", "potato", "onion", "wheat", "gram_dal"],
-    "dairy": ["sugar"],
+    "tea_snacks": ["sugar", "potato", "onion", "wheat", "gram_dal", "soyabean"],
+    "tea_stall": ["sugar", "potato", "onion", "wheat", "gram_dal", "soyabean"],
+    "food_beverage": ["sugar", "potato", "onion", "wheat", "gram_dal", "rice", "soyabean"],
+    "food_stall": ["sugar", "potato", "onion", "wheat", "gram_dal", "rice", "soyabean"],
+    "restaurant": ["sugar", "potato", "onion", "wheat", "gram_dal", "rice", "tur_dal", "soyabean"],
+    "dairy": ["sugar", "soyabean", "wheat"],
     "flour_mill": ["wheat", "gram_dal", "jowar"],
-    "poultry": ["soyabean"],
-    "tailoring": [],
+    "poultry": ["soyabean", "wheat", "jowar"],
+    "tailoring": ["rice", "wheat", "tur_dal", "gram_dal", "onion", "sugar"],
 }
 
 def get_commodity_mandi_metrics(
@@ -48,7 +51,18 @@ def get_mandi_basket_for_category(
 ) -> Dict[str, Any]:
     """Returns wholesale mandi metrics for all agricultural commodities relevant to the category."""
     cat_key = category_id.lower().strip()
-    commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES.get(cat_key, ["rice", "wheat", "tur_dal", "gram_dal", "onion", "sugar"])
+    commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES.get(cat_key)
+    if not commodities:
+        if any(k in cat_key for k in ("food", "snack", "tea", "cafe", "dhaba", "sweet", "canteen")):
+            commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES["food_beverage"]
+        elif any(k in cat_key for k in ("kirana", "shop", "grocery", "store", "retail")):
+            commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES["retail_kirana"]
+        elif "dairy" in cat_key:
+            commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES["dairy"]
+        elif any(k in cat_key for k in ("mill", "chakki", "flour")):
+            commodities = CATEGORY_DEFAULT_AGRI_COMMODITIES["flour_mill"]
+        else:
+            commodities = ["rice", "wheat", "tur_dal", "gram_dal", "onion", "potato", "sugar", "jowar", "soyabean"]
 
     basket = []
     evidence_dict = {}

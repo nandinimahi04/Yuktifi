@@ -38,9 +38,9 @@ CATEGORY_MAP = {
 }
 
 LEGACY_LABEL_ALIASES = {
-    "Dairy Farming & Collection": "agri_business",
-    "Dairy Farming": "agri_business",
-    "Dairy Farming & Milk Chilling": "agri_business",
+    "Dairy Farming & Collection": "dairy",
+    "Dairy Farming": "dairy",
+    "Dairy Farming & Milk Chilling": "dairy",
     "Kirana & General Store": "retail_shop",
     "Kirana / Grocery Store": "retail_shop",
     "Grocery Store": "retail_shop",

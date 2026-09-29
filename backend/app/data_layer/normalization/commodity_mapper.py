@@ -90,13 +90,28 @@ class CommodityMapper:
     def get_business_input_profile(self, category_id: str) -> Dict[str, float]:
         """Returns input commodity weight mapping e.g. {'rice': 0.18, 'wheat': 0.12}"""
         cat_key = category_id.lower().strip()
-        if cat_key in ("kirana", "retail_shop", "grocery"):
+        if cat_key in ("kirana", "retail_shop", "grocery", "retail_store", "general_store", "supermarket"):
             cat_key = "retail_kirana"
-        elif cat_key in ("tea_stall", "chai", "tea_shop"):
+        elif cat_key in ("tea_stall", "chai", "tea_shop", "food_beverage", "food_stall", "restaurant", "fast_food", "bakery", "vada_pav", "canteen", "sweet_shop", "dhaba", "cafe"):
             cat_key = "tea_snacks"
+        elif cat_key in ("atta_chakki", "oil_mill", "dal_mill", "processing"):
+            cat_key = "flour_mill"
 
-        profile = self.business_profiles.get(cat_key, {})
-        return profile.get("inputs", {})
+        profile = self.business_profiles.get(cat_key)
+        if not profile:
+            # Fallback by specific keyword match only
+            if any(k in cat_key for k in ("food", "snack", "tea", "cafe", "dhaba", "sweet", "canteen", "vada", "restaurant")):
+                profile = self.business_profiles.get("tea_snacks", {})
+            elif "dairy" in cat_key:
+                profile = self.business_profiles.get("dairy", {})
+            elif any(k in cat_key for k in ("mill", "chakki", "flour")):
+                profile = self.business_profiles.get("flour_mill", {})
+            elif any(k in cat_key for k in ("kirana", "retail", "shop", "grocery", "store")):
+                profile = self.business_profiles.get("retail_kirana", {})
+            else:
+                return {}
+
+        return profile.get("inputs", {}) if profile else {}
 
     def list_all_commodities(self) -> List[str]:
         return list(self.commodities.keys())

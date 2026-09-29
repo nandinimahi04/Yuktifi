@@ -23,10 +23,13 @@ CATEGORY_DEFAULT_COMMODITIES = {
     "retail_shop": ["rice", "wheat", "atta", "tur_dal", "gram_dal", "sugar", "edible_oil", "milk", "tea", "salt"],
     "tea_snacks": ["milk", "sugar", "tea", "edible_oil", "atta", "salt", "potato", "onion"],
     "tea_stall": ["milk", "sugar", "tea", "edible_oil", "atta", "salt", "potato", "onion"],
+    "food_beverage": ["milk", "sugar", "tea", "edible_oil", "atta", "salt", "potato", "onion", "rice", "wheat"],
+    "food_stall": ["milk", "sugar", "tea", "edible_oil", "atta", "salt", "potato", "onion", "rice", "wheat"],
+    "restaurant": ["milk", "sugar", "tea", "edible_oil", "atta", "salt", "potato", "onion", "rice", "wheat", "tur_dal"],
     "dairy": ["milk", "sugar"],
-    "flour_mill": ["wheat", "atta", "gram_dal"],
-    "poultry": [],
-    "tailoring": [],
+    "flour_mill": ["wheat", "atta", "gram_dal", "jowar"],
+    "poultry": ["soyabean", "wheat", "rice"],
+    "tailoring": ["rice", "wheat", "atta", "sugar", "milk", "tea", "edible_oil"],
 }
 
 def get_commodity_retail_metrics(
@@ -42,7 +45,19 @@ def get_retail_basket_for_category(
 ) -> Dict[str, Any]:
     """Returns retail metrics for all commodities relevant to the selected business category."""
     cat_key = category_id.lower().strip()
-    commodities = CATEGORY_DEFAULT_COMMODITIES.get(cat_key, ["rice", "wheat", "atta", "sugar", "milk", "tea"])
+    commodities = CATEGORY_DEFAULT_COMMODITIES.get(cat_key)
+    if not commodities:
+        # Check partial matching
+        if any(k in cat_key for k in ("food", "snack", "tea", "cafe", "dhaba", "sweet", "canteen")):
+            commodities = CATEGORY_DEFAULT_COMMODITIES["food_beverage"]
+        elif any(k in cat_key for k in ("kirana", "shop", "grocery", "store", "retail")):
+            commodities = CATEGORY_DEFAULT_COMMODITIES["retail_kirana"]
+        elif "dairy" in cat_key:
+            commodities = CATEGORY_DEFAULT_COMMODITIES["dairy"]
+        elif any(k in cat_key for k in ("mill", "chakki", "flour")):
+            commodities = CATEGORY_DEFAULT_COMMODITIES["flour_mill"]
+        else:
+            commodities = ["rice", "wheat", "atta", "tur_dal", "gram_dal", "sugar", "edible_oil", "milk", "tea", "potato", "onion"]
 
     basket = []
     evidence_dict = {}
