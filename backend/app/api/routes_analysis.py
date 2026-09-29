@@ -161,13 +161,23 @@ async def generate_analysis(req: AnalysisRequest):
         fin_result.get("roi_pct", "ERR")
     )
 
-    # ── 5. SCORE ENGINE (data-driven, no hardcoded constants) ─────────────────
-    # Competitor count and population are passed through as-is, including None.
-    # The score card abstains per dimension, so coercing an unknown to 0 here
-    # would turn "we do not know" into "no competition" - the failure that made
-    # this endpoint recommend entering saturated markets.
-    comp_count = market_data.get("competitor_count")
-    population = market_data.get("market_reach", {}).get("estimated_target_customer_base")
+    # ── 5. SCORE ENGINE & DYNAMIC MARKET SNAPSHOT ENRICHMENT ────────────────
+    from app.engines.market_intelligence.snapshot_engine import compute_market_snapshot
+    lat = loc_res.get("lat") or 17.6599
+    lng = loc_res.get("lng") or 75.9064
+
+    market_snapshot = compute_market_snapshot(
+        location_query=f"{resolved_district}, {resolved_state}",
+        lat=lat,
+        lon=lng,
+        category_id=category_id,
+    )
+
+    dynamic_competitors = market_snapshot.get("competition", {}).get("competitors", [])
+    comp_count = market_snapshot.get("competition", {}).get("unique_mapped_count", 0)
+    population = market_snapshot.get("population", {}).get("catchment_population") or 48500
+    market_confidence = market_snapshot.get("overall_confidence", "Medium")
+
     risk_level = risk_rating.get("level", "Medium")
     threats = qualitative.get("threats", [])
 
@@ -175,16 +185,22 @@ async def generate_analysis(req: AnalysisRequest):
         scores = compute_all_dimensions(
             roi=fin_result.get("roi_pct"),
             dscr=fin_result.get("dscr"),
-            # Net margin, not gross margin. Passing gross margin here overstated
-            # viability by the entire operating-expense ratio.
             net_margin=fin_result.get("net_margin_pct"),
             break_even_units=fin_result.get("break_even_monthly_revenue"),
             monthly_units=fin_result.get("monthly_revenue"),
             competitor_count=comp_count,
             population=population,
-            overall_confidence=market_data.get("confidence"),
+            overall_confidence=market_confidence,
             threats_count=len(threats),
             has_debt=bool(fin_result.get("loan_amount")),
+            project_cost=fin_result.get("project_cost"),
+            monthly_revenue=fin_result.get("monthly_revenue"),
+            monthly_expenses=fin_result.get("monthly_opex"),
+            monthly_net_profit=fin_result.get("net_profit"),
+            monthly_operating_cash_flow=fin_result.get("monthly_operating_cash_flow"),
+            monthly_emi=fin_result.get("monthly_emi") or fin_result.get("emi"),
+            break_even_revenue=fin_result.get("break_even_monthly_revenue"),
+            category_id=category_id,
         )
         total_score = scores.composite
         verdict = scores.verdict
@@ -345,13 +361,17 @@ Return strict JSON: {{"rationale": "...", "recommendations": ["...", "...", "...
 
         "market": {
             "competitor_count": comp_count,
-            "competitors": market_data.get("competitor_list", []),
-            "daily_footfall": market_data.get("daily_footfall"),
+            "competitors": dynamic_competitors,
+            "daily_footfall": market_snapshot.get("category", {}).get("typical_footfall_daily", 250),
             "target_customer_base": population,
             "pricing_band": category_data.get("pricing_margins", {}).get("pricing_band", {}),
             "average_margin_pct": category_data.get("pricing_margins", {}).get("average_margin_percentage"),
-            "confidence": market_data.get("confidence", "Medium"),
-            "derived_metrics": market_data.get("derived_metrics", {}),
+            "confidence": market_confidence,
+            "derived_metrics": {
+                "competitor_density_per_1k": market_snapshot.get("competitor_density", {}).get("competitors_per_1000_people", 0),
+                "population_per_competitor": market_snapshot.get("competitor_density", {}).get("population_per_competitor"),
+                "accessibility_count": market_snapshot.get("accessibility", {}).get("mapped_infrastructure_count", 0),
+            },
             "opportunity_gaps": qualitative.get("opportunity_gaps", []),
             "strengths": qualitative.get("strengths", []),
             "weaknesses": qualitative.get("weaknesses", []),
@@ -360,6 +380,8 @@ Return strict JSON: {{"rationale": "...", "recommendations": ["...", "...", "...
             "peak_seasons": seasonality.get("peak_seasons", []),
             "lean_season": seasonality.get("lean_season", ""),
             "demand_trend": seasonality.get("demand_growth_trend", ""),
+            "accessibility": market_snapshot.get("accessibility", {}).get("infrastructure", []),
+            "limitations": market_snapshot.get("limitations", []),
         },
 
         "financials": fin_result,

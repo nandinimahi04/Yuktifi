@@ -27,7 +27,7 @@ class Settings(BaseSettings):
 
     # ── Network ─────────────────────────────────────────────────────────────
     # Comma-separated. Default is local development only.
-    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,http://yuktifi.vercel.app"
     # Wildcard CORS is refused unless this is explicitly enabled.
     allow_wildcard_cors: bool = False
 

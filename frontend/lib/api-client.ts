@@ -526,6 +526,193 @@ export interface SchemeListResponse {
   disclaimer: string;
 }
 
+export interface MarketSnapshotResponse {
+  location: {
+    state: string;
+    district: string;
+    subdistrict?: string;
+    village?: string;
+    latitude: number;
+    longitude: number;
+    formatted_address: string;
+  };
+  category: {
+    category_id: string;
+    display_name: string;
+    primary_radius_km: number;
+    extended_radius_km: number;
+    selected_radius_km: number;
+    description?: string;
+  };
+  population: {
+    catchment_population: number;
+    catchment_households: number;
+    radius_km: number;
+    area_sq_km: number;
+    density_per_sq_km: number;
+    density_classification: string;
+    is_estimate: boolean;
+    source: string;
+  };
+  census_reference: {
+    district_population_2011: number;
+    district_households_2011: number;
+    literacy_rate_pct: number;
+    reference_year: number;
+    is_estimate: boolean;
+    source: string;
+  };
+  competition: {
+    unique_mapped_count: number;
+    overture_count: number;
+    osm_count: number;
+    duplicate_count: number;
+    competitors: Array<{
+      id?: string;
+      name: string;
+      category?: string;
+      latitude: number;
+      longitude: number;
+      distance_km?: number;
+      sources?: string[];
+      is_duplicate_resolved?: boolean;
+      osm_matched_id?: string;
+      reconciliation_note?: string;
+    }>;
+    note: string;
+  };
+  competitor_density: {
+    competitors_per_1000_people: number;
+    population_per_competitor: number | null;
+    is_estimate: boolean;
+  };
+  accessibility: {
+    mapped_infrastructure_count: number;
+    infrastructure: Array<{
+      name: string;
+      type: string;
+      importance?: string;
+      distance_km: number;
+      latitude: number;
+      longitude: number;
+    }>;
+    source: string;
+  };
+  // Phase 2 blocks
+  consumer_profile?: {
+    status: string;
+    state: string;
+    sector: string;
+    survey_year: string;
+    benchmark_label: string;
+    report_number?: string;
+    survey_period?: string;
+    mpce_inr?: number;
+    food_share_pct?: number;
+    non_food_share_pct?: number;
+    avg_household_size?: number;
+    monthly_household_expenditure_inr?: number;
+    commodity_shares_pct?: Record<string, number>;
+    quantity_consumption?: Record<string, number>;
+    relevant_category_share_pct?: number;
+    estimated_per_capita_category_spend_inr?: number;
+    estimated_household_category_spend_inr?: number;
+    limitations: string[];
+  };
+  retail_prices?: {
+    category_id: string;
+    market_centre: string;
+    total_basket_items: number;
+    valid_items_count: number;
+    items: Array<{
+      commodity_id: string;
+      commodity_name: string;
+      market_centre: string;
+      unit: string;
+      status: string;
+      current_price?: number;
+      avg_7d?: number;
+      avg_30d?: number;
+      avg_90d?: number;
+      change_30d_pct?: number;
+      yoy_pct?: number;
+      volatility_cv?: number;
+      observation_count: number;
+      latest_observed_at?: string;
+    }>;
+    source: string;
+    limitations: string[];
+  };
+  mandi_prices?: {
+    category_id: string;
+    primary_mandi: string;
+    primary_mandi_distance_km?: number;
+    label: string;
+    total_basket_items: number;
+    valid_items_count: number;
+    items: Array<{
+      commodity_id: string;
+      commodity_name: string;
+      market_name: string;
+      distance_km?: number;
+      status: string;
+      latest_arrival_date?: string;
+      variety?: string;
+      grade?: string;
+      unit: string;
+      unit_kg: string;
+      modal_price_quintal?: number;
+      min_price_quintal?: number;
+      max_price_quintal?: number;
+      modal_price_kg?: number;
+      avg_7d_modal?: number;
+      avg_30d_modal?: number;
+      avg_90d_modal?: number;
+      change_30d_pct?: number;
+      volatility_cv?: number;
+      observation_count: number;
+    }>;
+    source: string;
+    limitations: string[];
+  };
+  input_cost_pressure?: {
+    status: string;
+    category_id: string;
+    weighted_30d_change_pct?: number;
+    weighted_volatility_cv?: number;
+    pressure_level: string;
+    coverage_pct: number;
+    cost_drivers: Array<{
+      commodity_id: string;
+      commodity_name: string;
+      weight_pct: number;
+      source_type: string;
+      current_price?: number;
+      unit: string;
+      change_30d_pct?: number;
+      volatility_cv?: number;
+      weighted_contribution_pct?: number;
+      status: string;
+    }>;
+    input_breakdown: Array<{
+      commodity_id: string;
+      commodity_name: string;
+      weight_pct: number;
+      source_type: string;
+      current_price?: number;
+      unit: string;
+      change_30d_pct?: number;
+      volatility_cv?: number;
+      weighted_contribution_pct?: number;
+      status: string;
+    }>;
+    limitations: string[];
+  };
+  evidence: Record<string, any>;
+  limitations: string[];
+  overall_confidence: string;
+}
+
 // ─── API methods ─────────────────────────────────────────────────────────────
 
 export const api = {
@@ -550,6 +737,17 @@ export const api = {
 
   analyzeMarket: (data: { session_id: string; location_id: string; category_id: string; category_name?: string; budget?: number; experience?: string; idea_details?: string }, signal?: AbortSignal) =>
     ApiClient.post<MarketResponse>("/analyze-market", data, AI_TIMEOUT_MS, signal),
+
+  getMarketSnapshot: (params: { location?: string; lat?: number; lon?: number; category_id?: string; radius_km?: number }, signal?: AbortSignal) => {
+    const query = new URLSearchParams();
+    if (params.location) query.append("location", params.location);
+    if (params.lat !== undefined) query.append("lat", params.lat.toString());
+    if (params.lon !== undefined) query.append("lon", params.lon.toString());
+    if (params.category_id) query.append("category_id", params.category_id);
+    if (params.radius_km !== undefined) query.append("radius_km", params.radius_km.toString());
+    const qs = query.toString();
+    return ApiClient.get<MarketSnapshotResponse>(`/api/market/snapshot${qs ? `?${qs}` : ''}`, undefined, signal);
+  },
 
   calculateFinance: (data: { session_id: string; overrides?: any }, signal?: AbortSignal) =>
     ApiClient.post<FinanceResponse>("/calculate-finance", data, undefined, signal),

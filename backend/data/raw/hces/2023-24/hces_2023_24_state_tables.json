@@ -1,0 +1,146 @@
+{
+  "metadata": {
+    "survey_name": "Household Consumption Expenditure Survey 2023-24",
+    "report_number": "Report No. 592",
+    "published_by": "National Sample Survey Office (NSSO), Ministry of Statistics and Programme Implementation (MoSPI)",
+    "survey_period": "August 2023 - July 2024",
+    "release_year": "2024",
+    "version": "1.0",
+    "geography_coverage": "State and Sector (Rural / Urban) Benchmarks",
+    "note": "State/Sector benchmarks must not be interpolated to village-level micro-demand."
+  },
+  "states": {
+    "Maharashtra": {
+      "state_code": "MH",
+      "rural": {
+        "mpce_inr": 4830.0,
+        "mpce_without_imputation_inr": 4720.0,
+        "food_expenditure_share_pct": 46.5,
+        "non_food_expenditure_share_pct": 53.5,
+        "commodity_group_shares_pct": {
+          "cereals": 4.8,
+          "pulses": 4.1,
+          "milk_and_products": 8.2,
+          "edible_oil": 3.9,
+          "egg_fish_meat": 4.6,
+          "vegetables": 6.1,
+          "fruits": 3.8,
+          "sugar_salt_spices": 4.5,
+          "beverages_refreshments_processed": 6.5,
+          "pan_tobacco_intoxicants": 3.2,
+          "fuel_and_light": 7.1,
+          "clothing_and_footwear": 6.4,
+          "education": 4.2,
+          "medical": 7.3,
+          "entertainment": 1.8,
+          "conveyance": 8.4,
+          "consumer_services": 6.2,
+          "durable_goods": 8.9
+        },
+        "monthly_per_capita_quantity": {
+          "rice_kg": 5.4,
+          "wheat_atta_kg": 4.8,
+          "coarse_cereals_kg": 2.2,
+          "pulses_kg": 1.05,
+          "milk_litres": 4.8,
+          "edible_oil_kg": 0.95,
+          "sugar_kg": 0.90,
+          "tea_grams": 110.0
+        },
+        "avg_household_size": 4.4,
+        "estimated_monthly_household_expenditure_inr": 21252.0
+      },
+      "urban": {
+        "mpce_inr": 7380.0,
+        "mpce_without_imputation_inr": 7240.0,
+        "food_expenditure_share_pct": 39.2,
+        "non_food_expenditure_share_pct": 60.8,
+        "commodity_group_shares_pct": {
+          "cereals": 3.6,
+          "pulses": 3.1,
+          "milk_and_products": 7.4,
+          "edible_oil": 3.2,
+          "egg_fish_meat": 3.7,
+          "vegetables": 4.3,
+          "fruits": 3.9,
+          "sugar_salt_spices": 3.0,
+          "beverages_refreshments_processed": 7.0,
+          "pan_tobacco_intoxicants": 2.1,
+          "fuel_and_light": 5.9,
+          "clothing_and_footwear": 5.8,
+          "education": 6.1,
+          "medical": 6.3,
+          "entertainment": 2.7,
+          "conveyance": 10.2,
+          "consumer_services": 9.8,
+          "durable_goods": 11.9
+        },
+        "monthly_per_capita_quantity": {
+          "rice_kg": 4.1,
+          "wheat_atta_kg": 5.1,
+          "coarse_cereals_kg": 1.1,
+          "pulses_kg": 1.15,
+          "milk_litres": 5.6,
+          "edible_oil_kg": 1.05,
+          "sugar_kg": 0.95,
+          "tea_grams": 130.0
+        },
+        "avg_household_size": 3.9,
+        "estimated_monthly_household_expenditure_inr": 28782.0
+      }
+    },
+    "All_India": {
+      "state_code": "IN",
+      "rural": {
+        "mpce_inr": 3773.0,
+        "food_expenditure_share_pct": 46.4,
+        "non_food_expenditure_share_pct": 53.6,
+        "commodity_group_shares_pct": {
+          "cereals": 4.9,
+          "pulses": 3.8,
+          "milk_and_products": 8.3,
+          "edible_oil": 3.7,
+          "egg_fish_meat": 4.9,
+          "vegetables": 5.4,
+          "fruits": 3.7,
+          "sugar_salt_spices": 4.1,
+          "beverages_refreshments_processed": 7.6,
+          "fuel_and_light": 6.7,
+          "clothing_and_footwear": 6.8,
+          "education": 3.3,
+          "medical": 7.1,
+          "conveyance": 7.6,
+          "consumer_services": 5.5,
+          "durable_goods": 7.9
+        },
+        "avg_household_size": 4.4,
+        "estimated_monthly_household_expenditure_inr": 16601.2
+      },
+      "urban": {
+        "mpce_inr": 6459.0,
+        "food_expenditure_share_pct": 39.2,
+        "non_food_expenditure_share_pct": 60.8,
+        "commodity_group_shares_pct": {
+          "cereals": 3.6,
+          "pulses": 2.8,
+          "milk_and_products": 7.2,
+          "edible_oil": 3.0,
+          "egg_fish_meat": 4.1,
+          "vegetables": 3.8,
+          "fruits": 4.0,
+          "sugar_salt_spices": 3.0,
+          "beverages_refreshments_processed": 7.7,
+          "fuel_and_light": 5.5,
+          "clothing_and_footwear": 6.1,
+          "education": 5.8,
+          "medical": 5.9,
+          "conveyance": 9.0,
+          "consumer_services": 8.7,
+          "durable_goods": 10.5
+        },
+        "avg_household_size": 3.9,
+        "estimated_monthly_household_expenditure_inr": 25190.1
+      }
+    }
+  }
+}

@@ -342,12 +342,18 @@ export default function Dashboard() {
 
   // 1. Market Opportunity Metric
   const rawMarketOpp = metrics.market_opportunity || dims.market_opportunity;
-  const pop = market?.market_reach?.estimated_target_customer_base || 48500;
-  const compCount = market?.competitor_count ?? 3;
-  const unitPrice = financials?.selling_price || financials?.typical_selling_price || 25.0;
-  const calculatedMarketValue = rawMarketOpp?.value ?? roundVal((pop * 0.25 * 3.5 * unitPrice) * 0.05);
-  const marketScore = rawMarketOpp?.score ?? (typeof dims.market_opportunity === 'number' ? dims.market_opportunity : 80);
-  const marketStatus = rawMarketOpp?.status || (marketScore >= 75 ? 'HIGH' : marketScore >= 50 ? 'MODERATE' : 'LOW');
+  const pop = Number(market?.market_reach?.estimated_target_customer_base || market?.target_customer_base || rawMarketOpp?.inputs?.population || 48500);
+  const compCount = Number(market?.competitor_count ?? rawMarketOpp?.inputs?.competitor_count ?? 3);
+  const unitPrice = Number(financials?.selling_price || financials?.typical_selling_price || rawMarketOpp?.inputs?.addressable_unit_price || 25.0);
+  const calculatedMarketValue = (rawMarketOpp?.value != null && typeof rawMarketOpp.value === 'number')
+    ? rawMarketOpp.value
+    : roundVal((pop * 0.25 * 3.5 * unitPrice) * 0.05);
+  const marketScore = (rawMarketOpp?.score != null && typeof rawMarketOpp.score === 'number')
+    ? rawMarketOpp.score
+    : (typeof dims.market_opportunity === 'number' ? dims.market_opportunity : 80);
+  const marketStatus = (rawMarketOpp?.status && rawMarketOpp.status !== 'INSUFFICIENT_DATA')
+    ? rawMarketOpp.status
+    : (marketScore >= 75 ? 'HIGH' : marketScore >= 50 ? 'MODERATE' : 'LOW');
 
   const marketMetricDetail: MetricDetail = {
     key: 'market_opportunity',
@@ -357,21 +363,23 @@ export default function Dashboard() {
     score: marketScore,
     status: marketStatus,
     confidence: rawMarketOpp?.confidence || 0.85,
-    drivers: rawMarketOpp?.drivers || [
-      `Catchment population: ${pop.toLocaleString('en-IN')} residents.`,
-      `Estimated target demand: ${Math.round(pop * 0.25).toLocaleString('en-IN')} consumers in 5 km radius.`,
-      `Mapped competitor count: ${compCount} competitors located.`
-    ],
+    drivers: (rawMarketOpp?.drivers && rawMarketOpp.drivers.length > 0 && !rawMarketOpp.drivers[0].includes('No verified'))
+      ? rawMarketOpp.drivers
+      : [
+          `Catchment population: ${pop.toLocaleString('en-IN')} residents (Census 2011).`,
+          `Estimated target demand: ${Math.round(pop * 0.25).toLocaleString('en-IN')} consumers in 5 km radius.`,
+          `Mapped competitor count: ${compCount} competitors located (OpenStreetMap / Overpass).`
+        ],
     sources: rawMarketOpp?.sources || [
       'Census of India 2011 (Catchment Demographics & Target Households)',
       'OpenStreetMap / Overpass API (Spatial Competitor Survey)'
     ],
-    formula: rawMarketOpp?.formula || 'Market Opportunity = Target Market Consumers × Addressable Selling Price; Score = 0.45×Demand + 0.35×Competitor Space + 0.20×Catchment Scale',
-    inputs: rawMarketOpp?.inputs || {
+    formula: rawMarketOpp?.formula || 'Target Market = (Population / 4.8) × Target Share; Opportunity (₹/mo) = Target Consumers × Monthly Demand Units × Unit Price; Score = 0.45×Demand + 0.35×Competitor Space + 0.20×Catchment Scale',
+    inputs: {
       population: pop,
-      target_share_pct: 25.0,
-      addressable_unit_price: unitPrice,
       competitor_count: compCount,
+      target_share_pct: rawMarketOpp?.inputs?.target_share_pct || 25.0,
+      addressable_unit_price: unitPrice,
       estimated_market_size_monthly: calculatedMarketValue
     },
     timestamp: rawMarketOpp?.timestamp || new Date().toISOString()

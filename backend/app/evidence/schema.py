@@ -188,18 +188,74 @@ SOURCES: dict[str, Source] = {
             "Unmapped or unregistered businesses are invisible to this source."
         ),
     ),
+    "overture_places": Source(
+        source_id="overture_places",
+        name="Overture Maps Foundation - Places Theme",
+        url="https://overturemaps.org/download/",
+        dataset="Overture Places",
+        geography_level="point",
+        reference_date="2024-2026",
+        method="Global open-data spatial point extraction with category filtering",
+        coverage="Curated open business places and points of interest",
+        limitations=(
+            "Overture captures registered and mapped commercial POIs. Rural informal micro-units, "
+            "mobile tea carts, and unlisted home shops are frequently omitted."
+        ),
+    ),
+    "worldpop_grid": Source(
+        source_id="worldpop_grid",
+        name="WorldPop Open Spatial Demographics",
+        url="https://www.worldpop.org/",
+        dataset="WorldPop High-Resolution Population Grids (100m/1km)",
+        geography_level="gridded_catchment",
+        reference_date="2020-2026",
+        method="High-resolution spatial demographic modeling and areal disaggregation",
+        coverage="Global 100m/1km gridded population layers",
+        limitations=(
+            "Modeled spatial estimates based on satellite imagery, settlement footprints, and census disaggregation. "
+            "These are statistical models, not direct headcounts."
+        ),
+    ),
     "agmarknet": Source(
         source_id="agmarknet",
         name="AGMARKNET / eNAM (Ministry of Agriculture)",
         url="https://www.enam.gov.in/web/dashboard/agmarknet",
-        dataset="AGMARKNET",
-        geography_level="state/market",
+        dataset="AGMARKNET Daily Mandi Prices",
+        geography_level="state/district/market",
         reference_date="daily",
-        method="Official modal price reporting from mandi data",
-        coverage="Reporting mandis only; wholesale, not retail",
+        method="Official modal price reporting from agricultural mandis",
+        coverage="Reporting mandis only; wholesale agricultural arrivals, not retail",
         limitations=(
-            "Wholesale mandi modal prices, not the retail price a small business will "
-            "charge. Covering mandis are unevenly distributed across states."
+            "Wholesale mandi modal prices from nearest reporting APMC market, not guaranteed local "
+            "procurement cost. Transport, trader margins, and quality differences apply."
+        ),
+    ),
+    "consumer_affairs": Source(
+        source_id="consumer_affairs",
+        name="Department of Consumer Affairs - Price Monitoring Division",
+        url="https://fcainfoweb.nic.in/Default.aspx",
+        dataset="Price Monitoring System (PMS) Daily Retail Prices",
+        geography_level="market_centre",
+        reference_date="daily",
+        method="Official daily retail and wholesale price monitoring across reporting centres",
+        coverage="22 core essential commodities across 555 market centres",
+        limitations=(
+            "Monitored retail prices from official reporting centres. Centre-specific and state-average "
+            "benchmarks; local village retail prices may vary with logistics and shop format."
+        ),
+    ),
+    "hces_2023_24": Source(
+        source_id="hces_2023_24",
+        name="MoSPI Household Consumption Expenditure Survey 2023-24 (Report No. 592)",
+        url="https://www.mospi.gov.in/sites/default/files/publication_reports/Final_Report_HCES_2023-24L.pdf",
+        dataset="HCES 2023-24 State & Sector Consumption Tables",
+        geography_level="state/sector",
+        reference_date="2023-2024",
+        method="Official representative household sample survey (August 2023 - July 2024)",
+        coverage="State/UT level by rural and urban sectors",
+        limitations=(
+            "Survey period August 2023 - July 2024. State-level rural/urban consumption benchmark; "
+            "does not measure village-level micro demand directly."
         ),
     ),
     "data_gov_in": Source(
