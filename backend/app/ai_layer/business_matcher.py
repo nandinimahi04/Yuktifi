@@ -111,28 +111,6 @@ async def match_business_category(
          if " ".join(label.split()).casefold() == _needle),
         None,
     )
-
-    # Keyword substring fallback if direct lookup didn't match
-    if not explicit_category:
-        combined_text = f"{area_of_interest} {suggested_idea} {detailed_idea}".lower()
-        if any(k in combined_text for k in ["kirana", "grocery", "provision", "general store", "supermarket", "mart", "pooja", "retail", "stationery"]):
-            explicit_category = "retail_shop"
-        elif any(k in combined_text for k in ["tea", "snack", "vada pav", "bakery", "juice", "restaurant", "cafe", "dhaba", "food", "chaat", "hotel", "tiffin"]):
-            explicit_category = "food_beverage"
-        elif any(k in combined_text for k in ["dairy", "milk", "poultry", "goat", "fertilizer", "vermicompost", "farming", "agri", "crop", "cattle"]):
-            explicit_category = "agri_business"
-        elif any(k in combined_text for k in ["flour", "atta", "chakki", "spice", "grinding", "paper bag", "garment", "stitching", "manufactur", "processing", "oil mill"]):
-            explicit_category = "manufacturing"
-        elif any(k in combined_text for k in ["mobile", "electronics", "repair", "garage", "two-wheeler", "service", "salon", "beauty", "pathology", "diagnostic", "solar"]):
-            explicit_category = "services_tech"
-        elif any(k in combined_text for k in ["rickshaw", "e-rickshaw", "auto", "delivery", "transport", "logistics", "cargo", "van", "courier"]):
-            explicit_category = "logistics_delivery"
-        elif any(k in combined_text for k in ["handicraft", "textile", "handloom", "pottery", "artisan"]):
-            explicit_category = "handicrafts_artisanal"
-        elif any(k in combined_text for k in ["clinic", "hospital", "wellness", "medical", "pharmacy", "health"]):
-            explicit_category = "healthcare_wellness"
-        elif any(k in combined_text for k in ["school", "tuition", "coaching", "training", "education"]):
-            explicit_category = "education_training"
     
     if explicit_category:
         prompt = f"""
@@ -195,30 +173,34 @@ async def match_business_category(
     except Exception as e:
         logger.warning("[MATCHER] Gemini call failed: %s", str(e))
 
-    if result:
-        # Enforce the deterministic category if determined.
-        if explicit_category:
-            return {
-                **result,
-                "matched_category_id": explicit_category,
-                "category_source": "USER_SELECTED",
-                "confidence": 0.95,
-                "reason": (
-                    f"Category was mapped from user selection: {area_of_interest or detailed_idea}."
-                ),
-            }
+    if explicit_category:
+        return {
+            **(result or {}),
+            "matched_category_id": explicit_category,
+            "matched_subcategory": (result or {}).get("matched_subcategory") or area_of_interest,
+            "confidence": None,
+            "category_source": "USER_SELECTED",
+            "reason": f"Category was mapped from user selection: {area_of_interest}.",
+        }
 
+    if result:
         matched = result.get("matched_category_id")
         if matched in ALLOWED_CATEGORIES:
             return {**result, "category_source": "MODEL_MATCH"}
+        else:
+            return {
+                "matched_category_id": None,
+                "matched_subcategory": result.get("matched_subcategory"),
+                "confidence": None,
+                "category_source": "UNMATCHED",
+                "unmatched_category_id": matched,
+                "reason": f"Model suggested unmatched category: {matched}."
+            }
 
-    # Fallback to explicit_category or retail_shop default
-    final_cat = explicit_category or "retail_shop"
-    subcat = detailed_idea or area_of_interest or "General Enterprise"
     return {
-        "matched_category_id": final_cat,
-        "matched_subcategory": subcat,
-        "confidence": 0.90 if explicit_category else 0.75,
-        "category_source": "USER_SELECTED" if explicit_category else "DEFAULT_FALLBACK",
-        "reason": f"Category assigned as '{final_cat}' based on user input: {area_of_interest or detailed_idea}.",
+        "matched_category_id": None,
+        "matched_subcategory": None,
+        "confidence": None,
+        "category_source": "UNAVAILABLE",
+        "reason": "No model was reachable to classify the idea, and no explicit area of interest was selected."
     }

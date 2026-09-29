@@ -148,6 +148,8 @@ from app.api import routes_financial_assumptions
 app.include_router(routes_financial_assumptions.router)
 from app.api import routes_analytics
 app.include_router(routes_analytics.router)
+from app.api import routes_universal_evidence
+app.include_router(routes_universal_evidence.router)
 
 
 @app.get("/health")

@@ -1,0 +1,93 @@
+"""
+Canonical Business Taxonomy and Dataset Mapping Engine.
+Maps micro-enterprise business categories to their relevant statistical datasets,
+macro indicators, competitor filters, and RAG document collections.
+"""
+from typing import Any, Dict, List, Optional
+
+BUSINESS_TAXONOMY: List[Dict[str, Any]] = [
+    {
+        "category_id": "kirana",
+        "name": "Kirana / Grocery Store",
+        "sector": "Retail & Essential Goods",
+        "aliases": ["grocery", "general store", "provision store", "superette", "kirana store", "ration shop"],
+        "keywords": ["fmcg", "staples", "packaged food", "household essentials", "edible oil", "grains", "sugar"],
+        "competitor_tags": ["shop=supermarket", "shop=convenience", "shop=general", "shop=grocery"],
+        "relevant_datasets": ["census_pca_2011", "worldpop_india_2025", "mospi_hces_2023", "consumer_affairs_prices", "open_street_map_poi"],
+        "relevant_metrics": ["target_population", "household_monthly_consumption_food", "essential_commodity_inflation", "competitor_density"],
+        "relevant_documents": ["DCHB Solapur", "HCES Factsheet", "PMEGP Retail Guidelines"]
+    },
+    {
+        "category_id": "dairy",
+        "name": "Dairy Farming & Milk Collection Centre",
+        "sector": "Livestock & Animal Husbandry",
+        "aliases": ["dairy", "milk collection", "dairy farm", "milk chilling unit", "doodh dairy"],
+        "keywords": ["milk", "bovine", "cattle", "chilling center", "fodder", "ghee", "curd", "paneer"],
+        "competitor_tags": ["shop=dairy", "industrial=dairy", "craft=dairy"],
+        "relevant_datasets": ["census_pca_2011", "livestock_census", "agmarknet_wholesale_prices", "worldpop_india_2025", "area_under_irrigation"],
+        "relevant_metrics": ["bovine_population", "green_fodder_irrigation_area", "raw_milk_procurement_price", "household_dairy_expenditure"],
+        "relevant_documents": ["DCHB Solapur", "Livestock Survey", "AHIDF Scheme Guidelines", "NABARD Dairy Model"]
+    },
+    {
+        "category_id": "agriculture",
+        "name": "Agriculture & Agro-Service Enterprise",
+        "sector": "Agriculture & Farm Services",
+        "aliases": ["farming", "crop cultivation", "custom hiring center", "agro input shop", "fertilizer dealer"],
+        "keywords": ["irrigation", "groundwater", "fertilizer", "seeds", "mandi prices", "crops", "horticulture"],
+        "competitor_tags": ["shop=agrarian", "shop=fertilizer", "office=agricultural"],
+        "relevant_datasets": ["area_under_irrigation", "agmarknet_wholesale_prices", "census_pca_2011", "nfhs_5_districts"],
+        "relevant_metrics": ["net_irrigated_area", "crop_mandi_modal_price", "groundwater_depth", "farmer_household_income"],
+        "relevant_documents": ["DCHB Solapur", "Irrigation Statistics", "AIF Scheme Guidelines", "PM-KUSUM Model"]
+    },
+    {
+        "category_id": "tea_snacks",
+        "name": "Tea & Snacks Stall (Chai Tapri / QSR)",
+        "sector": "Food Service & Hospitality",
+        "aliases": ["tea stall", "chai shop", "fast food", "snacks counter", "breakfast corner"],
+        "keywords": ["tea", "milk", "sugar", "snack items", "footfall", "highway stall", "bus stand shop"],
+        "competitor_tags": ["amenity=cafe", "amenity=fast_food", "amenity=restaurant"],
+        "relevant_datasets": ["worldpop_india_2025", "census_pca_2011", "consumer_affairs_prices", "open_street_map_poi"],
+        "relevant_metrics": ["footfall_density", "milk_sugar_tea_raw_costs", "local_competitor_count"],
+        "relevant_documents": ["DCHB Solapur", "PM SVANidhi Scheme", "FSSAI Guidelines"]
+    },
+    {
+        "category_id": "flour_mill",
+        "name": "Flour Mill (Atta Chakki)",
+        "sector": "Agro-Processing & Milling",
+        "aliases": ["atta chakki", "grain mill", "grinding mill", "masala chakki"],
+        "keywords": ["wheat grinding", "grain milling", "electricity tariff", "milling charges"],
+        "competitor_tags": ["craft=flour_mill", "shop=flour_mill", "industrial=mill"],
+        "relevant_datasets": ["census_pca_2011", "mospi_hces_2023", "open_street_map_poi"],
+        "relevant_metrics": ["local_household_cereal_demand", "milling_capacity_per_hour", "power_reliability"],
+        "relevant_documents": ["DCHB Solapur", "PMEGP Agro Processing"]
+    },
+    {
+        "category_id": "handloom_textiles",
+        "name": "Handloom / Textile Weaving Enterprise",
+        "sector": "Textiles & Traditional Handicrafts",
+        "aliases": ["textile weaving", "solapur chaddar", "terry towel", "powerloom", "handloom"],
+        "keywords": ["cotton yarn", "weaving", "solapur chaddar", "jacquard", "loom power"],
+        "competitor_tags": ["shop=fabric", "craft=weaver", "industrial=textile"],
+        "relevant_datasets": ["census_pca_2011", "dchb_solapur_tables", "open_street_map_poi"],
+        "relevant_metrics": ["artisan_cluster_workers", "yarn_procurement_cost", "textile_market_export_demand"],
+        "relevant_documents": ["DCHB Solapur Part B", "Weaver Mudra Scheme", "PMEGP Textiles"]
+    }
+]
+
+def resolve_business_category(query: str) -> Optional[Dict[str, Any]]:
+    """
+    Resolves a business query to its canonical business taxonomy entry.
+    """
+    q = (query or "").strip().lower()
+    for cat in BUSINESS_TAXONOMY:
+        if cat["category_id"] == q or cat["name"].lower() == q:
+            return cat
+        if any(alias in q or q in alias for alias in cat["aliases"]):
+            return cat
+        if any(kw in q for kw in cat["keywords"]):
+            return cat
+    return BUSINESS_TAXONOMY[0]  # Default to Kirana if unmatched
+
+def get_relevant_datasets_for_business(category_id: str) -> List[str]:
+    cat = resolve_business_category(category_id)
+    return cat.get("relevant_datasets", []) if cat else []

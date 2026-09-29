@@ -1,0 +1,1044 @@
+{
+  "total_datasets_checked": 79,
+  "total_records_checked": 28554,
+  "valid_records": 28299,
+  "invalid_records": 255,
+  "quarantined_files": [],
+  "dataset_reports": {
+    "ds_e64c7c66bf2f3b6a": {
+      "dataset_id": "ds_e64c7c66bf2f3b6a",
+      "total_records": 14,
+      "valid": 14,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_2a6ffc68df6a5b53": {
+      "dataset_id": "ds_2a6ffc68df6a5b53",
+      "total_records": 20095,
+      "valid": 20095,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_bb7c3711da908408": {
+      "dataset_id": "ds_bb7c3711da908408",
+      "total_records": 9,
+      "valid": 9,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_33eb207f3dbdef77": {
+      "dataset_id": "ds_33eb207f3dbdef77",
+      "total_records": 446,
+      "valid": 446,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_e482b990d74eb46b": {
+      "dataset_id": "ds_e482b990d74eb46b",
+      "total_records": 707,
+      "valid": 542,
+      "invalid": 165,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 165,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PARTIAL"
+    },
+    "ds_9629548ce378ef69": {
+      "dataset_id": "ds_9629548ce378ef69",
+      "total_records": 1190,
+      "valid": 1190,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_8f16972a8554ae1c": {
+      "dataset_id": "ds_8f16972a8554ae1c",
+      "total_records": 26,
+      "valid": 19,
+      "invalid": 7,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 7
+      },
+      "status": "PARTIAL"
+    },
+    "ds_25452177f1bf518b": {
+      "dataset_id": "ds_25452177f1bf518b",
+      "total_records": 17,
+      "valid": 12,
+      "invalid": 5,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 5
+      },
+      "status": "PARTIAL"
+    },
+    "ds_9236f99a4540c621": {
+      "dataset_id": "ds_9236f99a4540c621",
+      "total_records": 788,
+      "valid": 788,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_e188723030087fb8": {
+      "dataset_id": "ds_e188723030087fb8",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_225ce98d1d6497a8": {
+      "dataset_id": "ds_225ce98d1d6497a8",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_10358ae75ee9bdbc": {
+      "dataset_id": "ds_10358ae75ee9bdbc",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_1a1f701c2022a6bf": {
+      "dataset_id": "ds_1a1f701c2022a6bf",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_063ee13a00e64198": {
+      "dataset_id": "ds_063ee13a00e64198",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_a2610aeefb26bce5": {
+      "dataset_id": "ds_a2610aeefb26bce5",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_81cec790c8f8c0fb": {
+      "dataset_id": "ds_81cec790c8f8c0fb",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_1e169836963e6a81": {
+      "dataset_id": "ds_1e169836963e6a81",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_a07a4925f36eddd0": {
+      "dataset_id": "ds_a07a4925f36eddd0",
+      "total_records": 17,
+      "valid": 17,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_b7db7d6343934fa1": {
+      "dataset_id": "ds_b7db7d6343934fa1",
+      "total_records": 17,
+      "valid": 17,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_930ad7f21ae91fc2": {
+      "dataset_id": "ds_930ad7f21ae91fc2",
+      "total_records": 17,
+      "valid": 17,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_b4d86d3665490e17": {
+      "dataset_id": "ds_b4d86d3665490e17",
+      "total_records": 96,
+      "valid": 96,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_669d2a2026e5decf": {
+      "dataset_id": "ds_669d2a2026e5decf",
+      "total_records": 18,
+      "valid": 17,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_a194a156b6c3543d": {
+      "dataset_id": "ds_a194a156b6c3543d",
+      "total_records": 1193,
+      "valid": 1193,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_5346603a31fb10eb": {
+      "dataset_id": "ds_5346603a31fb10eb",
+      "total_records": 1239,
+      "valid": 1219,
+      "invalid": 20,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 20
+      },
+      "status": "PARTIAL"
+    },
+    "ds_d93d65274767b81e": {
+      "dataset_id": "ds_d93d65274767b81e",
+      "total_records": 1239,
+      "valid": 1219,
+      "invalid": 20,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 20
+      },
+      "status": "PARTIAL"
+    },
+    "ds_ad570b08221ef0c9": {
+      "dataset_id": "ds_ad570b08221ef0c9",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_2317f543cabe2d28": {
+      "dataset_id": "ds_2317f543cabe2d28",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_20844cae99cfce2e": {
+      "dataset_id": "ds_20844cae99cfce2e",
+      "total_records": 18,
+      "valid": 16,
+      "invalid": 2,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 2
+      },
+      "status": "PARTIAL"
+    },
+    "ds_453dd6a390c97d3b": {
+      "dataset_id": "ds_453dd6a390c97d3b",
+      "total_records": 18,
+      "valid": 15,
+      "invalid": 3,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 3
+      },
+      "status": "PARTIAL"
+    },
+    "ds_8700893625f1e144": {
+      "dataset_id": "ds_8700893625f1e144",
+      "total_records": 20,
+      "valid": 11,
+      "invalid": 9,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 9
+      },
+      "status": "PARTIAL"
+    },
+    "ds_530896ca7686964a": {
+      "dataset_id": "ds_530896ca7686964a",
+      "total_records": 19,
+      "valid": 17,
+      "invalid": 2,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 2
+      },
+      "status": "PARTIAL"
+    },
+    "ds_a0f0b3ba27d2f484": {
+      "dataset_id": "ds_a0f0b3ba27d2f484",
+      "total_records": 15,
+      "valid": 15,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_3cb482bb4ce84f6f": {
+      "dataset_id": "ds_3cb482bb4ce84f6f",
+      "total_records": 14,
+      "valid": 14,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_e87d9de32132e785": {
+      "dataset_id": "ds_e87d9de32132e785",
+      "total_records": 15,
+      "valid": 13,
+      "invalid": 2,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 2
+      },
+      "status": "PARTIAL"
+    },
+    "ds_5cfe5b1556ee7143": {
+      "dataset_id": "ds_5cfe5b1556ee7143",
+      "total_records": 17,
+      "valid": 16,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_80be146d46ea5818": {
+      "dataset_id": "ds_80be146d46ea5818",
+      "total_records": 40,
+      "valid": 39,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_402c0ca07eb19db3": {
+      "dataset_id": "ds_402c0ca07eb19db3",
+      "total_records": 15,
+      "valid": 15,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_5e99ec26e12ffbe8": {
+      "dataset_id": "ds_5e99ec26e12ffbe8",
+      "total_records": 13,
+      "valid": 13,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_033132c083de56d5": {
+      "dataset_id": "ds_033132c083de56d5",
+      "total_records": 18,
+      "valid": 17,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_e63ce147ec6a9882": {
+      "dataset_id": "ds_e63ce147ec6a9882",
+      "total_records": 38,
+      "valid": 38,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_eada7d09043c7c50": {
+      "dataset_id": "ds_eada7d09043c7c50",
+      "total_records": 14,
+      "valid": 14,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_5843c562aa2058dd": {
+      "dataset_id": "ds_5843c562aa2058dd",
+      "total_records": 13,
+      "valid": 12,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_e8439cff9277ef08": {
+      "dataset_id": "ds_e8439cff9277ef08",
+      "total_records": 13,
+      "valid": 12,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_4a0ce7f419451ef8": {
+      "dataset_id": "ds_4a0ce7f419451ef8",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_21ca36db29429330": {
+      "dataset_id": "ds_21ca36db29429330",
+      "total_records": 14,
+      "valid": 14,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_0b8b27ed70e63b62": {
+      "dataset_id": "ds_0b8b27ed70e63b62",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_7c3ae5c35a894615": {
+      "dataset_id": "ds_7c3ae5c35a894615",
+      "total_records": 41,
+      "valid": 40,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_5b9d3b9ae8302d87": {
+      "dataset_id": "ds_5b9d3b9ae8302d87",
+      "total_records": 17,
+      "valid": 16,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_038237915c0a3533": {
+      "dataset_id": "ds_038237915c0a3533",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_cd14c55ffdd82855": {
+      "dataset_id": "ds_cd14c55ffdd82855",
+      "total_records": 18,
+      "valid": 18,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_4941b1c39bc6c776": {
+      "dataset_id": "ds_4941b1c39bc6c776",
+      "total_records": 17,
+      "valid": 16,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_6c6f2c621ed29ea3": {
+      "dataset_id": "ds_6c6f2c621ed29ea3",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_15f20c761c3b4d18": {
+      "dataset_id": "ds_15f20c761c3b4d18",
+      "total_records": 18,
+      "valid": 18,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_d8edb48cf291e720": {
+      "dataset_id": "ds_d8edb48cf291e720",
+      "total_records": 17,
+      "valid": 16,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_15f39b5259fce559": {
+      "dataset_id": "ds_15f39b5259fce559",
+      "total_records": 16,
+      "valid": 16,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_b26647ce00c81cfd": {
+      "dataset_id": "ds_b26647ce00c81cfd",
+      "total_records": 18,
+      "valid": 18,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_faa1fdd17310da19": {
+      "dataset_id": "ds_faa1fdd17310da19",
+      "total_records": 39,
+      "valid": 39,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_95e5a09736d8b9e1": {
+      "dataset_id": "ds_95e5a09736d8b9e1",
+      "total_records": 39,
+      "valid": 39,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_40986fe0710e3021": {
+      "dataset_id": "ds_40986fe0710e3021",
+      "total_records": 45,
+      "valid": 45,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_a31331be6755e6ca": {
+      "dataset_id": "ds_a31331be6755e6ca",
+      "total_records": 40,
+      "valid": 40,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_71713f3b80347d86": {
+      "dataset_id": "ds_71713f3b80347d86",
+      "total_records": 40,
+      "valid": 40,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_f91c665f153bee46": {
+      "dataset_id": "ds_f91c665f153bee46",
+      "total_records": 46,
+      "valid": 46,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_e2c5114892070e5b": {
+      "dataset_id": "ds_e2c5114892070e5b",
+      "total_records": 22,
+      "valid": 22,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_afeaf9eb72eed046": {
+      "dataset_id": "ds_afeaf9eb72eed046",
+      "total_records": 22,
+      "valid": 22,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_164c2bea8aea2453": {
+      "dataset_id": "ds_164c2bea8aea2453",
+      "total_records": 26,
+      "valid": 22,
+      "invalid": 4,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 4
+      },
+      "status": "PARTIAL"
+    },
+    "ds_a9bccd7d7659fa6e": {
+      "dataset_id": "ds_a9bccd7d7659fa6e",
+      "total_records": 22,
+      "valid": 22,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_f9fcf797d72af15b": {
+      "dataset_id": "ds_f9fcf797d72af15b",
+      "total_records": 24,
+      "valid": 24,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_9a1f5afdaf25399c": {
+      "dataset_id": "ds_9a1f5afdaf25399c",
+      "total_records": 15,
+      "valid": 15,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_bfb6da3b05d40ab4": {
+      "dataset_id": "ds_bfb6da3b05d40ab4",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_f9a9e376fd0c52a0": {
+      "dataset_id": "ds_f9a9e376fd0c52a0",
+      "total_records": 0,
+      "valid": 0,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_ddc3e4e23039198f": {
+      "dataset_id": "ds_ddc3e4e23039198f",
+      "total_records": 13,
+      "valid": 13,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_65aebb55aabbd7e8": {
+      "dataset_id": "ds_65aebb55aabbd7e8",
+      "total_records": 15,
+      "valid": 15,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_a16e8aea330043a0": {
+      "dataset_id": "ds_a16e8aea330043a0",
+      "total_records": 39,
+      "valid": 36,
+      "invalid": 3,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 3
+      },
+      "status": "PARTIAL"
+    },
+    "ds_74d516f326ab4962": {
+      "dataset_id": "ds_74d516f326ab4962",
+      "total_records": 19,
+      "valid": 18,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_18955fb19db6aef7": {
+      "dataset_id": "ds_18955fb19db6aef7",
+      "total_records": 20,
+      "valid": 19,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    },
+    "ds_7e88426dd113762e": {
+      "dataset_id": "ds_7e88426dd113762e",
+      "total_records": 17,
+      "valid": 17,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_f436a0bcf591f069": {
+      "dataset_id": "ds_f436a0bcf591f069",
+      "total_records": 315,
+      "valid": 315,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_56641455a44c1982": {
+      "dataset_id": "ds_56641455a44c1982",
+      "total_records": 17,
+      "valid": 17,
+      "invalid": 0,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 0
+      },
+      "status": "PASS"
+    },
+    "ds_04ec8185c5871a9d": {
+      "dataset_id": "ds_04ec8185c5871a9d",
+      "total_records": 19,
+      "valid": 18,
+      "invalid": 1,
+      "errors": {
+        "null_metric": 0,
+        "negative_numeric": 0,
+        "invalid_year": 0,
+        "empty_row": 1
+      },
+      "status": "PARTIAL"
+    }
+  },
+  "duplicates_detected": [
+    {
+      "duplicate_file": "ind_pop_2025_CN_1km_R2025A_UA_v1.tif",
+      "original_file": "ind_pop_2025_CN_1km_R2025A_UA_v1 (1).tif",
+      "sha256": "e188723030087fb8e90e1741199bd476a181c00b046fab7dd8e8358adb136b64",
+      "size_bytes": 16327769
+    }
+  ]
+}
