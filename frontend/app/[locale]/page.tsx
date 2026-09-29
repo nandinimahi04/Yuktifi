@@ -90,9 +90,9 @@ export default function LandingPage() {
           loan_intent: onboardingData.loanIntent
         },
         business: {
-          area_of_interest: onboardingData.industry,
+          area_of_interest: onboardingData.ideaDetails || onboardingData.industry || "Business",
           detailed_idea_description: onboardingData.ideaDetails || "",
-          prior_experience: onboardingData.experience
+          prior_experience: onboardingData.experience || "None, I am a beginner"
         },
         language: locale
       });
@@ -108,7 +108,7 @@ export default function LandingPage() {
         userMode: 'entrepreneur',
         marginCapital: investmentAmount,
         categoryId: matchedCategoryId,
-        categoryName: onboardingData.industry || "Business",
+        categoryName: onboardingData.ideaDetails || onboardingData.industry || "Business",
         experience: onboardingData.experience || "None, I am a beginner",
         ideaDetails: onboardingData.ideaDetails || "",
         analysisResult: resAnalysis

@@ -31,8 +31,8 @@
   "Stepper": {
     "step_1": "आपके बारे में",
     "step_2": "स्थान (Location)",
-    "step_3": "व्यवसाय (Business)",
-    "step_4": "निवेश (Investment)",
+    "step_3": "पूंजी (Capital)",
+    "step_4": "व्यवसाय (Business)",
     "step_5": "समीक्षा (Review)"
   },
   "onboarding": {

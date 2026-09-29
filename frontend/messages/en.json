@@ -31,8 +31,8 @@
   "Stepper": {
     "step_1": "About You",
     "step_2": "Location",
-    "step_3": "Business",
-    "step_4": "Investment",
+    "step_3": "Capital",
+    "step_4": "Business",
     "step_5": "Review"
   },
   "onboarding": {
