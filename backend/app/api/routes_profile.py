@@ -44,16 +44,16 @@ def create_profile(req: ProfileRequest, db: DBSession = Depends(get_db)):
     # Create user
     user = User(
         id=uid(), 
-        name=req.name, 
-        age=req.age,
+        name=req.name or "Entrepreneur", 
+        age=req.age or 30,
         gender=req.gender,
         social_category=req.social_category,
         business_idea=req.business_idea,
-        experience_level=req.experience_level,
-        available_capital_inr=req.available_capital_inr,
-        loan_intent=req.loan_intent,
-        business_category=req.business_category,
-        language_pref=req.language
+        experience_level=req.experience_level or req.business_experience or "beginner",
+        available_capital_inr=req.available_capital_inr or 75000.0,
+        loan_intent=req.loan_intent or "not_sure",
+        business_category=req.business_category or req.business_industry or "Retail & Shop",
+        language_pref=req.language or "en"
     )
     db.add(user)
     db.commit()

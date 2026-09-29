@@ -66,6 +66,17 @@ def init_db():
 # table, so a checked-in SQLite file would otherwise be missing them. Each entry
 # is applied only when absent, making this safe to run on every startup.
 _ADDITIVE_COLUMNS = {
+    "users": [
+        ("age", "INTEGER"),
+        ("gender", "VARCHAR"),
+        ("social_category", "VARCHAR"),
+        ("business_idea", "TEXT"),
+        ("experience_level", "VARCHAR"),
+        ("available_capital_inr", "FLOAT"),
+        ("loan_intent", "VARCHAR"),
+        ("business_category", "VARCHAR"),
+        ("language_pref", "VARCHAR"),
+    ],
     "financial_projections": [
         ("monthly_emi", "FLOAT"),
         ("monthly_interest", "FLOAT"),

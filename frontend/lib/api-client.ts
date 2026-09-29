@@ -85,9 +85,24 @@ async function fetchWithTimeout<T>(
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
+      let msg = errorData.detail || `Request failed with status ${res.status}`;
+      if (Array.isArray(msg)) {
+        msg = msg
+          .map((m: any) => {
+            if (!m) return "";
+            if (typeof m === "string") return m;
+            const loc = Array.isArray(m.loc) ? m.loc.filter((l: any) => l !== "body").join(".") : "";
+            const errorMsg = m.msg || JSON.stringify(m);
+            return loc ? `${loc}: ${errorMsg}` : errorMsg;
+          })
+          .filter(Boolean)
+          .join(", ");
+      } else if (typeof msg === "object") {
+        msg = JSON.stringify(msg);
+      }
       throw new ApiError(
         errorData.code || `HTTP_${res.status}`,
-        errorData.detail || `Request failed with status ${res.status}`,
+        String(msg),
         res.status
       );
     }
@@ -731,18 +746,47 @@ export const api = {
 
   createProfile: (data: {
     name: string;
-    age: number;
-    gender: "Male" | "Female" | "Other";
-    social_category: "SC" | "ST" | "OBC" | "General" | "Other";
+    age: number | string;
+    gender: string;
+    social_category: string;
     location_input: string;
     language: string;
     business_idea?: string;
     business_industry?: string;
+    business_category?: string;
     business_experience?: string;
+    experience_level?: string;
     available_capital_inr?: number;
-    loan_intent?: "no" | "yes" | "not_sure";
-  }, signal?: AbortSignal) =>
-    ApiClient.post<ProfileResponse>("/profile", data, undefined, signal),
+    loan_intent?: string;
+  }, signal?: AbortSignal) => {
+    const rawGender = String(data.gender || "male").toLowerCase();
+    const gender = rawGender.includes("fem") ? "female" : (rawGender.includes("male") ? "male" : (rawGender.includes("prefer") ? "prefer_not_to_say" : "other"));
+
+    const rawCat = String(data.social_category || "general").toLowerCase();
+    let social_category = "general";
+    if (["sc", "st", "obc", "general", "minority"].includes(rawCat)) {
+      social_category = rawCat;
+    } else {
+      social_category = "prefer_not_to_say";
+    }
+
+    const payload = {
+      name: data.name || "Entrepreneur",
+      age: data.age && Number(data.age) > 0 ? Number(data.age) : 30,
+      gender,
+      social_category,
+      location_input: data.location_input || "Solapur, Maharashtra",
+      language: data.language || "en",
+      business_category: data.business_category || data.business_industry || "Retail & Shop",
+      business_industry: data.business_industry || data.business_category || "Retail & Shop",
+      business_idea: data.business_idea || "",
+      experience_level: data.experience_level || data.business_experience || "beginner",
+      business_experience: data.business_experience || data.experience_level || "beginner",
+      available_capital_inr: data.available_capital_inr && Number(data.available_capital_inr) > 0 ? Number(data.available_capital_inr) : 75000,
+      loan_intent: data.loan_intent || "not_sure"
+    };
+    return ApiClient.post<ProfileResponse>("/profile", payload, undefined, signal);
+  },
 
   rankOpportunities: (data: { session_id: string; location_id: string; margin_capital: number }, signal?: AbortSignal) =>
     ApiClient.post<RankResponse>("/rank-opportunities", data, undefined, signal),
