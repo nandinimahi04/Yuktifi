@@ -5,10 +5,10 @@ import { X, Calculator, Database, ShieldCheck, Clock, CheckCircle, AlertTriangle
 export interface MetricDetail {
   key: string;
   label: string;
-  value?: number | string | null;
+  value?: any;
   unit?: string;
   score?: number | null;
-  status?: string;
+  status?: any;
   confidence?: number;
   drivers?: string[];
   sources?: string[];
@@ -31,8 +31,17 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
 }) => {
   if (!isOpen || !metric) return null;
 
-  const getStatusColor = (status?: string) => {
-    switch (status?.toUpperCase()) {
+  const extractStatusText = (status?: any): string => {
+    if (status == null) return '';
+    if (typeof status === 'object') {
+      return status.text || status.status || status.label || '';
+    }
+    return String(status);
+  };
+
+  const getStatusColor = (status?: any) => {
+    const s = extractStatusText(status);
+    switch (s.toUpperCase()) {
       case 'HIGH':
       case 'GOOD':
       case 'EXCELLENT':
@@ -53,6 +62,15 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
 
   const formatInputValue = (val: any, key?: string): string => {
     if (val === null || val === undefined) return 'N/A';
+    if (typeof val === 'object') {
+      if (typeof val.text === 'string') return val.text;
+      if (typeof val.value !== 'undefined') return formatInputValue(val.value, key);
+      try {
+        return JSON.stringify(val);
+      } catch {
+        return String(val);
+      }
+    }
     const k = (key || '').toLowerCase();
     const isCurrency =
       k.includes('cost') ||
@@ -135,6 +153,8 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
                   <>
                     {typeof metric.value === 'number' && metric.unit?.includes('₹')
                       ? `₹${metric.value.toLocaleString('en-IN')}`
+                      : typeof metric.value === 'object'
+                      ? ((metric.value as any)?.text || (metric.value as any)?.value || JSON.stringify(metric.value))
                       : `${metric.value}`}
                     <span className="text-sm font-semibold text-ink-soft ml-1.5">{metric.unit || ''}</span>
                   </>
@@ -153,7 +173,7 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
               )}
               {metric.status && (
                 <span className={`px-3 py-1.5 rounded-xl text-xs font-bold border ${getStatusColor(metric.status)}`}>
-                  {metric.status}
+                  {extractStatusText(metric.status)}
                 </span>
               )}
             </div>

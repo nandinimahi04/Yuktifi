@@ -20,8 +20,9 @@ const DashboardHeader = () => (
 );
 
 // Large YuktiFi Score Card
-const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; verdict?: string; reason?: string | null }) => {
+const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; verdict?: any; reason?: string | null }) => {
   const t = useTranslations('dashboard.scoreCard');
+  const verdictText = typeof verdict === 'object' && verdict !== null ? (verdict.text || verdict.label || '') : (typeof verdict === 'string' ? verdict : '');
   return (
     <div className="flex-1 bg-gradient-to-br from-[#15803d] via-[#166534] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden">
       <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none"></div>
@@ -32,7 +33,7 @@ const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; ve
             {t('badge')}
           </span>
           <span className="text-xs bg-emerald-400 text-forest-deep font-bold px-3 py-1 rounded-full shadow-sm">
-            {score !== null ? (verdict || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : 'NOT ASSESSED'}
+            {score !== null ? (verdictText || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : 'NOT ASSESSED'}
           </span>
         </div>
 
@@ -116,6 +117,7 @@ const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails 
 
 // Metric Cards with View Calculation Action
 const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass, onViewCalculation }: any) => {
+  const statusStr = typeof status === 'object' && status !== null ? (status.text || status.status || status.label || '') : String(status || '');
   const getStatusColor = (s: string) => {
     switch (s?.toUpperCase()) {
       case 'HIGH':
@@ -133,6 +135,8 @@ const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass,
     }
   };
 
+  const valueStr = typeof value === 'object' && value !== null ? (value.text || value.value || JSON.stringify(value)) : value;
+
   return (
     <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card flex flex-col justify-between hover:border-premium-border-strong transition-all group">
       <div>
@@ -144,7 +148,7 @@ const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass,
         </div>
         
         <div className="font-display text-2xl font-bold text-forest-deep mb-1 group-hover:text-forest transition-colors">
-          {value}
+          {valueStr}
         </div>
 
         <div className="flex items-center space-x-2 mt-2">
@@ -153,9 +157,9 @@ const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass,
               {score}/100
             </span>
           )}
-          {status && (
-            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${getStatusColor(status)}`}>
-              {status}
+          {statusStr && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${getStatusColor(statusStr)}`}>
+              {statusStr}
             </span>
           )}
         </div>
@@ -262,7 +266,10 @@ export default function DashboardPage() {
       ? scores.overall
       : (scores?.yukti_score ?? null);
 
-  const yuktiVerdict = scores?.verdict || (yuktiScore && yuktiScore >= 75 ? 'HIGH POTENTIAL' : 'VIABLE');
+  const rawVerdict = analysisResult?.verdict ?? scores?.verdict;
+  const yuktiVerdict = typeof rawVerdict === 'object' && rawVerdict !== null
+    ? (rawVerdict.text || rawVerdict.label || '')
+    : (rawVerdict || (yuktiScore && yuktiScore >= 75 ? 'HIGH POTENTIAL' : 'VIABLE'));
   const notScoredReason = scores?.not_scored_reason ?? null;
   const targetBusinessName = resolvedBusiness?.area_of_interest || resolvedBusiness?.matched_category_id || "Custom Business";
 
@@ -488,9 +495,9 @@ export default function DashboardPage() {
                     text: "Apply under the PMEGP or PM Mudra Yojana for capital subsidy eligibility and favorable 5-year term-loan interest rates."
                   }
                 ]
-              : ai_insights.recommendations.map((rec: string, i: number) => ({
+              : ai_insights.recommendations.map((rec: any, i: number) => ({
                   tag: i === 0 ? "Market Expansion" : i === 1 ? "Unit Economics" : "Capital & Schemes",
-                  text: rec
+                  text: typeof rec === 'object' && rec !== null ? (rec.text || rec.content || rec.recommendation || JSON.stringify(rec)) : String(rec)
                 }));
 
             return (

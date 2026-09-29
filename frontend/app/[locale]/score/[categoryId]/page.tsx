@@ -146,8 +146,10 @@ export default function ScorePage() {
 
   const apiConfidence: string | null =
     analysisResult?.confidence ?? analysisResult?.recommendation?.confidence ?? market?.confidence ?? "Medium";
-  const apiVerdict: string | null =
-    analysisResult?.verdict ?? analysisResult?.recommendation?.verdict ?? scores?.verdict?.text ?? null;
+  const rawApiVerdict = analysisResult?.verdict ?? analysisResult?.recommendation?.verdict ?? scores?.verdict;
+  const apiVerdict: string | null = typeof rawApiVerdict === 'object' && rawApiVerdict !== null
+    ? (rawApiVerdict.text || rawApiVerdict.label || null)
+    : (typeof rawApiVerdict === 'string' ? rawApiVerdict : null);
   const confidence: string = apiConfidence ?? "Medium";
   const confidenceMultiplier: number = analysisResult?.confidence_multiplier ?? 1.0;
 

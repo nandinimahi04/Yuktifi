@@ -2,12 +2,13 @@ import React from "react";
 import { ShieldCheck, AlertTriangle, XCircle, HelpCircle } from "lucide-react";
 
 interface Props {
-  verdict?: string | null;
+  verdict?: any;
   score?: number | null;
 }
 
 export function VerdictBanner({ verdict, score }: Props) {
-  const v = (verdict || "").toUpperCase().trim();
+  const verdictText = typeof verdict === 'object' && verdict !== null ? (verdict.text || '') : (verdict || '');
+  const v = (verdictText || "").toUpperCase().trim();
 
   // If score is high (>=75) or verdict is positive
   const isGo =
@@ -106,7 +107,7 @@ export function VerdictBanner({ verdict, score }: Props) {
           {typeof score === "number" && score >= 75 ? "Strong Opportunity" : "Automated Decision Assessment"}
         </h4>
         <p className="text-sm text-ink-soft font-medium mt-1 leading-relaxed">
-          {verdict || "Derived deterministically from multi-factor analysis across verified market and financial metrics."}
+          {verdictText || "Derived deterministically from multi-factor analysis across verified market and financial metrics."}
         </p>
       </div>
     </div>
