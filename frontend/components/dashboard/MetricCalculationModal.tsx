@@ -51,6 +51,7 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
     }
   };
 
+<<<<<<< HEAD
   const formatInputValue = (val: any): string => {
     if (val === null || val === undefined) return 'N/A';
     if (typeof val === 'number') {
@@ -58,6 +59,35 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
         return `₹${val.toLocaleString('en-IN')}`;
       }
       return val.toString();
+=======
+  const formatInputValue = (val: any, key?: string): string => {
+    if (val === null || val === undefined) return 'N/A';
+    const k = (key || '').toLowerCase();
+    const isCurrency =
+      k.includes('cost') ||
+      k.includes('revenue') ||
+      k.includes('profit') ||
+      k.includes('price') ||
+      k.includes('opex') ||
+      k.includes('cogs') ||
+      k.includes('emi') ||
+      k.includes('size') ||
+      k.includes('ebit') ||
+      k.includes('investment') ||
+      k.includes('capital') ||
+      k.includes('amount') ||
+      k.includes('sales');
+    const isPercent = k.includes('pct') || k.includes('share') || k.includes('margin') || k.includes('roi') || k.includes('rate');
+
+    if (typeof val === 'number') {
+      if (isPercent) {
+        return `${Number(val).toFixed(1)}%`;
+      }
+      if (isCurrency) {
+        return `₹${Math.round(val).toLocaleString('en-IN')}`;
+      }
+      return val.toLocaleString('en-IN');
+>>>>>>> cleanup-final
     }
     if (typeof val === 'boolean') return val ? 'Yes' : 'No';
     return String(val);
@@ -161,7 +191,11 @@ export const MetricCalculationModal: React.FC<MetricCalculationModalProps> = ({
                 {Object.entries(metric.inputs).map(([k, v]) => (
                   <div key={k} className="p-3 bg-cream/70 rounded-xl border border-premium-border flex justify-between items-center text-xs">
                     <span className="font-medium text-ink-soft">{formatInputLabel(k)}</span>
+<<<<<<< HEAD
                     <span className="font-bold text-forest-deep text-right ml-2">{formatInputValue(v)}</span>
+=======
+                    <span className="font-bold text-forest-deep text-right ml-2">{formatInputValue(v, k)}</span>
+>>>>>>> cleanup-final
                   </div>
                 ))}
               </div>

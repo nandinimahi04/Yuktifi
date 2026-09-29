@@ -1,0 +1,289 @@
+# Canonical Commodity Taxonomy for YuktiFi Phase 2
+# Maps Canonical Commodity IDs to:
+# - Consumer Affairs Price Monitoring System commodity names
+# - AGMARKNET / Mandi commodity names
+# - Units and Business Relevance
+
+commodities:
+  rice:
+    canonical_name: "Rice"
+    category: "cereals"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Rice"
+    agmarknet:
+      - "Rice"
+      - "Paddy"
+      - "Paddy(Dhan)(Common)"
+      - "Paddy(Dhan)(Grade A)"
+    hces_group: "Cereals & cereal products"
+
+  wheat:
+    canonical_name: "Wheat"
+    category: "cereals"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Wheat"
+    agmarknet:
+      - "Wheat"
+      - "Wheat(Husked)"
+      - "Kalyan Sona"
+      - "Sharbati"
+    hces_group: "Cereals & cereal products"
+
+  atta:
+    canonical_name: "Atta (Wheat Flour)"
+    category: "cereals"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Wheat Flour (Atta)"
+      - "Atta (Wheat)"
+      - "Atta"
+    agmarknet:
+      - "Atta"
+      - "Wheat Flour"
+    hces_group: "Cereals & cereal products"
+
+  gram_dal:
+    canonical_name: "Gram Dal (Chana Dal)"
+    category: "pulses"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Gram Dal"
+    agmarknet:
+      - "Bengal Gram(Gram)(Whole)"
+      - "Bengal Gram Dal(Chana Dal)"
+      - "Gram Dal"
+      - "Chana"
+    hces_group: "Pulses & pulse products"
+
+  tur_dal:
+    canonical_name: "Tur Dal (Arhar Dal)"
+    category: "pulses"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Tur/Arhar Dal"
+      - "Tur (Arhar) Dal"
+    agmarknet:
+      - "Arhar (Tur/Red Gram)(Whole)"
+      - "Arhar Dal(Tur Dal)"
+      - "Tur Dal"
+      - "Red Gram"
+    hces_group: "Pulses & pulse products"
+
+  urad_dal:
+    canonical_name: "Urad Dal"
+    category: "pulses"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Urad Dal"
+    agmarknet:
+      - "Black Gram (Urd Beans)(Whole)"
+      - "Black Gram Dal (Urd Dal)"
+      - "Urad Dal"
+    hces_group: "Pulses & pulse products"
+
+  moong_dal:
+    canonical_name: "Moong Dal"
+    category: "pulses"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Moong Dal"
+    agmarknet:
+      - "Green Gram (Moong)(Whole)"
+      - "Green Gram Dal (Moong Dal)"
+      - "Moong Dal"
+    hces_group: "Pulses & pulse products"
+
+  masoor_dal:
+    canonical_name: "Masoor Dal"
+    category: "pulses"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Masoor Dal"
+    agmarknet:
+      - "Masur Dal"
+      - "Lentil (Masur)(Whole)"
+    hces_group: "Pulses & pulse products"
+
+  sugar:
+    canonical_name: "Sugar"
+    category: "sugar_sweets"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Sugar"
+    agmarknet:
+      - "Sugar"
+      - "Gur(Jaggery)"
+    hces_group: "Sugar, salt & spices"
+
+  milk:
+    canonical_name: "Milk"
+    category: "dairy"
+    unit: "INR/litre"
+    mandi_unit: "INR/litre"
+    consumer_affairs:
+      - "Milk"
+      - "Milk (Cow/Buffalo)"
+    agmarknet:
+      - "Milk"
+      - "Cow Milk"
+      - "Buffalo Milk"
+    hces_group: "Milk & milk products"
+
+  tea:
+    canonical_name: "Tea"
+    category: "beverages"
+    unit: "INR/kg"
+    mandi_unit: "INR/kg"
+    consumer_affairs:
+      - "Tea (Loose)"
+      - "Tea"
+    agmarknet:
+      - "Tea"
+      - "Tea Leaves"
+    hces_group: "Beverages, refreshments & processed food"
+
+  edible_oil:
+    canonical_name: "Edible Oil (Mustard/Sunflower/Groundnut/Soya)"
+    category: "oils_fats"
+    unit: "INR/litre"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Groundnut Oil (Packed)"
+      - "Mustard Oil (Packed)"
+      - "Vanaspati (Packed)"
+      - "Soya Oil (Packed)"
+      - "Sunflower Oil (Packed)"
+      - "Palm Oil (Packed)"
+    agmarknet:
+      - "Mustard Oil"
+      - "Groundnut Oil"
+      - "Sunflower Oil"
+      - "Soyabean Oil"
+    hces_group: "Edible oils"
+
+  potato:
+    canonical_name: "Potato"
+    category: "vegetables"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Potato"
+    agmarknet:
+      - "Potato"
+      - "Aloo"
+    hces_group: "Vegetables"
+
+  onion:
+    canonical_name: "Onion"
+    category: "vegetables"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Onion"
+    agmarknet:
+      - "Onion"
+      - "Pyaz"
+      - "Red Onion"
+    hces_group: "Vegetables"
+
+  tomato:
+    canonical_name: "Tomato"
+    category: "vegetables"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Tomato"
+    agmarknet:
+      - "Tomato"
+      - "Tamatar"
+    hces_group: "Vegetables"
+
+  salt:
+    canonical_name: "Salt (Iodised)"
+    category: "spices"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Salt Pack (Iodised)"
+      - "Salt"
+    agmarknet:
+      - "Salt"
+    hces_group: "Sugar, salt & spices"
+
+  jowar:
+    canonical_name: "Jowar (Sorghum)"
+    category: "cereals"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Jowar"
+    agmarknet:
+      - "Jowar(Sorghum)"
+      - "Jowar"
+      - "Sorghum"
+      - "Maldandi"
+    hces_group: "Cereals & cereal products"
+
+  soyabean:
+    canonical_name: "Soyabean"
+    category: "oilseeds"
+    unit: "INR/kg"
+    mandi_unit: "INR/quintal"
+    consumer_affairs:
+      - "Soyabean"
+    agmarknet:
+      - "Soyabean"
+      - "Soya Bean"
+      - "Yellow Soyabean"
+    hces_group: "Edible oils"
+
+
+# Business Category Input-Cost Profiles & Weightings
+business_input_profiles:
+  retail_kirana:
+    display_name: "Kirana / Grocery Store"
+    inputs:
+      rice: 0.18
+      wheat: 0.12
+      atta: 0.10
+      tur_dal: 0.15
+      sugar: 0.10
+      edible_oil: 0.15
+      potato: 0.06
+      onion: 0.08
+      salt: 0.03
+      tea: 0.03
+
+  tea_snacks:
+    display_name: "Tea & Snacks Shop"
+    inputs:
+      milk: 0.35
+      tea: 0.20
+      sugar: 0.12
+      atta: 0.10
+      edible_oil: 0.12
+      potato: 0.08
+      onion: 0.03
+
+  dairy:
+    display_name: "Dairy / Milk Products"
+    inputs:
+      milk: 0.85
+      sugar: 0.15
+
+  flour_mill:
+    display_name: "Flour Mill / Atta Chakki"
+    inputs:
+      wheat: 0.70
+      gram_dal: 0.30

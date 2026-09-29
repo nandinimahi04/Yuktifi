@@ -386,6 +386,7 @@ export default function ScorePage() {
           </motion.div>
         )}
       </AnimatePresence>
+<<<<<<< HEAD
 
       {/* Decision Banner */}
       {apiVerdict ? (
@@ -404,6 +405,12 @@ export default function ScorePage() {
         </div>
       )}
 
+=======
+
+      {/* Decision Banner */}
+      <VerdictBanner verdict={apiVerdict} score={finalYuktiScore} />
+
+>>>>>>> cleanup-final
       {/* Top 3 Metric Summary Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
         {/* Score Dial Card */}

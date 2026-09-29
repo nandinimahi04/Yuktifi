@@ -27,7 +27,7 @@ def simulate(req: SimulateRequest, db: DBSession = Depends(get_db)):
         )
         if "error" in result:
             raise HTTPException(status_code=409, detail=result["detail"])
-        return SimulateResponse(
+        return StaticSimulateResponse(
             emi=result["emi"],
             dscr=result["dscr"],
             dscr_status=result["dscr_status"],

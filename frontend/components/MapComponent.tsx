@@ -18,9 +18,14 @@ const createIcon = (color: string) => {
 
 interface Competitor {
   name: string;
-  distance_km: number;
+  distance_km?: number;
   lat?: number;
   lon?: number;
+  latitude?: number;
+  longitude?: number;
+  category?: string;
+  sources?: string[];
+  address?: string;
 }
 
 interface MapComponentProps {
@@ -42,6 +47,7 @@ export default function MapComponent({
 }: MapComponentProps) {
   const redIcon = useMemo(() => createIcon('red'), []);
 
+<<<<<<< HEAD
   // Ensure we have pins to render on the map
   const displayCompetitors = useMemo(() => {
     if (competitors && competitors.length > 0) return competitors;
@@ -55,6 +61,12 @@ export default function MapComponent({
       { name: "Om Traders", distance_km: 1.7, lat: lat - 0.015, lon: lng - 0.001 },
     ];
   }, [competitors, lat, lng]);
+=======
+  // Render only real mapped competitors
+  const displayCompetitors = useMemo(() => {
+    return (competitors || []).filter(c => Boolean(c && (c.name || c.category)));
+  }, [competitors]);
+>>>>>>> cleanup-final
 
   return (
     <MapContainer 
@@ -92,6 +104,7 @@ export default function MapComponent({
       )}
       
       {/* Competitor Pins */}
+<<<<<<< HEAD
       {showCompetitors && displayCompetitors.map((comp, idx) => {
         let compLat = comp.lat;
         let compLng = comp.lon;
@@ -100,6 +113,16 @@ export default function MapComponent({
           const angle = (idx * (360 / Math.max(1, displayCompetitors.length))) * (Math.PI / 180);
           compLat = lat + (comp.distance_km / 111) * Math.cos(angle);
           compLng = lng + (comp.distance_km / (111 * Math.cos(lat * (Math.PI / 180)))) * Math.sin(angle);
+=======
+      {showCompetitors && displayCompetitors.map((comp: any, idx) => {
+        let compLat = comp.latitude ?? comp.lat;
+        let compLng = comp.longitude ?? comp.lon;
+        
+        if (compLat === undefined || compLng === undefined || compLat === null || compLng === null) {
+          const angle = (idx * (360 / Math.max(1, displayCompetitors.length))) * (Math.PI / 180);
+          compLat = lat + ((comp.distance_km || 1) / 111) * Math.cos(angle);
+          compLng = lng + ((comp.distance_km || 1) / (111 * Math.cos(lat * (Math.PI / 180)))) * Math.sin(angle);
+>>>>>>> cleanup-final
         }
         
         return (

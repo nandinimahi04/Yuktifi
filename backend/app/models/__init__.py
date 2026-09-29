@@ -17,4 +17,10 @@ from app.models.confidence_tag import ConfidenceTag  # noqa: F401
 from app.models.source import Source  # noqa: F401
 from app.models.price import Price  # noqa: F401
 from app.models.financial_assumptions import ProjectFinancialAssumptions, FinancialAssumptionsAudit  # noqa: F401
+<<<<<<< HEAD
+=======
+from app.models.hces_consumption import HCESConsumption  # noqa: F401
+from app.models.consumer_affairs_price import ConsumerAffairsPrice  # noqa: F401
+from app.models.agmarknet_price import AgmarknetPrice  # noqa: F401
+>>>>>>> cleanup-final
 
