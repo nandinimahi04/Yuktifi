@@ -2,59 +2,113 @@ import React from "react";
 import { ShieldCheck, AlertTriangle, XCircle, HelpCircle } from "lucide-react";
 
 interface Props {
-  verdict: string;
+  verdict?: string | null;
+  score?: number | null;
 }
 
-export function VerdictBanner({ verdict }: Props) {
-  switch (verdict) {
-    case "GO":
-      return (
-        <div className="flex items-start space-x-3 p-4 bg-emerald-900/40 border border-emerald-500/30 rounded-lg">
-          <ShieldCheck className="text-emerald-400 mt-0.5 shrink-0" size={20} />
-          <div>
-            <h4 className="font-semibold text-emerald-400">Highly Recommended</h4>
-            <p className="text-sm text-emerald-100/70 mt-1">
-              Strong financial viability with good buffer against market fluctuations.
-            </p>
-          </div>
+export function VerdictBanner({ verdict, score }: Props) {
+  const v = (verdict || "").toUpperCase().trim();
+
+  // If score is high (>=75) or verdict is positive
+  const isGo =
+    v === "GO" ||
+    v.includes("STRONG") ||
+    v.includes("HIGHLY") ||
+    v.includes("OPPORTUNITY") ||
+    (v.includes("RECOMMENDED") && !v.includes("NOT")) ||
+    (typeof score === "number" && score >= 75 && !v.includes("NOT") && !v.includes("HIGH RISK"));
+
+  // If score is moderate (50-74) or caution
+  const isCaution =
+    !isGo &&
+    (v === "CAUTION" ||
+      v.includes("MODERATE") ||
+      v.includes("POTENTIAL") ||
+      v.includes("CAUTION") ||
+      v.includes("WATCH") ||
+      (typeof score === "number" && score >= 50 && score < 75 && !v.includes("NOT") && !v.includes("HIGH RISK")));
+
+  const isAlternative = !isGo && !isCaution && (v === "ALTERNATIVE" || v.includes("ALTERNATIVE") || v.includes("OPTION"));
+
+  const isNotRecommended =
+    !isGo &&
+    !isCaution &&
+    !isAlternative &&
+    (v === "NOT_RECOMMENDED" ||
+      v === "NO_GO" ||
+      v.includes("NOT RECOMMENDED") ||
+      v.includes("HIGH RISK") ||
+      v.includes("UNVIABLE") ||
+      (typeof score === "number" && score < 50));
+
+  if (isGo) {
+    return (
+      <div className="flex items-start space-x-3.5 p-5 bg-emerald-50/90 border border-emerald-200 rounded-2xl shadow-sm mb-6">
+        <ShieldCheck className="text-emerald-600 mt-0.5 shrink-0" size={24} />
+        <div>
+          <h4 className="font-bold text-forest-deep text-base">Highly Recommended — Strong Opportunity</h4>
+          <p className="text-sm text-ink-soft font-medium mt-1 leading-relaxed">
+            Strong financial viability with healthy margin of safety and verified market demand.
+          </p>
         </div>
-      );
-    case "CAUTION":
-      return (
-        <div className="flex items-start space-x-3 p-4 bg-amber-900/40 border border-amber-500/30 rounded-lg">
-          <AlertTriangle className="text-amber-400 mt-0.5 shrink-0" size={20} />
-          <div>
-            <h4 className="font-semibold text-amber-400">Proceed with Caution</h4>
-            <p className="text-sm text-amber-100/70 mt-1">
-              Tight margins. The project is sensitive to revenue drops or cost increases.
-            </p>
-          </div>
-        </div>
-      );
-    case "ALTERNATIVE":
-      return (
-        <div className="flex items-start space-x-3 p-4 bg-blue-900/40 border border-blue-500/30 rounded-lg">
-          <HelpCircle className="text-blue-400 mt-0.5 shrink-0" size={20} />
-          <div>
-            <h4 className="font-semibold text-blue-400">Alternative Options Available</h4>
-            <p className="text-sm text-blue-100/70 mt-1">
-              Consider shifting business model or seeking higher margin categories.
-            </p>
-          </div>
-        </div>
-      );
-    case "NOT_RECOMMENDED":
-    default:
-      return (
-        <div className="flex items-start space-x-3 p-4 bg-red-900/40 border border-red-500/30 rounded-lg">
-          <XCircle className="text-red-400 mt-0.5 shrink-0" size={20} />
-          <div>
-            <h4 className="font-semibold text-red-400">Not Recommended</h4>
-            <p className="text-sm text-red-100/70 mt-1">
-              High risk of defaulting on loans. Project does not cover its operational costs and Monthly Installment.
-            </p>
-          </div>
-        </div>
-      );
+      </div>
+    );
   }
+
+  if (isCaution) {
+    return (
+      <div className="flex items-start space-x-3.5 p-5 bg-amber-50/90 border border-amber-200 rounded-2xl shadow-sm mb-6">
+        <AlertTriangle className="text-amber-600 mt-0.5 shrink-0" size={24} />
+        <div>
+          <h4 className="font-bold text-forest-deep text-base">Proceed with Caution — Moderate Potential</h4>
+          <p className="text-sm text-ink-soft font-medium mt-1 leading-relaxed">
+            Viable project fundamentals. Maintain disciplined working capital and monitor monthly cash flows.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAlternative) {
+    return (
+      <div className="flex items-start space-x-3.5 p-5 bg-blue-50/90 border border-blue-200 rounded-2xl shadow-sm mb-6">
+        <HelpCircle className="text-blue-600 mt-0.5 shrink-0" size={24} />
+        <div>
+          <h4 className="font-bold text-forest-deep text-base">Alternative Options Available</h4>
+          <p className="text-sm text-ink-soft font-medium mt-1 leading-relaxed">
+            Consider exploring higher margin business variations or optimizing fixed costs.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isNotRecommended) {
+    return (
+      <div className="flex items-start space-x-3.5 p-5 bg-rose-50/90 border border-rose-200 rounded-2xl shadow-sm mb-6">
+        <XCircle className="text-red-500 mt-0.5 shrink-0" size={24} />
+        <div>
+          <h4 className="font-bold text-red-700 text-base">High Risk Exposure — Restructure Plan</h4>
+          <p className="text-sm text-red-600 font-medium mt-1 leading-relaxed">
+            High risk of defaulting on loans. Project does not cover its operational costs and monthly installments under current assumptions.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback if neither matches (e.g. initial loading or custom text)
+  return (
+    <div className="flex items-start space-x-3.5 p-5 bg-emerald-50/90 border border-emerald-200 rounded-2xl shadow-sm mb-6">
+      <ShieldCheck className="text-emerald-600 mt-0.5 shrink-0" size={24} />
+      <div>
+        <h4 className="font-bold text-forest-deep text-base">
+          {typeof score === "number" && score >= 75 ? "Strong Opportunity" : "Automated Decision Assessment"}
+        </h4>
+        <p className="text-sm text-ink-soft font-medium mt-1 leading-relaxed">
+          {verdict || "Derived deterministically from multi-factor analysis across verified market and financial metrics."}
+        </p>
+      </div>
+    </div>
+  );
 }

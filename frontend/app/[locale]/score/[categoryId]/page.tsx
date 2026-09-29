@@ -388,21 +388,7 @@ export default function ScorePage() {
       </AnimatePresence>
 
       {/* Decision Banner */}
-      {apiVerdict ? (
-        <VerdictBanner verdict={apiVerdict} />
-      ) : (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 mb-6">
-          <div className="text-xs font-bold uppercase tracking-widest text-emerald-800">
-            Automated Decision Assessment
-          </div>
-          <div className="text-lg font-bold text-forest-deep mt-1">
-            {finalYuktiScore >= 75 ? "Strong Viability & Expansion Potential" : finalYuktiScore >= 50 ? "Moderate Viability — Monitor Debt Coverage" : "High Risk Exposure — Restructure Plan"}
-          </div>
-          <p className="text-xs text-ink-soft mt-1">
-            Derived deterministically from {scoredDimensions.length} verified dimensions. Gated on debt service coverage, positive unit economics, and local market absorption.
-          </p>
-        </div>
-      )}
+      <VerdictBanner verdict={apiVerdict} score={finalYuktiScore} />
 
       {/* Top 3 Metric Summary Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">

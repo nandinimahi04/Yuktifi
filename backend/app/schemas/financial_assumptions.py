@@ -9,25 +9,25 @@ class ValidationWarning(BaseModel):
 
 
 class FinancialAssumptionsInput(BaseModel):
-    project_cost: float = Field(..., ge=0, description="Total capital required for setup (INR)")
-    own_capital: float = Field(..., ge=0, description="Promoter's equity contribution (INR)")
+    project_cost: Optional[float] = Field(None, ge=0, description="Total capital required for setup (INR)")
+    own_capital: Optional[float] = Field(None, ge=0, description="Promoter's equity contribution (INR)")
     loan_amount: Optional[float] = Field(None, ge=0, description="Borrowing required (INR)")
     
     # Revenue Mode & Parameters
-    is_direct_revenue_mode: bool = Field(False, description="Whether to use direct monthly revenue override")
+    is_direct_revenue_mode: Optional[bool] = Field(None, description="Whether to use direct monthly revenue override")
     monthly_revenue: Optional[float] = Field(None, ge=0, description="Direct monthly revenue if override enabled")
     selling_price: Optional[float] = Field(None, ge=0, description="Selling price per unit/customer (INR)")
     units_per_day: Optional[float] = Field(None, ge=0, description="Expected volume per operating day")
-    operating_days: Optional[int] = Field(30, ge=1, le=31, description="Working days in a month")
+    operating_days: Optional[int] = Field(None, ge=1, le=31, description="Working days in a month")
     
     # Cost Parameters
     variable_cost_per_unit: Optional[float] = Field(None, ge=0, description="Direct cost of raw material/packaging per unit")
     monthly_expenses: Optional[float] = Field(None, ge=0, description="Fixed monthly operational expenses (rent, salary, utility)")
     
     # Financing Parameters
-    interest_rate_annual_pct: Optional[float] = Field(9.0, ge=0.0, le=100.0, description="Annual borrowing interest rate (%)")
-    loan_tenure_months: Optional[int] = Field(60, ge=0, le=360, description="Loan term in months")
-    moratorium_months: Optional[int] = Field(0, ge=0, le=60, description="Moratorium / grace period in months")
+    interest_rate_annual_pct: Optional[float] = Field(None, ge=0.0, le=100.0, description="Annual borrowing interest rate (%)")
+    loan_tenure_months: Optional[int] = Field(None, ge=0, le=360, description="Loan term in months")
+    moratorium_months: Optional[int] = Field(None, ge=0, le=60, description="Moratorium / grace period in months")
     tax_rate_pct: Optional[float] = Field(None, ge=0.0, le=100.0, description="Effective corporate/business tax rate (%)")
     
     # Concurrency version
@@ -35,11 +35,11 @@ class FinancialAssumptionsInput(BaseModel):
 
     @model_validator(mode="after")
     def validate_cross_fields(self):
-        if self.own_capital > self.project_cost:
-            raise ValueError(f"Own contribution (₹{self.own_capital:,.0f}) cannot exceed total project cost (₹{self.project_cost:,.0f})")
-        
-        if self.loan_amount is None:
-            self.loan_amount = max(0.0, self.project_cost - self.own_capital)
+        if self.own_capital is not None and self.project_cost is not None:
+            if self.own_capital > self.project_cost:
+                raise ValueError(f"Own contribution (₹{self.own_capital:,.0f}) cannot exceed total project cost (₹{self.project_cost:,.0f})")
+            if self.loan_amount is None:
+                self.loan_amount = max(0.0, self.project_cost - self.own_capital)
             
         return self
 

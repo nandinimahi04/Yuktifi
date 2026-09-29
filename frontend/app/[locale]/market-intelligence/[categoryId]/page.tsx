@@ -148,36 +148,35 @@ const MarketSnapshot = ({ assessment, compCount }: any) => {
 
 // 6. Map Section
 const MapSection = ({ lat, lng, radiusKm, competitors }: any) => {
-  const t = useTranslations('market.map');
   const legendItems = [
-    { label: t('legend.competitors'), color: 'bg-blue-500' },
-    { label: t('legend.customers'), color: 'bg-orange-400' },
-    { label: t('legend.transport'), color: 'bg-yellow-500' },
-    { label: t('legend.markets'), color: 'bg-green-500' },
-    { label: t('legend.schools'), color: 'bg-purple-500' },
-    { label: t('legend.hospitals'), color: 'bg-pink-500' },
-    { label: t('legend.opportunity'), color: 'bg-blue-400' },
+    { label: 'Competitors', color: 'bg-[#3b82f6]' },
+    { label: 'Target Clusters', color: 'bg-[#f97316]' },
+    { label: 'Transport Hubs', color: 'bg-[#eab308]' },
+    { label: 'Local Markets', color: 'bg-[#22c55e]' },
+    { label: 'Schools', color: 'bg-[#a855f7]' },
+    { label: 'Hospitals', color: 'bg-[#ec4899]' },
+    { label: 'High Opportunity Zone', color: 'bg-[#38bdf8]' },
   ];
 
   return (
-    <div>
-      <h2 className="text-xl font-bold text-forest-deep mb-4">{t('title')}</h2>
+    <div className="animate-in fade-in duration-300">
+      <h2 className="text-xl font-bold text-forest-deep mb-4 font-display">Catchment & Market Competition Map</h2>
       <div className="flex flex-col lg:flex-row gap-6">
         
         {/* Real Interactive Map Area */}
-        <div className="flex-1 h-[400px] border border-premium-border rounded-2xl relative overflow-hidden flex flex-col">
+        <div className="flex-1 h-[520px] min-h-[480px] border border-premium-border rounded-2xl relative overflow-hidden flex flex-col shadow-sm bg-white">
           <div className="flex-1 [&>div]:h-full [&>div]:w-full">
             <MapRadiusOverlay 
-              lat={lat} 
-              lng={lng} 
-              radiusKm={radiusKm} 
+              lat={lat || 17.6599} 
+              lng={lng || 75.9064} 
+              radiusKm={radiusKm || 5} 
               competitors={competitors} 
             />
           </div>
         </div>
 
         {/* Legend */}
-        <div className="w-full lg:w-64 bg-white rounded-2xl border border-premium-border p-6 shrink-0 shadow-sm self-start">
+        <div className="w-full lg:w-72 bg-white rounded-2xl border border-premium-border p-6 shrink-0 shadow-sm self-start">
           <ul className="space-y-4">
             {legendItems.map(item => (
               <li key={item.label} className="flex items-center">
@@ -651,7 +650,7 @@ export default function MarketIntelligencePage({ params }: { params: { categoryI
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
       
       {activeTab === "snapshot" && <MarketSnapshot assessment={scoreStr} compCount={compCount} />}
-      {activeTab === "map" && lat !== null && lng !== null && <MapSection lat={lat} lng={lng} radiusKm={5} competitors={competitors} />}
+      {activeTab === "map" && <MapSection lat={lat || 17.6599} lng={lng || 75.9064} radiusKm={5} competitors={competitors} />}
       {activeTab === "competitors" && <CompetitorAnalysis competitors={competitors} />}
       {activeTab === "customers" && <CustomerInsights consumerBase={consumerBase} />}
       {activeTab === "swot" && <SwotAndRisks 

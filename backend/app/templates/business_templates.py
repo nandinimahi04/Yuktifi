@@ -486,26 +486,59 @@ ALIAS_MAP: Dict[str, str] = {
     "kirana": "retail_kirana",
     "grocery": "retail_kirana",
     "supermarket": "retail_kirana",
+    "retail_shop": "retail_kirana",
+    "pooja_samagri": "retail_kirana",
+    "pooja_store": "retail_kirana",
+    "general_store": "retail_kirana",
     "cafe": "restaurant",
     "bakery_unit": "bakery",
     "electronics_repair": "mobile_repair",
     "atta_chakki": "manufacturing",
+    "flour_mill": "manufacturing",
+    "tailoring": "retail_kirana",
+    "dairy": "retail_kirana",
+    "poultry": "retail_kirana",
     "clinical_lab": "service_business",
+    "custom": "retail_kirana",
+    "general": "retail_kirana",
 }
 
+DEFAULT_TEMPLATE = BusinessTemplate(
+    category_id="retail_kirana",
+    name="General Retail & Service Enterprise",
+    sector="Retail & Shop",
+    catchment_radius_min_km=1.0,
+    catchment_radius_max_km=5.0,
+    default_inventory_days=10,
+    default_receivable_days=7,
+    default_payable_days=14,
+    typical_cogs_pct=60.0,
+    typical_opex_pct=15.0,
+    key_cost_drivers=["Inventory Stock", "Shop Rent & Utilities", "Operational Costs"],
+    description="Standard enterprise model with balanced working capital and inventory cycle.",
+    promoter_contribution_pct=25.0,
+    annual_revenue_per_invested_rupee=2.5,
+    typical_unit_value=100.0,
+    depreciable_asset_share=0.70,
+    asset_useful_life_years=5.0,
+    typical_selling_price=100.0,
+    typical_variable_cost_per_unit=60.0,
+    typical_units_per_day=100.0,
+    typical_operating_days=26,
+    typical_monthly_fixed_cost=25000.0,
+)
 
-def get_business_template(category_id: str) -> BusinessTemplate | None:
-    """Retrieve template by canonical ID or alias."""
+
+def get_business_template(category_id: Optional[str] = None) -> BusinessTemplate:
+    """Retrieve template by canonical ID or alias, guaranteed to return a valid BusinessTemplate."""
     cid = (category_id or "").strip().lower()
-    if not cid:
-        return None
-    if cid in TEMPLATES:
+    if cid and cid in TEMPLATES:
         return TEMPLATES[cid]
     mapped = ALIAS_MAP.get(cid)
     if mapped and mapped in TEMPLATES:
         return TEMPLATES[mapped]
     # Fuzzy match substring
     for key in TEMPLATES:
-        if key in cid or cid in key:
+        if cid and (key in cid or cid in key):
             return TEMPLATES[key]
-    return None
+    return TEMPLATES.get("retail_kirana", DEFAULT_TEMPLATE)
