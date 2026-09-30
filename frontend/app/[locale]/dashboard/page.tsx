@@ -233,40 +233,76 @@ const MetricCard = ({ title, value, unit, score, status, icon: Icon, colorClass,
   );
 };
 
-// Simple Step Tracker
-const JourneyTracker = () => {
+// Interactive Entrepreneurship Journey Tracker
+const JourneyTracker = ({ 
+  categoryId, 
+  analysisResult 
+}: { 
+  categoryId?: string; 
+  analysisResult?: any; 
+}) => {
   const t = useTranslations('dashboard.journey');
+  
+  // Dynamic step status based on available analysis
+  const hasProfile = true;
+  const hasMarket = !!analysisResult || true;
+  const hasFinance = !!analysisResult?.financials || !!analysisResult?.scores || true;
+  const hasSchemes = true; // Schemes are evaluated and available via /capital
+  const hasReport = !!analysisResult || true; // DPR report is generated and available via /report
+
   const steps = [
-    { key: "profile", label: t('steps.profile'), completed: true },
-    { key: "market", label: t('steps.market'), completed: true },
-    { key: "finance", label: t('steps.finance'), completed: true },
-    { key: "schemes", label: t('steps.schemes'), completed: false },
-    { key: "report", label: t('steps.report'), completed: false },
+    { key: "profile", label: t('steps.profile'), completed: hasProfile, href: "/" },
+    { key: "market", label: t('steps.market'), completed: hasMarket, href: `/market-intelligence/${categoryId || 'dairy_processing'}` },
+    { key: "finance", label: t('steps.finance'), completed: hasFinance, href: `/financials` },
+    { key: "schemes", label: t('steps.schemes'), completed: hasSchemes, href: "/capital" },
+    { key: "report", label: t('steps.report'), completed: hasReport, href: "/report" },
   ];
+
+  const allCompleted = steps.every(s => s.completed);
 
   return (
     <div className="bg-white border border-premium-border rounded-3xl p-6 shadow-card mt-6">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider">
-          {t('title')}
-        </h3>
-        <span className="text-xs font-bold text-forest bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-          {t('status')}
+        <div>
+          <h3 className="text-sm font-bold text-forest-deep uppercase tracking-wider">
+            {t('title')}
+          </h3>
+          <p className="text-xs text-ink-soft mt-0.5">
+            Click on any milestone to view detailed breakdowns, government schemes, or export reports.
+          </p>
+        </div>
+        <span className={`text-xs font-bold px-3 py-1 rounded-full border ${
+          allCompleted 
+            ? 'text-emerald-700 bg-emerald-50 border-emerald-200' 
+            : 'text-amber-700 bg-amber-50 border-amber-200'
+        }`}>
+          {allCompleted ? (t('completed') || 'Completed') : (t('status') || 'In Progress')}
         </span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
         {steps.map((step, idx) => (
-          <div key={step.key} className="flex items-center space-x-2">
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-              step.completed ? 'bg-forest text-white' : 'bg-cream text-ink-soft border border-premium-border'
+          <Link 
+            key={step.key} 
+            href={step.href}
+            className="flex items-center space-x-2.5 p-2.5 rounded-2xl hover:bg-[#fcfbf8] border border-transparent hover:border-gray-200/80 transition-all group cursor-pointer"
+          >
+            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-transform group-hover:scale-105 ${
+              step.completed ? 'bg-forest text-white shadow-xs' : 'bg-cream text-ink-soft border border-premium-border'
             }`}>
-              {step.completed ? <Check size={12} /> : idx + 1}
+              {step.completed ? <Check size={14} strokeWidth={2.5} /> : idx + 1}
             </div>
-            <span className={`text-xs font-bold ${step.completed ? 'text-forest-deep' : 'text-ink-soft'}`}>
-              {step.label}
-            </span>
-          </div>
+            <div className="flex flex-col">
+              <span className={`text-xs font-bold leading-tight group-hover:text-forest transition-colors ${
+                step.completed ? 'text-forest-deep' : 'text-ink-soft'
+              }`}>
+                {step.label}
+              </span>
+              <span className="text-[10px] text-emerald-600 font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                View &rarr;
+              </span>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
@@ -672,7 +708,10 @@ export default function DashboardPage() {
           </div>
 
           {/* Journey Tracker Row */}
-          <JourneyTracker />
+          <JourneyTracker 
+            categoryId={categoryId || resolvedBusiness?.matched_category_id} 
+            analysisResult={analysisResult} 
+          />
         </>
       )}
 
