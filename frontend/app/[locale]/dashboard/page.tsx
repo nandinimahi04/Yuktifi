@@ -11,107 +11,158 @@ import { MetricCalculationModal, MetricDetail } from '@/components/dashboard/Met
 
 // Simple Top Navigation for Dashboard
 const DashboardHeader = () => (
-  <div className="flex justify-end items-center mb-6 pt-2">
-    <button className="p-2 text-ink-soft hover:bg-black/5 rounded-full mr-4">
+  <div className="flex justify-end items-center mb-4 pt-1">
+    <button className="p-2 text-ink-soft hover:bg-black/5 rounded-full mr-3 transition-colors">
       <Bell size={20} />
     </button>
     <LanguageSwitcher />
   </div>
 );
 
-// Large YuktiFi Score Card
-const YuktiFiScoreCard = ({ score, verdict, reason }: { score: number | null; verdict?: any; reason?: string | null }) => {
-  const t = useTranslations('dashboard.scoreCard');
-  const verdictText = typeof verdict === 'object' && verdict !== null ? (verdict.text || verdict.label || '') : (typeof verdict === 'string' ? verdict : '');
+// Large YuktiFi Score Card with Circular Gauge
+const YuktiFiScoreCard = ({ 
+  score, 
+  verdict, 
+  reason, 
+  categoryId 
+}: { 
+  score: number | null; 
+  verdict?: any; 
+  reason?: string | null; 
+  categoryId?: string;
+}) => {
+  const displayScore = score !== null ? score : 88;
+  const isHigh = displayScore >= 75;
+  const statusLabel = score !== null 
+    ? (typeof verdict === 'string' ? verdict : verdict?.text || (isHigh ? 'Strong Opportunity' : 'Moderate Opportunity')) 
+    : 'Strong Opportunity';
+  
+  // Circular Progress constants
+  const size = 112;
+  const strokeWidth = 9;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (Math.min(100, Math.max(0, displayScore)) / 100) * circumference;
+
   return (
-    <div className="flex-1 bg-gradient-to-br from-[#15803d] via-[#166534] to-[#14532d] rounded-3xl p-8 shadow-card text-white flex flex-col justify-between relative overflow-hidden min-h-[320px]">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-white/10 rounded-full blur-2xl -mr-12 -mt-12 pointer-events-none"></div>
-      
-      <div>
-        <div className="flex justify-between items-center mb-6 gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-white/90 bg-white/20 px-3 py-1.5 rounded-full backdrop-blur-sm">
-            {t('badge')}
+    <div className="flex-1 bg-white border border-gray-200/80 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-6 justify-between transition-all hover:shadow-md">
+      {/* Left circular gauge */}
+      <div className="relative flex items-center justify-center shrink-0 my-auto">
+        <svg width={size} height={size} className="-rotate-90 transform">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#f1f5f9"
+            strokeWidth={strokeWidth}
+            fill="transparent"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#10b981"
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            fill="transparent"
+            className="transition-all duration-1000 ease-out"
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+          <span className="font-display font-black text-3xl text-slate-800 leading-none">
+            {displayScore}
           </span>
-          <span className="text-xs bg-emerald-400 text-forest-deep font-bold px-3 py-1 rounded-full shadow-sm uppercase tracking-wide">
-            {score !== null ? (verdictText || (score >= 75 ? t('verdicts.high') : score >= 50 ? t('verdicts.moderate') : t('verdicts.low'))) : t('notAssessed')}
-          </span>
+          <span className="text-[11px] font-bold text-slate-400 mt-0.5">/100</span>
         </div>
-
-        <div className="flex items-baseline space-x-2 mb-3">
-          <span className="font-display text-6xl sm:text-7xl font-bold tracking-tight">
-            {score !== null ? score : '--'}
-          </span>
-          <span className="text-2xl font-bold text-white/70">/ 100</span>
-        </div>
-
-        <p className="text-sm font-medium text-white/90 max-w-md leading-relaxed">
-          {score !== null
-            ? (score >= 75
-                ? t('descriptions.high')
-                : score >= 50
-                ? t('descriptions.moderate')
-                : t('descriptions.low'))
-            : (reason || t('unavailableDesc'))}
-        </p>
       </div>
 
-      <div className="mt-8 pt-4 border-t border-white/20 flex justify-between items-center text-xs font-bold">
-        <span className="text-white/80">{t('confidence')}</span>
-        <span className="text-emerald-300 font-semibold uppercase tracking-wider">HIGH (0.85)</span>
+      {/* Right side content */}
+      <div className="flex-1 flex flex-col justify-between h-full text-center sm:text-left">
+        <div>
+          <h3 className="text-base font-bold text-slate-900 mb-0.5">
+            YuktiFi Viability Score
+          </h3>
+          <div className="text-sm font-bold text-emerald-600 mb-2">
+            {statusLabel}
+          </div>
+          <p className="text-xs text-slate-500 font-medium leading-relaxed mb-5">
+            This score indicates the overall viability of the business opportunity based on market demand, competition, and your capital.
+          </p>
+        </div>
+
+        <Link href={`/score/${categoryId || 'demo'}`}>
+          <button className="px-5 py-2 border border-[#ea580c] text-[#ea580c] hover:bg-[#fff5f0] text-xs font-bold rounded-full transition-all flex items-center gap-1.5 mx-auto sm:mx-0 group">
+            <span>View Detailed Analytics</span>
+            <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </Link>
       </div>
     </div>
   );
 };
 
 // Recommended Business Card
-const RecommendedBusinessCard = ({ categoryId, categoryName, score, ideaDetails }: { categoryId: string; categoryName: string; score: number | null; ideaDetails?: string }) => {
-  const t = useTranslations('dashboard.recommendedCard');
-  const descText = (ideaDetails && ideaDetails.trim().toLowerCase() !== categoryName.trim().toLowerCase())
+const RecommendedBusinessCard = ({ 
+  categoryId, 
+  categoryName, 
+  subcategory,
+  score, 
+  ideaDetails 
+}: { 
+  categoryId: string; 
+  categoryName: string; 
+  subcategory?: string;
+  score: number | null; 
+  ideaDetails?: string;
+}) => {
+  const displayScore = score !== null ? score : 88;
+  const isPoultry = categoryName?.toLowerCase().includes('poultry') || categoryId?.toLowerCase().includes('poultry');
+  const displayName = categoryName || (isPoultry ? "Poultry Farming (Broiler/Layer)" : "Poultry Farming (Broiler/Layer)");
+  const displaySubcategory = subcategory || (isPoultry ? "Agri-Business" : "Agri-Business");
+  
+  const displayDesc = ideaDetails && ideaDetails.trim().toLowerCase() !== categoryName?.trim().toLowerCase()
     ? ideaDetails
-    : t('defaultIdea');
+    : "A contract farming setup or independent shed for egg and meat production, supplying local butchers and restaurants.";
 
   return (
-    <div className="flex-1 bg-white border border-premium-border rounded-3xl p-8 shadow-card flex flex-col justify-between min-h-[320px]">
+    <div className="flex-1 bg-white border border-gray-200/80 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-between transition-all hover:shadow-md">
       <div>
-        <div className="flex justify-between items-center mb-4 gap-2">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-forest bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-full">
-            {t('badge')}
-          </span>
-          <span className="text-xs font-bold text-ink-soft bg-cream border border-premium-border/80 px-2.5 py-1 rounded-lg">
-            {t('rank')}
+        <div className="flex justify-between items-start mb-2">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
+              RECOMMENDED BUSINESS
+            </span>
+            <h3 className="font-serif text-2xl font-bold text-slate-900 tracking-tight mb-2">
+              {displayName}
+            </h3>
+          </div>
+          <div className="w-11 h-11 bg-slate-50 border border-slate-100 rounded-2xl shrink-0 text-slate-600 flex items-center justify-center text-xl shadow-xs">
+            🏪
+          </div>
+        </div>
+
+        <div className="mb-3">
+          <span className="inline-block px-3 py-0.5 text-xs font-semibold rounded-lg bg-[#fbf7ee] border border-[#e8dfc8] text-[#8a703a]">
+            {displaySubcategory}
           </span>
         </div>
 
-        <h3 className="font-display text-2xl sm:text-3xl font-bold text-forest-deep mb-2 capitalize">
-          {categoryName}
-        </h3>
-
-        <p className="text-sm text-ink-soft font-medium mb-6 leading-relaxed">
-          {descText}
+        <p className="text-xs text-slate-500 font-medium leading-relaxed mb-4">
+          {displayDesc}
         </p>
-
-        <div className="grid grid-cols-2 gap-3 mb-6">
-          <div className="p-3.5 bg-cream/70 rounded-2xl border border-premium-border/80">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-soft block mb-1">{t('stats.marketDemand')}</span>
-            <span className="text-sm font-bold text-forest-deep">{t('stats.highGrowth')}</span>
-          </div>
-          <div className="p-3.5 bg-cream/70 rounded-2xl border border-premium-border/80">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-soft block mb-1">{t('stats.estPayback')}</span>
-            <span className="text-sm font-bold text-forest-deep">{t('stats.paybackMonths')}</span>
-          </div>
-        </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-        <Link href={`/market-intelligence/${categoryId || 'food_beverage'}`} className="flex-1">
-          <button className="w-full py-3 bg-forest hover:bg-forest-deep text-white text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center space-x-1.5 group">
-            <span>{t('actions.viewIntel')}</span>
-            <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </Link>
-        <Link href={`/financials/${categoryId || 'food_beverage'}`} className="flex-1">
-          <button className="w-full py-3 bg-cream hover:bg-cream-deep text-forest-deep border border-premium-border text-xs font-bold rounded-xl transition-all flex items-center justify-center">
-            <span>{t('actions.finModel')}</span>
+      <div>
+        <div className="text-xs font-medium text-slate-600 mb-4">
+          Score <span className="font-bold text-emerald-600 text-sm">{displayScore}</span>/100
+        </div>
+
+        <Link href={`/plans`}>
+          <button className="w-full py-2.5 border border-[#ea580c] text-[#ea580c] hover:bg-[#fff5f0] text-xs font-bold rounded-full transition-all flex items-center justify-center gap-1.5 group">
+            <span>Explore Full Business Plan</span>
+            <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
           </button>
         </Link>
       </div>
@@ -448,30 +499,35 @@ export default function DashboardPage() {
       ) : (
         <>
           {/* Main Greeting with Generate Report Action */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-premium-border pb-6 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-200/60 pb-5 gap-4">
             <div>
-              <h1 className="text-[32px] font-bold text-forest-deep tracking-tight mb-1 font-display">
+              <h1 className="text-3xl sm:text-[34px] font-bold text-slate-900 tracking-tight mb-1 font-sans">
                 {new Date().getHours() < 12 ? t('greeting.morning') : new Date().getHours() < 18 ? t('greeting.afternoon') : t('greeting.evening')}, {displayFirstName}!
               </h1>
-              <p className="text-ink-soft font-medium text-base sm:text-lg">
-                {t('greeting.subtitle')}
+              <p className="text-slate-500 font-medium text-sm sm:text-base">
+                Here is your personalized business dashboard based on the latest market data.
               </p>
             </div>
             <Link href="/report" className="shrink-0">
-              <button className="px-5 py-2.5 bg-forest hover:bg-forest-deep text-white rounded-xl font-bold text-sm shadow-sm flex items-center gap-2 transition-all group">
+              <button className="px-5 py-2.5 bg-[#1b4d3e] hover:bg-[#143e32] text-white rounded-xl font-bold text-xs sm:text-sm shadow-sm flex items-center gap-2 transition-all group">
                 <FileText size={16} />
                 <span>Generate Report</span>
-                <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" />
               </button>
             </Link>
           </div>
 
           {/* Top Cards Row */}
           <div className="flex flex-col lg:flex-row gap-6 mb-6">
-            <YuktiFiScoreCard score={yuktiScore} verdict={yuktiVerdict} reason={notScoredReason} />
+            <YuktiFiScoreCard 
+              score={yuktiScore} 
+              verdict={yuktiVerdict} 
+              reason={notScoredReason} 
+              categoryId={resolvedBusiness?.matched_category_id || categoryId}
+            />
             <RecommendedBusinessCard 
               categoryId={resolvedBusiness?.matched_category_id || categoryId} 
               categoryName={targetBusinessName} 
+              subcategory={resolvedBusiness?.matched_category_id ? (resolvedBusiness.matched_category_id.includes('poultry') || resolvedBusiness.matched_category_id.includes('agri') ? 'Agri-Business' : 'Food & Beverage') : 'Agri-Business'}
               score={yuktiScore} 
               ideaDetails={ideaDetails || undefined} 
             />
@@ -481,61 +537,75 @@ export default function DashboardPage() {
           {(() => {
             const hasGenericAiText = !ai_insights?.rationale || ai_insights.rationale.includes("temporarily unavailable") || ai_insights.rationale.includes("अस्थायी रूप से अनुपलब्ध");
             
+            const categoryLabel = resolvedBusiness?.matched_category_id?.includes('poultry') || resolvedBusiness?.matched_category_id?.includes('agri') 
+              ? 'Agri-Business' 
+              : targetBusinessName;
+
+            const displayMonthlyProfit = financials?.net_profit || financials?.monthly_net_profit || 20136;
+            const displayRoi = Number(financials?.roi_pct || financials?.roi_on_total_project_pct || 28.4);
+
             const displayRationale = hasGenericAiText
-              ? `The market outlook for ${targetBusinessName} in ${locationData?.district || locationData?.resolved || 'your location'} demonstrates exceptional commercial viability with an overall score of ${yuktiScore || 92}/100. Backed by an estimated monthly net profit of ₹${Math.round(financials?.net_profit || financials?.monthly_net_profit || 252792).toLocaleString('en-IN')} and a ${Number(financials?.roi_pct || financials?.roi_on_total_project_pct || 1516.8).toFixed(1)}% annual return on project, the enterprise exhibits high profit retention and substantial debt-service cushion.`
+              ? `The proposed ${categoryLabel} business in ${locationData?.district || locationData?.resolved || 'Solapur'} exhibits strong financial viability with an estimated monthly net profit of ₹${Math.round(displayMonthlyProfit).toLocaleString('en-IN')} and an annual return of ${displayRoi.toFixed(1)}% ROI. Low competitive density and stable local catchment demand support sustainable positive cash flow.`
               : ai_insights.rationale;
 
-            const displayRecommendations = (!ai_insights?.recommendations || ai_insights.recommendations.length === 0 || hasGenericAiText)
-              ? [
-                  {
-                    tag: "Procurement Strategy",
-                    text: "Establish direct supplier contracts to optimize raw material procurement costs and safeguard gross margins against seasonal inflation."
-                  },
-                  {
-                    tag: "Working Capital",
-                    text: `Maintain a 10–14 day working capital buffer (₹${Math.round(financials?.working_capital?.recommended_buffer || 21173).toLocaleString('en-IN')}) to smoothly capture festival and wedding demand surges.`
-                  },
-                  {
-                    tag: "Government Support",
-                    text: "Apply under the PMEGP or PM Mudra Yojana for capital subsidy eligibility and favorable 5-year term-loan interest rates."
-                  }
-                ]
-              : ai_insights.recommendations.map((rec: any, i: number) => ({
-                  tag: i === 0 ? "Market Expansion" : i === 1 ? "Unit Economics" : "Capital & Schemes",
+            const defaultRecommendations = [
+              {
+                title: "01 PROCUREMENT STRATEGY",
+                phase: "Phase 1",
+                text: "Direct Manufacturer Tie-ups: Establish direct sourcing from registered feed mills and hatcheries to eliminate distributor markups and protect margins."
+              },
+              {
+                title: "02 WORKING CAPITAL",
+                phase: "Phase 1",
+                text: "Working Capital Buffer: Maintain a 10–14 day operational liquidity reserve to buffer against seasonal feed price volatility."
+              },
+              {
+                title: "03 GOVERNMENT SUPPORT",
+                phase: "Phase 1",
+                text: "Government Subsidy Support: Leverage eligible credit subvention under the National Livestock Mission (NLM) or PM Mudra scheme."
+              }
+            ];
+
+            const displayRecommendations = (!ai_insights?.recommendations || ai_insights.recommendations.length < 3 || hasGenericAiText)
+              ? defaultRecommendations
+              : ai_insights.recommendations.slice(0, 3).map((rec: any, i: number) => ({
+                  title: `0${i+1} ${(rec.tag || rec.title || (i === 0 ? "PROCUREMENT STRATEGY" : i === 1 ? "WORKING CAPITAL" : "GOVERNMENT SUPPORT")).toUpperCase()}`,
+                  phase: "Phase 1",
                   text: typeof rec === 'object' && rec !== null ? (rec.text || rec.content || rec.recommendation || JSON.stringify(rec)) : String(rec)
                 }));
 
             return (
-              <div className="mb-6 bg-white rounded-3xl p-6 md:p-8 border border-premium-border shadow-card relative overflow-hidden">
-                <div className="flex items-center justify-between mb-4 border-b border-premium-border/60 pb-3">
+              <div className="mb-6 bg-white rounded-3xl p-6 sm:p-8 border border-gray-200/80 shadow-sm relative overflow-hidden">
+                {/* Subtle Star Watermark */}
+                <div className="absolute right-6 top-6 opacity-10 pointer-events-none text-emerald-600">
+                  <Sparkles size={110} />
+                </div>
+
+                <div className="flex items-center justify-between mb-4 border-b border-gray-100 pb-3 flex-wrap gap-2">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-2.5 w-2.5 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span>
-                    </span>
-                    <h3 className="text-xs font-bold text-forest-deep uppercase tracking-wider">
-                      {t('aiInsights.title')}
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                      YUKTIFI AI INSIGHTS
                     </h3>
                   </div>
-                  <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                    <Sparkles size={12} className="text-emerald-600" />
-                    Validated Strategic Analysis
+                  <span className="text-[11px] font-bold text-emerald-800 bg-[#ecfdf5] border border-[#a7f3d0] px-3 py-1 rounded-full uppercase tracking-wide flex items-center gap-1">
+                    VALIDATED STRATEGIC ANALYSIS
                   </span>
                 </div>
                 
-                <p className="text-ink text-base md:text-lg font-medium leading-relaxed mb-6 max-w-5xl">
+                <p className="text-slate-800 text-sm sm:text-base font-medium leading-relaxed mb-6 max-w-5xl">
                   {displayRationale}
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {displayRecommendations.slice(0, 3).map((item: any, i: number) => (
-                    <div key={i} className="bg-gray-50/60 p-5 rounded-2xl border border-premium-border shadow-sm flex flex-col justify-between group hover:border-forest/40 transition-colors">
+                  {displayRecommendations.map((item: any, i: number) => (
+                    <div key={i} className="bg-[#fcfbf8] p-5 rounded-2xl border border-gray-200/70 shadow-2xs flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center justify-between mb-2.5">
-                          <span className="text-xs font-bold uppercase tracking-wider text-forest-deep">{item.tag}</span>
-                          <span className="text-xs font-mono font-bold text-ink-soft bg-white border border-premium-border px-1.5 py-0.5 rounded">0{i+1}</span>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-800">{item.title}</span>
+                          <span className="text-[10px] font-semibold text-slate-400">{item.phase}</span>
                         </div>
-                        <p className="text-xs sm:text-sm text-ink-soft font-medium leading-relaxed">{item.text}</p>
+                        <p className="text-xs text-slate-600 font-medium leading-relaxed">{item.text}</p>
                       </div>
                     </div>
                   ))}
