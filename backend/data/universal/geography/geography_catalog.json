@@ -1,0 +1,38 @@
+[
+  {
+    "geography_id": "geo_e14b942640ae",
+    "original_name": "Solapur",
+    "normalized_name": "Solapur",
+    "level": "DISTRICT",
+    "state": "Maharashtra",
+    "district": "Solapur",
+    "subdistrict": null,
+    "lgd_code": "488",
+    "census_2011_code": "526",
+    "country": "India"
+  },
+  {
+    "geography_id": "geo_0a7e91341c6f",
+    "original_name": "000",
+    "normalized_name": "000",
+    "level": "VILLAGE",
+    "state": "Maharashtra",
+    "district": "Solapur",
+    "subdistrict": null,
+    "lgd_code": null,
+    "census_2011_code": null,
+    "country": "India"
+  },
+  {
+    "geography_id": "geo_123efe102770",
+    "original_name": "001",
+    "normalized_name": "001",
+    "level": "VILLAGE",
+    "state": "Maharashtra",
+    "district": "Solapur",
+    "subdistrict": null,
+    "lgd_code": null,
+    "census_2011_code": null,
+    "country": "India"
+  }
+]

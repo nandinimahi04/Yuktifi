@@ -1,0 +1,47 @@
+[
+  {
+    "spatial_id": "spatial_e188723030087fb8",
+    "dataset_id": "ds_e188723030087fb8",
+    "dataset_name": "WorldPop India 2025 High-Resolution Population Density Raster",
+    "filepath": "ind_pop_2025_CN_1km_R2025A_UA_v1 (1).tif",
+    "format": "GeoTIFF",
+    "width_pixels": 3504,
+    "height_pixels": 3451,
+    "bands": [
+      "F"
+    ],
+    "color_mode": "F",
+    "estimated_spatial_resolution": "1 km x 1 km grid (WorldPop)",
+    "coordinate_reference_system": "EPSG:4326 (WGS 84 Geodetic)",
+    "bounding_box": {
+      "min_longitude": 68.1,
+      "max_longitude": 97.4,
+      "min_latitude": 6.7,
+      "max_latitude": 37.1,
+      "coverage": "India Subcontinent National"
+    },
+    "file_size_mb": 15.57,
+    "tags_sample": {
+      "256": "3504",
+      "257": "3451",
+      "258": "(32,)",
+      "259": "5",
+      "322": "512",
+      "323": "512",
+      "262": "1",
+      "324": "(1302, 5296, 401911, 497546, 501540, 505534, 509528, 514841, 639301, 1661250, 2642151, 2813884, 2844",
+      "325": "(3994, 396615, 95635, 3994, 3994, 3994, 5313, 124460, 1021949, 980901, 171733, 30883, 53866, 185781,",
+      "33922": "(0.0, 0.0, 0.0, 68.19166567390003, 35.5083335273, 0.0)",
+      "42113": "-99999",
+      "33550": "(0.0083333333, 0.0083333333, 0.0)",
+      "339": "(3,)",
+      "277": "1",
+      "284": "1",
+      "42112": "<GDALMetadata>\n  <Item name=\"DESCRIPTION\" sample=\"0\" role=\"description\">global_pop_2025_CN_1km_R2025",
+      "34735": "(1, 1, 0, 7, 1024, 0, 1, 2, 1025, 0, 1, 1, 2048, 0, 1, 4326, 2049, 34737, 7, 0, 2054, 0, 1, 9102, 20",
+      "34736": "(298.257223563, 6378137.0)",
+      "34737": "WGS 84|",
+      "317": "1"
+    }
+  }
+]

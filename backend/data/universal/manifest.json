@@ -1,0 +1,18 @@
+{
+  "schema_version": "UYDF-1.0",
+  "pipeline_version": "2.0.0-production",
+  "source_archive": "Documents SIH 26",
+  "source_directory": "D:\\Ai workshop\\Documents SIH 26",
+  "build_timestamp": "2026-09-29T20:57:50.657554+00:00",
+  "build_duration_seconds": 562.86,
+  "total_files_discovered": 87,
+  "datasets_cataloged": 79,
+  "documents_indexed": 5,
+  "evidence_records_created": 2192,
+  "geographies_normalized": 3,
+  "spatial_rasters_cataloged": 1,
+  "rag_chunks_in_store": 204,
+  "valid_records_processed": 28299,
+  "duplicates_identified": 1,
+  "status": "SUCCESS"
+}

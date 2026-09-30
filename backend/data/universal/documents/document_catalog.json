@@ -1,0 +1,57 @@
+[
+  {
+    "document_id": "doc_b967e6303e179d76",
+    "title": "ISRO Bhuvan Spatial Data Content & Map Standards",
+    "filename": "4_Bhuvan_Data_Content_And_Map_Standards.pdf",
+    "organization": "National Remote Sensing Centre (NRSC), ISRO",
+    "source_type": "OPEN_GEOSPATIAL",
+    "total_pages": 50,
+    "chunks_extracted": 106,
+    "status": "SUCCESS",
+    "checksum": "b967e6303e179d7622d38bf5bd20d7de24ad23264cbbfffc6d6ff19949a67691"
+  },
+  {
+    "document_id": "doc_b8bfcb09c42dc6af",
+    "title": "District Census Handbook 2011 (DCHB Solapur)",
+    "filename": "DH_2011_2730_PART_B_DCHB_SOLAPUR.pdf",
+    "organization": "Directorate of Census Operations, Maharashtra",
+    "source_type": "OFFICIAL_STATISTICAL",
+    "total_pages": 330,
+    "chunks_extracted": 99,
+    "status": "SUCCESS",
+    "checksum": "b8bfcb09c42dc6afed49c754aeee0153600427f46ed4d6e3c4d89d6da7cb19bf"
+  },
+  {
+    "document_id": "doc_2993c572f87f8b58",
+    "title": "Household Consumption Expenditure Survey (HCES 2022-23 / 2023-24)",
+    "filename": "Factsheet_HCES_2022-23.pdf",
+    "organization": "National Sample Survey Office (NSSO), MoSPI",
+    "source_type": "SURVEY",
+    "total_pages": 27,
+    "chunks_extracted": 47,
+    "status": "SUCCESS",
+    "checksum": "2993c572f87f8b58c9c4ddc075431b2d2f2593aef00914f136d11ac434e3e9fc"
+  },
+  {
+    "document_id": "doc_e17d43c092043b46",
+    "title": "Household Consumption Expenditure Survey (HCES 2022-23 / 2023-24)",
+    "filename": "Report_591_HCES_2022-23New.pdf",
+    "organization": "National Sample Survey Office (NSSO), MoSPI",
+    "source_type": "SURVEY",
+    "total_pages": 228,
+    "chunks_extracted": 173,
+    "status": "SUCCESS",
+    "checksum": "e17d43c092043b466711b2bfc2f8e0f42af6dcddd1da57897db91845747fecaf"
+  },
+  {
+    "document_id": "doc_52224bd8faf72ff1",
+    "title": "WRI Rural Micro-Enterprise & Clean Energy Infrastructure Study",
+    "filename": "WRIpdf-517a7d2e45e78b3958e752dcd189e6b8.pdf",
+    "organization": "World Resources Institute (WRI)",
+    "source_type": "RESEARCH",
+    "total_pages": 1,
+    "chunks_extracted": 1,
+    "status": "SUCCESS",
+    "checksum": "52224bd8faf72ff15257753d0b6b71a0991dd222327ab675bfe7ca7826adbd53"
+  }
+]
