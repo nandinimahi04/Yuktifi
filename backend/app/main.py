@@ -150,6 +150,9 @@ from app.api import routes_analytics
 app.include_router(routes_analytics.router)
 from app.api import routes_universal_evidence
 app.include_router(routes_universal_evidence.router)
+from app.api import routes_swot
+app.include_router(routes_swot.router)
+
 
 
 @app.get("/health")

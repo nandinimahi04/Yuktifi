@@ -868,6 +868,9 @@ export const api = {
   copilotExplain: (data: { question: string; location_id: string; category_id: string; market_data?: any; financial_data?: any; score_data?: any }) =>
     ApiClient.post<CopilotExplainResponse>("/api/copilot/explain", data, AI_TIMEOUT_MS),
 
+  getSwotAnalysis: (data: { category_id: string; category_name: string; location_name?: string; financials?: any; market_data?: any; scores?: any }) =>
+    ApiClient.post<any>("/api/ai/swot", data, AI_TIMEOUT_MS),
+
   generateReport: (data: { session_id: string; format?: string }) =>
     ApiClient.post<ReportResponse>("/report", data, AI_TIMEOUT_MS),
 

@@ -6,6 +6,7 @@ import { useStore } from "@/lib/store";
 import { Loader2, Download, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { SwotMatrix } from "@/components/SwotMatrix";
 
 export default function ReportPage() {
   const router = useRouter();
@@ -125,6 +126,18 @@ export default function ReportPage() {
               <li key={i}>{rec}</li>
             ))}
           </ul>
+        </div>
+
+        {/* Gemini AI Strategic SWOT Analysis */}
+        <div className="mb-12 print:break-before-page">
+          <SwotMatrix 
+            categoryId={state.analysisResult?.business?.matched_category_id || state.categoryId || "agri_business"}
+            categoryName={state.analysisResult?.business?.area_of_interest || state.categoryName || "Poultry Farming (Broiler/Layer)"}
+            locationName={state.analysisResult?.location?.resolved || state.locationName || "Solapur, Maharashtra"}
+            financials={financials}
+            marketData={market}
+            scores={scores}
+          />
         </div>
 
         {/* Financials Summary */}

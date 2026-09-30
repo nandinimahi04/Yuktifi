@@ -8,6 +8,7 @@ import { LocationUnavailableState } from '@/components/LocationUnavailableState'
 import { useTranslations } from 'next-intl';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { MetricCalculationModal, MetricDetail } from '@/components/dashboard/MetricCalculationModal';
+import { SwotMatrix } from '@/components/SwotMatrix';
 
 // Simple Top Navigation for Dashboard
 const DashboardHeader = () => (
@@ -613,6 +614,18 @@ export default function DashboardPage() {
               </div>
             );
           })()}
+
+          {/* Gemini AI SWOT Analysis Matrix */}
+          <div className="mb-6">
+            <SwotMatrix 
+              categoryId={resolvedBusiness?.matched_category_id || categoryId || "agri_business"}
+              categoryName={targetBusinessName || "Poultry Farming (Broiler/Layer)"}
+              locationName={locationData?.resolved || locationData?.district || "Solapur, Maharashtra"}
+              financials={financials}
+              marketData={market}
+              scores={scores}
+            />
+          </div>
 
           {/* Metrics Row — Fully Calculated with View Calculation Action */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

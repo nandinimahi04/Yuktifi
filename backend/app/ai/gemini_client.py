@@ -29,7 +29,7 @@ class GeminiClient:
         if not self.api_key:
             logger.warning("GEMINI_API_KEY is not set. Gemini API calls will fail.")
             
-        self.model = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+        self.model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
         self.base_url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
         logger.info("[GEMINI] Using model: %s", self.model)
 
@@ -44,7 +44,7 @@ class GeminiClient:
             "generationConfig": generation_config
         }
 
-    def _parse_response(self, data: dict, mime_type: str) -> Any:
+    def _parse_response(self, data: dict, mime_type: str = "application/json") -> Any:
         content = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
         if not content:
             return None
@@ -63,12 +63,13 @@ class GeminiClient:
         if key in _prompt_cache:
             logger.debug("Gemini prompt cache HIT (sync)")
             return _prompt_cache[key]
+        mime_type = "application/json"
         for attempt in range(2):
             try:
                 with httpx.Client(timeout=7.0) as client:
                     response = client.post(
                         f"{self.base_url}?key={self.api_key}",
-                        json=self._build_payload(prompt, schema)
+                        json=self._build_payload(prompt, schema, mime_type=mime_type)
                     )
                     response.raise_for_status()
                     result = self._parse_response(response.json(), mime_type)
@@ -96,12 +97,13 @@ class GeminiClient:
         if key in _prompt_cache:
             logger.debug("Gemini prompt cache HIT (async)")
             return _prompt_cache[key]
+        mime_type = "application/json"
         for attempt in range(2):
             try:
                 async with httpx.AsyncClient(timeout=7.0) as client:
                     response = await client.post(
                         f"{self.base_url}?key={self.api_key}",
-                        json=self._build_payload(prompt, schema)
+                        json=self._build_payload(prompt, schema, mime_type=mime_type)
                     )
                     response.raise_for_status()
                     result = self._parse_response(response.json(), mime_type)
